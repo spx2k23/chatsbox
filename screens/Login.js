@@ -2,20 +2,45 @@ import React, { useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { Input, Button } from 'react-native-elements';
 import Icon from 'react-native-vector-icons/MaterialIcons';
+import { useLazyQuery, gql } from '@apollo/client';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
+const LOGIN_QUERY = gql`
+  query Login($Email: String!, $Password: String!) {
+    login(Email: $Email, Password: $Password) {
+      success
+      message
+      token
+    }
+  }
+`;
 
 const Login = ({ navigation }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
 
-  const handleLogin = () => {
+  const [login, { loading }] = useLazyQuery(LOGIN_QUERY, {
+    onCompleted: async (data) => {
+      if (data.login.success) {
+        await AsyncStorage.setItem('token', data.login.token);
+        navigation.navigate('Chat', { user_id: email, name: 'User' });
+      } else {
+        setErrorMessage(data.login.message);
+      }
+    },
+    onError: () => {
+      setErrorMessage('An error occurred. Please try again.');
+    },
+  });
+
+  const handleLogin = async () => {
     if (!email || !password) {
       setErrorMessage('Please enter both email and password');
       return;
     }
-
-    //add Login logic here
-    navigation.navigate('Chat',{user_id:email ,name:'name from login'});
+    setErrorMessage('');
+    login({ variables: { Email: email, Password: password } });
   };
 
   const handleRegister = () => {

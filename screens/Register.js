@@ -80,6 +80,9 @@ const Register = ({ navigation }) => {
       <TouchableOpacity onPress={() => navigation.navigate('Login')}>
         <Text style={styles.loginText}>Already have an account? Login</Text>
       </TouchableOpacity>
+      <TouchableOpacity onPress={() => navigation.navigate('OrganizationReg')}>
+        <Text style={styles.loginText}>Register Organization</Text>
+      </TouchableOpacity>
     </View>
   );
 };
