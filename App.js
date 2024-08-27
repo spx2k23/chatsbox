@@ -7,6 +7,7 @@ import Login from './screens/Login';
 import Register from './screens/Register';
 import OrganizationReg from './screens/OrganizationReg';
 import Chat from './screens/Chat';
+import ChatList from './screens/ChatList';
 
 
 const Stack = createStackNavigator();
@@ -17,12 +18,14 @@ const App = () => {
   return (
     <ApolloProvider client={client}>
       <NavigationContainer>
-        <Stack.Navigator initialRouteName="Login"  screenOptions={{headerShown:false}}>
-          <Stack.Screen name="Login"  >
+        <Stack.Navigator initialRouteName="Login" >
+          <Stack.Screen name="Login" options={{ headerShown: false }}>
             {props => <Login {...props} setUserId={setUserId} />}
+            
           </Stack.Screen>
-          <Stack.Screen name="Register" component={Register} />
-          <Stack.Screen name="OrganizationReg" component={OrganizationReg} />
+          <Stack.Screen name="Register" component={Register} options={{ headerShown: false }} />
+          <Stack.Screen name="OrganizationReg" component={OrganizationReg} options={{ headerShown: false }} />
+          <Stack.Screen name="ChatList" component={ChatList} />
           <Stack.Screen name="Chat">
             {props => <Chat {...props} user_id={user_id} />}
           </Stack.Screen>

@@ -1,57 +1,20 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { Input, Button } from 'react-native-elements';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { useLazyQuery, gql } from '@apollo/client';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { jwtDecode } from 'jwt-decode';
 
-const LOGIN_QUERY = gql`
-  query Login($Email: String!, $Password: String!) {
-    login(Email: $Email, Password: $Password) {
-      success
-      message
-      token
-      organization
-    }
-  }
-`;
-
-const Login = ({ navigation }) => {
+const Approve = ({ navigation }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
-
-  useEffect(() => {
-    const checkLoginStatus = async () => {
-      try {
-        const token = await AsyncStorage.getItem("token");
-        if (token) {
-          const decodedToken = jwtDecode(token);
-          const currentTime = Date.now() / 1000;
-          if (decodedToken.exp && decodedToken.exp < currentTime) {
-            await AsyncStorage.removeItem("token");
-            navigation.navigate("Login");
-          } else {
-            navigation.navigate("ChatList");
-          }
-        } else {
-          // console.log("No token found");
-        }
-      } catch (error) {
-        console.log("Error retrieving token:", error);
-      }
-    };
-
-    checkLoginStatus();
-  }, []);
 
   const [login, { loading }] = useLazyQuery(LOGIN_QUERY, {
     onCompleted: async (data) => {
       if (data.login.success) {
         await AsyncStorage.setItem('token', data.login.token);
-        await AsyncStorage.setItem('organization', data.login.organization);
-        navigation.navigate('ChatList');
+        navigation.navigate('Chat', { user_id: email, name: 'User' });
       } else {
         setErrorMessage(data.login.message);
       }
@@ -134,23 +97,23 @@ const styles = StyleSheet.create({
   },
   inputContainer: {
     marginBottom: 20,
-    width: '90%',
-    alignSelf: 'center'
+    width:'90%',
+    alignSelf:'center'
   },
   inputField: {
     marginBottom: 15,
   },
   inputText: {
     color: '#37474F',
-    padding: 10
+    padding:10
   },
   loginButton: {
     backgroundColor: '#6200EE',
     borderRadius: 25,
     paddingVertical: 15,
     marginBottom: 20,
-    width: '60%',
-    alignSelf: 'center'
+    width:'60%',
+    alignSelf:'center'
   },
   loginButtonText: {
     fontSize: 18,
@@ -168,4 +131,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default Login;
+export default Approve;
