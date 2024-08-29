@@ -7,7 +7,7 @@ import Login from './screens/Login';
 import Register from './screens/Register';
 import OrganizationReg from './screens/OrganizationReg';
 import Chat from './screens/Chat';
-import ChatList from './screens/ChatList';
+import DrawerList from './components/ChatList/DrawerList';
 
 
 const Stack = createStackNavigator();
@@ -25,7 +25,7 @@ const App = () => {
           </Stack.Screen>
           <Stack.Screen name="Register" component={Register} options={{ headerShown: false }} />
           <Stack.Screen name="OrganizationReg" component={OrganizationReg} options={{ headerShown: false }} />
-          <Stack.Screen name="ChatList" component={ChatList} />
+          <Stack.Screen name="Chats" component={DrawerList} options={{ headerShown: false }}/>
           <Stack.Screen name="Chat">
             {props => <Chat {...props} user_id={user_id} />}
           </Stack.Screen>
