@@ -1,8 +1,11 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { createDrawerNavigator, DrawerContentScrollView, DrawerItemList } from '@react-navigation/drawer';
 import { Text, View ,StyleSheet} from 'react-native';
 import ChatList from '../../screens/ChatList';
 import { MaterialIcons } from '@expo/vector-icons';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { jwtDecode } from 'jwt-decode';
+import ApproveRequest from '../../screens/ApproveRequest';
 
 const Drawer = createDrawerNavigator();
 
@@ -22,14 +25,6 @@ function Friends() {
   );
 }
 
-function ApproveRequests() {
-  return (
-    <View>
-      <Text>Approve Requests</Text>
-    </View>
-  );
-}
-
 function Logout() {
   return (
     <View>
@@ -39,6 +34,21 @@ function Logout() {
 }
 
 function CustomDrawerContent(props) {
+
+  const [isSuperAdmin, setIsSuperAdmin] = useState(false);
+
+  useEffect(() => {
+    const checkSuperAdminStatus = async () => {
+      const token = await AsyncStorage.getItem("token");
+      if (token && typeof token === "string") {
+        const decodedToken = jwtDecode(token);
+        const superAdminStatus = decodedToken.superAdmin;
+        setIsSuperAdmin(superAdminStatus);
+      }
+    };
+    checkSuperAdminStatus();
+  }, []);
+
   return (
     <View style={styles.container}>
       <View style={styles.drawerbox} > 
@@ -91,7 +101,7 @@ function DrawerList() {
           drawerIcon: ({ color, size }) => (
             <MaterialIcons name="person-add-alt" color={color} size={size} />
           ),
-          title: 'Users',
+          title: 'Chat List',
         }}
       />
       <Drawer.Screen 
@@ -105,8 +115,8 @@ function DrawerList() {
         }}
       />
       <Drawer.Screen 
-        name="ApproveRequests" 
-        component={ApproveRequests} 
+        name="Approve Request"
+        component={ApproveRequest} 
         options={{ 
           headerShown: true,
           drawerIcon: ({ color, size }) => (

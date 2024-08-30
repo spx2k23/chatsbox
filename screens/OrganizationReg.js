@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { Input, Button } from 'react-native-elements';
-import Icon from 'react-native-vector-icons/MaterialIcons';
 import { useMutation, gql } from '@apollo/client';
 
 const REGISTER_ORGANIZATION = gql`

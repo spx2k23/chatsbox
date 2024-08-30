@@ -8,7 +8,7 @@ import Register from './screens/Register';
 import OrganizationReg from './screens/OrganizationReg';
 import Chat from './screens/Chat';
 import DrawerList from './components/ChatList/DrawerList';
-
+import ApproveRequest from './screens/ApproveRequest';
 
 const Stack = createStackNavigator();
 
@@ -21,7 +21,6 @@ const App = () => {
         <Stack.Navigator initialRouteName="Login" >
           <Stack.Screen name="Login" options={{ headerShown: false }}>
             {props => <Login {...props} setUserId={setUserId} />}
-            
           </Stack.Screen>
           <Stack.Screen name="Register" component={Register} options={{ headerShown: false }} />
           <Stack.Screen name="OrganizationReg" component={OrganizationReg} options={{ headerShown: false }} />
@@ -29,6 +28,7 @@ const App = () => {
           <Stack.Screen name="Chat">
             {props => <Chat {...props} user_id={user_id} />}
           </Stack.Screen>
+          <Stack.Screen name="ApproveRequest" component={ApproveRequest} />
         </Stack.Navigator>
       </NavigationContainer>
     </ApolloProvider>
