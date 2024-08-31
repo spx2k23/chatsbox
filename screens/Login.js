@@ -36,7 +36,7 @@ const Login = ({ navigation }) => {
             navigation.navigate("Chats");
           }
         } else {
-          // console.log("No token found");
+          console.log("No token found");
         }
       } catch (error) {
         console.log("Error retrieving token:", error);

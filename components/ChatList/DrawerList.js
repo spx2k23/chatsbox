@@ -1,43 +1,18 @@
-import React, { useEffect, useState } from 'react';
-import { createDrawerNavigator, DrawerContentScrollView, DrawerItemList } from '@react-navigation/drawer';
-import { Text, View ,StyleSheet} from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { createDrawerNavigator } from '@react-navigation/drawer';
 import ChatList from '../../screens/ChatList';
+import Friends from '../../screens/Friends'; // Import your other screens
+import ApproveRequest from '../../screens/ApproveRequest'; // Import your other screens
+import DrawerHeader from '../../components/ChatList/DrawerHeader'; // Update the import path
 import { MaterialIcons } from '@expo/vector-icons';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import { jwtDecode } from 'jwt-decode';
-import ApproveRequest from '../../screens/ApproveRequest';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const Drawer = createDrawerNavigator();
 
-function Users() {
-  return (
-    <View>
-      <Text>Users</Text>
-    </View>
-  );
-}
-
-function Friends() {
-  return (
-    <View>
-      <Text>Friends</Text>
-    </View>
-  );
-}
-
-function Logout() {
-  return (
-    <View>
-      <Text>Logout</Text>
-    </View>
-  );
-}
-
-function CustomDrawerContent(props) {
-
+const DrawerList = () => {
   const [isSuperAdmin, setIsSuperAdmin] = useState(false);
-
-  useEffect(() => {
+    useEffect(() => {
     const checkSuperAdminStatus = async () => {
       const token = await AsyncStorage.getItem("token");
       if (token && typeof token === "string") {
@@ -50,38 +25,8 @@ function CustomDrawerContent(props) {
   }, []);
 
   return (
-    <View style={styles.container}>
-      <View style={styles.drawerbox} > 
-        <Text style={styles.heading}>Welcome</Text>
-      <DrawerContentScrollView {...props}>
-        <DrawerItemList {...props} />
-      </DrawerContentScrollView>
-    </View>
-    </View>
-  );
-}
-
-const styles=StyleSheet.create({
-container:{
-  flex:1
-},
-drawerbox:{
-  marginTop:70,
-  height:'100%'
-},
-heading:{
-  color:'#6200EE',
-  textAlign:'center',
-  fontWeight:'500',
-  fontSize:20,
-}
-});
-
-function DrawerList() {
-  return (
     <Drawer.Navigator
-      drawerPosition="right"
-      drawerContent={(props) => <CustomDrawerContent {...props} />}
+      drawerContent={(props) => <DrawerHeader {...props} />}
       screenOptions={{
         drawerStyle: {
           backgroundColor: '#fff',
@@ -89,7 +34,13 @@ function DrawerList() {
         drawerActiveBackgroundColor: '#6200EE',
         drawerActiveTintColor: '#fff',
         drawerInactiveTintColor: '#6200EE',
-        headerTintColor: '#6200EE',
+        headerStyle: {
+          backgroundColor: '#fff',
+          elevation: 0, // Android shadow removal
+          shadowOpacity: 0, // iOS shadow removal
+        },
+        headerStatusBarHeight: 14, // Adjust if needed
+        headerTintColor:'#6200EE',
         headerTitleAlign:'center'
       }}
     >
@@ -97,7 +48,6 @@ function DrawerList() {
         name="ChatList" 
         component={ChatList} 
         options={{ 
-          headerShown: true,
           drawerIcon: ({ color, size }) => (
             <MaterialIcons name="person-add-alt" color={color} size={size} />
           ),
@@ -108,34 +58,24 @@ function DrawerList() {
         name="Friends" 
         component={Friends} 
         options={{ 
-          headerShown: true,
           drawerIcon: ({ color, size }) => (
             <MaterialIcons name="people-outline" color={color} size={size} />
           ),
+          title: 'Friends',
         }}
       />
       <Drawer.Screen 
         name="Approve Request"
         component={ApproveRequest} 
         options={{ 
-          headerShown: true,
           drawerIcon: ({ color, size }) => (
             <MaterialIcons name="check-circle-outline" color={color} size={size} />
           ),
-        }}
-      />
-      <Drawer.Screen 
-        name="Logout" 
-        component={Logout} 
-        options={{ 
-          headerShown: true,
-          drawerIcon: ({ color, size }) => (
-            <MaterialIcons name="logout" color={color} size={size} />
-          ),
+          title: 'Approve Request',
         }}
       />
     </Drawer.Navigator>
   );
-}
+};
 
 export default DrawerList;

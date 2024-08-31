@@ -131,7 +131,7 @@ const Register = ({ navigation }) => {
             ))}
           </Picker>
         )}
-        <Input
+        {/* <Input
           placeholder="ProfilePicture"
           placeholderTextColor="#B0BEC5"
           value={ProfilePicture}
@@ -139,7 +139,7 @@ const Register = ({ navigation }) => {
           leftIcon={{ type: 'font-awesome', name: 'image', color: '#6200EE' }}
           inputStyle={styles.inputText}
           containerStyle={styles.inputField}
-        />
+        /> */}
         {errorMessage ? <Text style={styles.error}>{errorMessage}</Text> : null}
       </View>
       <Button
