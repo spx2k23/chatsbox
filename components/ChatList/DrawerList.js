@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { createDrawerNavigator } from '@react-navigation/drawer';
 import ChatList from '../../screens/ChatList';
-import Friends from '../../screens/Friends'; // Import your other screens
+import Users from '../../screens/Users'; // Import your other screens
 import ApproveRequest from '../../screens/ApproveRequest'; // Import your other screens
 import DrawerHeader from '../../components/ChatList/DrawerHeader'; // Update the import path
 import { MaterialIcons } from '@expo/vector-icons';
@@ -55,16 +55,16 @@ const DrawerList = () => {
         }}
       />
       <Drawer.Screen 
-        name="Friends" 
-        component={Friends} 
+        name="Users" 
+        component={Users} 
         options={{ 
           drawerIcon: ({ color, size }) => (
             <MaterialIcons name="people-outline" color={color} size={size} />
           ),
-          title: 'Friends',
+          title: 'Users',
         }}
       />
-      <Drawer.Screen 
+      {isSuperAdmin&&<Drawer.Screen 
         name="Approve Request"
         component={ApproveRequest} 
         options={{ 
@@ -73,7 +73,7 @@ const DrawerList = () => {
           ),
           title: 'Approve Request',
         }}
-      />
+      />}
     </Drawer.Navigator>
   );
 };

@@ -4,6 +4,7 @@ import { Input, Button } from 'react-native-elements';
 import { useMutation, gql } from '@apollo/client';
 import * as ImagePicker from 'expo-image-picker';
 import * as FileSystem from 'expo-file-system';
+import Loading from '../components/Loading/Loading';
 
 const REGISTER_ORGANIZATION = gql`
   mutation registerOrganization(
@@ -94,9 +95,12 @@ const OrganizationReg = ({ navigation }) => {
             setErrorMessage('An error occurred. Please try again.');
         }    
     }
-
+    if(loading){
+        return <Loading/>
+    }
     return (
-        <ScrollView contentContainerStyle={styles.container}>
+        <ScrollView >
+            <View style={styles.container}>
             <View style={styles.logoContainer}>
                 <Text style={styles.logoText}>Register</Text>
             </View>
@@ -167,7 +171,6 @@ const OrganizationReg = ({ navigation }) => {
                     />
                 ) : null}
                 {errorMessage ? <Text style={styles.error}>{errorMessage}</Text> : null}
-                {loading ? <Text>loading...</Text> : null}
             </View>
             <Button
                 title="Register"
@@ -175,6 +178,7 @@ const OrganizationReg = ({ navigation }) => {
                 buttonStyle={styles.registerButton}
                 titleStyle={styles.registerButtonText}
             />
+            </View>
         </ScrollView>
     );
 };

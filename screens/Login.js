@@ -84,6 +84,7 @@ const Login = ({ navigation }) => {
         <Input
           placeholder="Email"
           placeholderTextColor="#B0BEC5"
+          keyboardType='email-address'
           value={email}
           onChangeText={(text) => setEmail(text)}
           leftIcon={{ type: 'font-awesome', name: 'envelope', color: '#6200EE' }}

@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Image } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Image, ScrollView } from 'react-native';
 import { Input, Button } from 'react-native-elements';
 import { gql, useMutation } from '@apollo/client';
 import * as ImagePicker from 'expo-image-picker';
 import * as FileSystem from 'expo-file-system';
+import Loading from '../components/Loading/Loading';
 
 const REGISTER = gql`
   mutation register(
@@ -39,7 +40,6 @@ const Register = ({ navigation }) => {
   const [errorMessage, setErrorMessage] = useState('');
 
   const [register, { data, loading, error }] = useMutation(REGISTER);
-
   const handlePickImage = async () => {
     const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
     if (status !== 'granted') {
@@ -91,8 +91,12 @@ const Register = ({ navigation }) => {
       setErrorMessage('An error occurred. Please try again.');
     }
   };
+if(loading){
+  return <Loading/>   
+}
 
   return (
+    <ScrollView>
     <View style={styles.container}>
       <View style={styles.logoContainer}>
         <Text style={styles.logoText}>Register</Text>
@@ -155,7 +159,6 @@ const Register = ({ navigation }) => {
           />
         ) : null}
         {errorMessage ? <Text style={styles.error}>{errorMessage}</Text> : null}
-        {loading ? <Text>loading...</Text> : null}
       </View>
       <Button
         title="Register"
@@ -170,6 +173,7 @@ const Register = ({ navigation }) => {
         <Text style={styles.loginText}>Register Organization</Text>
       </TouchableOpacity>
     </View>
+    </ScrollView>
   );
 };
 
