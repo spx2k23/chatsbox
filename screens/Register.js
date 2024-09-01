@@ -1,17 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Image } from 'react-native';
 import { Input, Button } from 'react-native-elements';
-import { useQuery, gql, useMutation } from '@apollo/client';
-import { Picker } from '@react-native-picker/picker';
-
-const GET_ALL_ORGANIZATIONS_QUERY = gql`
-  query GetOrganizations {
-    getOrganizations {
-      id
-      OrganizationName
-    }
-  }
-`;
+import { gql, useMutation } from '@apollo/client';
+import * as ImagePicker from 'expo-image-picker';
+import * as FileSystem from 'expo-file-system';
 
 const REGISTER = gql`
   mutation register(
@@ -20,7 +12,7 @@ const REGISTER = gql`
     $MobileNumber: String!,
     $Password: String!,
     $ProfilePicture: String!,
-    $Organization: String!
+    $OrganizationCode: String!
   ) {
     register(
       Name: $Name,
@@ -28,7 +20,7 @@ const REGISTER = gql`
       MobileNumber: $MobileNumber,
       Password: $Password,
       ProfilePicture: $ProfilePicture,
-      Organization: $Organization
+      OrganizationCode: $OrganizationCode
     ) {
       success
       message
@@ -42,15 +34,38 @@ const Register = ({ navigation }) => {
   const [MobileNumber, setMobileNumber] = useState('');
   const [Password, setPassword] = useState('');
   const [ProfilePicture, setProfilePicture] = useState('');
+  const [OrganizationCode, setOrganizationCode] = useState(null);
+  const [ProfileUri, setProfileUri] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
-  const [selectedOrganization, setSelectedOrganization] = useState(null);
 
-  const { loading, error, data } = useQuery(GET_ALL_ORGANIZATIONS_QUERY);
+  const [register, { data, loading, error }] = useMutation(REGISTER);
 
-  const [register, { registerdata, registerloading, registererror }] = useMutation(REGISTER);
+  const handlePickImage = async () => {
+    const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+    if (status !== 'granted') {
+      alert('Permission to access media library is required!');
+      return;
+    }
+
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsEditing: true,
+      quality: 1,
+    });
+
+    if (!result.canceled) {
+      const asset = result.assets[0];
+      const base64 = await FileSystem.readAsStringAsync(asset.uri, {
+        encoding: FileSystem.EncodingType.Base64,
+      });
+      setProfileUri(asset.uri);
+      setProfilePicture(base64);
+    }
+  };
 
   const handleRegister = async () => {
-    if (!Name || !Email || !MobileNumber || !Password || !ProfilePicture || !selectedOrganization) {
+    setErrorMessage('');
+    if (!Name || !Email || !MobileNumber || !Password || !ProfilePicture || !OrganizationCode) {
       setErrorMessage('Please fill all the fields');
       return;
     }
@@ -62,7 +77,7 @@ const Register = ({ navigation }) => {
           MobileNumber,
           Password,
           ProfilePicture,
-          Organization: selectedOrganization
+          OrganizationCode
         }
       });
 
@@ -120,27 +135,27 @@ const Register = ({ navigation }) => {
           inputStyle={styles.inputText}
           containerStyle={styles.inputField}
         />
-        {data && (
-          <Picker
-            selectedValue={selectedOrganization}
-            onValueChange={(itemValue) => setSelectedOrganization(itemValue)}
-          >
-            <Picker.Item label="Select Organization" value="" />
-            {data.getOrganizations.map((org) => (
-              <Picker.Item key={org.id} label={org.OrganizationName} value={org.id} />
-            ))}
-          </Picker>
-        )}
-        {/* <Input
-          placeholder="ProfilePicture"
+        <Input
+          placeholder="Organization code"
           placeholderTextColor="#B0BEC5"
-          value={ProfilePicture}
-          onChangeText={(text) => setProfilePicture(text)}
-          leftIcon={{ type: 'font-awesome', name: 'image', color: '#6200EE' }}
+          value={OrganizationCode}
+          onChangeText={(text) => setOrganizationCode(text)}
+          leftIcon={{ type: 'font-awesome', name: 'building', color: '#6200EE' }}
           inputStyle={styles.inputText}
           containerStyle={styles.inputField}
-        /> */}
+          maxLength={6}
+        />
+        <TouchableOpacity onPress={handlePickImage} style={styles.imagePicker}>
+          <Text style={styles.imagePickerText}>Pick Profile Picture</Text>
+        </TouchableOpacity>
+        {ProfileUri ? (
+          <Image
+            source={{ uri: ProfileUri }}
+            style={styles.profileImage}
+          />
+        ) : null}
         {errorMessage ? <Text style={styles.error}>{errorMessage}</Text> : null}
+        {loading ? <Text>loading...</Text> : null}
       </View>
       <Button
         title="Register"
@@ -208,6 +223,25 @@ const styles = StyleSheet.create({
     color: 'red',
     marginBottom: 15,
     textAlign: 'center',
+  },
+  imagePicker: {
+    backgroundColor: '#6200EE',
+    borderRadius: 25,
+    paddingVertical: 10,
+    paddingHorizontal: 15,
+    alignItems: 'center',
+    marginVertical: 15,
+  },
+  imagePickerText: {
+    color: '#fff',
+    fontSize: 16,
+  },
+  profileImage: {
+    width: 100,
+    height: 100,
+    borderRadius: 50,
+    alignSelf: 'center',
+    marginBottom: 20,
   },
 });
 

@@ -1,29 +1,64 @@
-import React from 'react';
-import { View,StyleSheet,FlatList } from 'react-native';
-
+import React, { useEffect, useState } from 'react';
+import { View, StyleSheet, FlatList, Text } from 'react-native';
+import { useQuery, gql } from '@apollo/client';
 import RequestContainer from '../components/ChatList/RequestContainer';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
+const GET_UNAPPROVED_USERS = gql`
+  query GetUnapprovedUsers($organizationId: ID!) {
+    getUnapprovedUsers(organizationId: $organizationId) {
+      id
+      Name
+      Email
+      ProfilePicture
+    }
+  }
+`;
 
 const ApproveRequest = ({ navigation }) => {
-  const data = [
-    {
-      name: 'Drago',
-      email: 'drago@gmail.com',
-      image: 'https://cdn.pixabay.com/photo/2023/01/06/12/38/ai-generated-7701143_640.jpg',
-    },
-    {
-      name: 'Witcher',
-      email: 'witcher@gmail.com',
-      image: 'https://scontent.fmaa15-1.fna.fbcdn.net/v/t39.30808-1/306163119_395338919425615_8855944441524828272_n.jpg?stp=dst-jpg_s200x200&_nc_cat=104&ccb=1-7&_nc_sid=f4b9fd&_nc_ohc=Qc6QCKqPcf0Q7kNvgFOXnQv&_nc_ht=scontent.fmaa15-1.fna&oh=00_AYD3p5oBwrA3IbmzfB2EE1PLZDAk7YiOg4AGVjkm5dTAXQ&oe=66D865ED',
-    },
-  ];
- 
+  const [organizationId, setOrganizationId] = useState(null);
+
+  useEffect(() => {
+    const fetchOrganizationId = async () => {
+      const storedOrganizationId = await AsyncStorage.getItem('organization');
+      setOrganizationId(storedOrganizationId);
+    };
+
+    fetchOrganizationId();
+  }, []);
+
+  const { loading, error, data, refetch } = useQuery(GET_UNAPPROVED_USERS, {
+    variables: { organizationId },
+    skip: !organizationId,
+  });
+
+  useEffect(() => {
+    const unsubscribe = navigation.addListener('focus', () => {
+      if (organizationId) {
+        refetch();
+      }
+    });
+
+    return unsubscribe;
+  }, [navigation, organizationId]);
+
+  if (loading) return <View><Text>Loading...</Text></View>;
+  if (error) return <View><Text>Error loading data</Text></View>;
 
   return (
     <View style={styles.container}>
       <FlatList 
-        data={data}
-        renderItem={({item})=><RequestContainer name={item.name} email={item.email} image={item.image} />}
-        keyExtractor={(item) => item.email}
+        data={data?.getUnapprovedUsers}
+        renderItem={({ item }) => (
+          <RequestContainer 
+            name={item.Name} 
+            email={item.Email} 
+            image={item.ProfilePicture} 
+            userId={item.id} 
+            refetch={refetch} 
+          />
+        )}
+        keyExtractor={(item) => item.id}
       />
     </View>
   );
@@ -35,7 +70,6 @@ const styles = StyleSheet.create({
     padding: 20,
     backgroundColor: '#f0f0f0',
   },
- 
 });
 
 export default ApproveRequest;

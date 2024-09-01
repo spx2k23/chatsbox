@@ -1,21 +1,48 @@
 import React from 'react';
 import { View, Text, StyleSheet, Image } from 'react-native';
 import { Button } from 'react-native-elements';
+import { useMutation, gql } from '@apollo/client';
 
-const RequestContainer = ({ name, email, image }) => {
-  const handleApprove = () => {
-    console.log(`Approved request for ${email}`);
-    // Add your logic here for approving the request
+const APPROVE_USER = gql`
+  mutation ApproveUser($userId: ID!) {
+    approveUser(userId: $userId) {
+      success
+      message
+    }
+  }
+`;
+
+const REJECT_USER = gql`
+  mutation RejectUser($userId: ID!) {
+    rejectUser(userId: $userId) {
+      success
+      message
+    }
+  }
+`;
+
+const RequestContainer = ({ name, email, image, userId, refetch }) => {
+
+  const [approveUser] = useMutation(APPROVE_USER);
+  const [rejectUser] = useMutation(REJECT_USER);
+
+  const handleApprove = async (userId) => {
+    const { data } = await approveUser({ variables: { userId } });
+    if (data.approveUser.success) {
+      refetch();
+    }
   };
 
-  const handleReject = () => {
-    console.log(`Rejected request for ${email}`);
-    // Add your logic here for rejecting the request
+  const handleReject = async (userId) => {
+    const { data } = await rejectUser({ variables: { userId } });
+    if (data.rejectUser.success) {
+      refetch();
+    }
   };
 
   return (
     <View style={styles.card}>
-      <Image source={{ uri: image }} style={styles.image} />
+      <Image source={{ uri: `data:image/jpeg;base64,${image}` }} style={styles.image} />
       <View style={styles.infoContainer}>
         <Text style={styles.name}>{name}</Text>
         <Text style={styles.email}>{email}</Text>

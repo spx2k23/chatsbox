@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Image, ScrollView, ActivityIndicator } from 'react-native';
 import { Input, Button } from 'react-native-elements';
 import { useMutation, gql } from '@apollo/client';
+import * as ImagePicker from 'expo-image-picker';
+import * as FileSystem from 'expo-file-system';
 
 const REGISTER_ORGANIZATION = gql`
   mutation registerOrganization(
@@ -10,7 +12,8 @@ const REGISTER_ORGANIZATION = gql`
     $MobileNumber: String!,
     $Password: String!,
     $ProfilePicture: String!,
-    $OrganizationName: String!
+    $OrganizationName: String!,
+    $OrganizationCode: String!
   ) {
     registerOrganization(
       Name: $Name,
@@ -18,7 +21,8 @@ const REGISTER_ORGANIZATION = gql`
       MobileNumber: $MobileNumber,
       Password: $Password,
       ProfilePicture: $ProfilePicture,
-      OrganizationName: $OrganizationName
+      OrganizationName: $OrganizationName,
+      OrganizationCode: $OrganizationCode
     ) {
       success
       message
@@ -26,20 +30,44 @@ const REGISTER_ORGANIZATION = gql`
   }
 `;
 
-
 const OrganizationReg = ({ navigation }) => {
     const [OrganizationName, setOrganizationName] = useState('');
+    const [OrganizationCode, setOrganizationCode] = useState('');
     const [Name, setName] = useState('');
     const [Email, setEmail] = useState('');
     const [MobileNumber, setMobileNumber] = useState('');
     const [Password, setPassword] = useState('');
     const [ProfilePicture, setProfilePicture] = useState('');
+    const [ProfileUri, setProfileUri] = useState('');
     const [errorMessage, setErrorMessage] = useState('');
 
     const [registerOrganization, { data, loading, error }] = useMutation(REGISTER_ORGANIZATION);
 
+    const handlePickImage = async () => {
+        const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+        if (status !== 'granted') {
+            alert('Permission to access media library is required!');
+            return;
+        }
+
+        const result = await ImagePicker.launchImageLibraryAsync({
+            mediaTypes: ImagePicker.MediaTypeOptions.Images,
+            allowsEditing: true,
+            quality: 1,
+        });
+
+        if (!result.canceled) {
+            const asset = result.assets[0];
+            const base64 = await FileSystem.readAsStringAsync(asset.uri, {
+                encoding: FileSystem.EncodingType.Base64,
+            });
+            setProfileUri(asset.uri);
+            setProfilePicture(base64);
+        }
+    };
+
     const handleRegister = async () => {
-        if (!OrganizationName || !Name || !Email || !MobileNumber || !Password || !ProfilePicture) {
+        if (!OrganizationName || !OrganizationCode || !Name || !Email || !MobileNumber || !Password || !ProfilePicture) {
             setErrorMessage('Please fill all the fields');
             return;
         }
@@ -47,6 +75,7 @@ const OrganizationReg = ({ navigation }) => {
             const { data } = await registerOrganization({
                 variables: {
                     OrganizationName,
+                    OrganizationCode,
                     Name,
                     Email,
                     MobileNumber,
@@ -65,10 +94,9 @@ const OrganizationReg = ({ navigation }) => {
             setErrorMessage('An error occurred. Please try again.');
         }    
     }
-        // navigation.navigate('Login');
 
     return (
-        <View style={styles.container}>
+        <ScrollView contentContainerStyle={styles.container}>
             <View style={styles.logoContainer}>
                 <Text style={styles.logoText}>Register</Text>
             </View>
@@ -81,6 +109,16 @@ const OrganizationReg = ({ navigation }) => {
                     leftIcon={{ type: 'font-awesome', name: 'building', color: '#6200EE' }}
                     inputStyle={styles.inputText}
                     containerStyle={styles.inputField}
+                />
+                <Input
+                    placeholder="Create code for your organization"
+                    placeholderTextColor="#B0BEC5"
+                    value={OrganizationCode}
+                    onChangeText={(text) => setOrganizationCode(text)}
+                    leftIcon={{ type: 'font-awesome', name: 'building', color: '#6200EE' }}
+                    inputStyle={styles.inputText}
+                    containerStyle={styles.inputField}
+                    maxLength={6}
                 />
                 <Input
                     placeholder="Name"
@@ -119,16 +157,17 @@ const OrganizationReg = ({ navigation }) => {
                     inputStyle={styles.inputText}
                     containerStyle={styles.inputField}
                 />
-                <Input
-                    placeholder="ProfilePicture"
-                    placeholderTextColor="#B0BEC5"
-                    value={ProfilePicture}
-                    onChangeText={(text) => setProfilePicture(text)}
-                    leftIcon={{ type: 'font-awesome', name: 'image', color: '#6200EE' }}
-                    inputStyle={styles.inputText}
-                    containerStyle={styles.inputField}
-                />
+                <TouchableOpacity onPress={handlePickImage} style={styles.imagePicker}>
+                    <Text style={styles.imagePickerText}>Pick Profile Picture</Text>
+                </TouchableOpacity>
+                {ProfileUri ? (
+                    <Image
+                        source={{ uri: ProfileUri }}
+                        style={styles.profileImage}
+                    />
+                ) : null}
                 {errorMessage ? <Text style={styles.error}>{errorMessage}</Text> : null}
+                {loading ? <Text>loading...</Text> : null}
             </View>
             <Button
                 title="Register"
@@ -136,7 +175,7 @@ const OrganizationReg = ({ navigation }) => {
                 buttonStyle={styles.registerButton}
                 titleStyle={styles.registerButtonText}
             />
-        </View>
+        </ScrollView>
     );
 };
 
@@ -190,6 +229,25 @@ const styles = StyleSheet.create({
         color: 'red',
         marginBottom: 15,
         textAlign: 'center',
+    },
+    imagePicker: {
+        backgroundColor: '#6200EE',
+        borderRadius: 25,
+        paddingVertical: 10,
+        paddingHorizontal: 15,
+        alignItems: 'center',
+        marginVertical: 15,
+    },
+    imagePickerText: {
+        color: '#fff',
+        fontSize: 16,
+    },
+    profileImage: {
+        width: 100,
+        height: 100,
+        borderRadius: 50,
+        alignSelf: 'center',
+        marginBottom: 20,
     },
 });
 
