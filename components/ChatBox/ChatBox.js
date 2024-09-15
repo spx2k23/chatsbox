@@ -23,33 +23,21 @@ const SEND_FRIEND_REQUEST = gql`
   }
 `;
 
-const ChatBox = ({ image, name, email, isFriend, isRequestSent, isRequestReceived, userId, receiverId, refetch }) => {
+const ChatBox = ({ image, name, email, isFriend, isRequestSent, isRequestReceived, userId, receiverId, refetch, updateUserStatus }) => {
   const [modalVisible, setModalVisible] = useState(false);
   const [pressed, setPressed] = useState(false);
 
   const [sendFriendRequest] = useMutation(SEND_FRIEND_REQUEST);
 
-  const { data: subscriptionData } = useSubscription(FRIEND_REQUEST_SUBSCRIPTION, {
+  useSubscription(FRIEND_REQUEST_SUBSCRIPTION, {
     variables: { receiverId: userId },
-  });
-
-  useEffect(() => {
-    if (subscriptionData) {
-      const { senderId, receiverId, sender } = subscriptionData.friendRequestSent;
-      if (receiverId === userId) {
-        console.log(`New friend request from user ${sender.Name}`);
-        refetch();
+    onData: ({ data }) => {
+      if (data) {
+        const { senderId } = data.friendRequestSent;
+        updateUserStatus(senderId, { isRequestReceived: true });
       }
     }
-  }, [subscriptionData, userId, refetch]);
-
-  const handlePressIn = () => {
-    setPressed(true);
-  };
-
-  const handlePressOut = () => {
-    setPressed(false);
-  };
+  });
 
   const handleSendRequest = async () => {
     setModalVisible(false);
@@ -59,11 +47,10 @@ const ChatBox = ({ image, name, email, isFriend, isRequestSent, isRequestReceive
         receiverId,
       },
     });
-    if(data.sendFriendRequest.success){
-      refetch();
+    if (data.sendFriendRequest.success) {
+      updateUserStatus(receiverId, { isRequestSent: true });
     }
   };
-
 
   let buttonLabel;
   let buttonDisabled = false;
@@ -84,8 +71,8 @@ const ChatBox = ({ image, name, email, isFriend, isRequestSent, isRequestReceive
   return (
     <View>
       <TouchableOpacity
-        onPressIn={handlePressIn}
-        onPressOut={handlePressOut}
+        onPressIn={() => setPressed(true)}
+        onPressOut={() => setPressed(false)}
         onPress={() => !isFriend && !isRequestSent && !isRequestReceived && setModalVisible(true)}
       >
         <View style={[styles.card, pressed ? styles.pressed : null]}>

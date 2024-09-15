@@ -25,6 +25,7 @@ const Users = ({ navigation }) => {
   const [userId, setUserId] = useState(null);
   const [searchText, setSearchText] = useState('');
   const [currentTabChoice, setCurrentTabChoice] = useState('friends');
+  const [users, setUsers] = useState([]);
 
   useEffect(() => {
     const fetchOrgAndUser = async () => {
@@ -44,6 +45,9 @@ const Users = ({ navigation }) => {
   const { loading, error, data, refetch } = useQuery(GET_USERS_IN_ORG, {
     variables: { organizationId },
     skip: !organizationId,
+    onCompleted: (data) => {
+      setUsers(data.getUsersInOrganization);
+    },
   });
 
   useEffect(() => {
@@ -55,11 +59,13 @@ const Users = ({ navigation }) => {
     return unsubscribe;
   }, [navigation, organizationId]);
 
-  useEffect(() => {
-    if (error) {
-      console.error('GraphQL Error:', error);
-    }
-  }, [error]);
+  const updateUserStatus = (userIdToUpdate, updatedFields) => {
+    setUsers((prevUsers) =>
+      prevUsers.map(user =>
+        user.id === userIdToUpdate ? { ...user, ...updatedFields } : user
+      )
+    );
+  };
 
   if (loading) {
     return <Loading/>;
@@ -91,7 +97,7 @@ const Users = ({ navigation }) => {
   }
 
   // Handle search logic
-  const filteredUsers = data.getUsersInOrganization.filter(user =>
+  const filteredUsers = users.filter(user =>
     user.Name.toLowerCase().includes(searchText.toLowerCase()) ||
     user.Email.toLowerCase().includes(searchText.toLowerCase())
   );
