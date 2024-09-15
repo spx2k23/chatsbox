@@ -9,6 +9,7 @@ import OrganizationReg from './screens/OrganizationReg';
 import Chat from './screens/Chat';
 import DrawerList from './components/ChatList/DrawerList';
 import ApproveRequest from './screens/ApproveRequest';
+import { StatusBar } from 'react-native';
 
 const Stack = createStackNavigator();
 
@@ -17,6 +18,7 @@ const App = () => {
 
   return (
     <ApolloProvider client={client}>
+      <StatusBar />
       <NavigationContainer>
         <Stack.Navigator initialRouteName="Login" >
           <Stack.Screen name="Login" options={{ headerShown: false }}>
