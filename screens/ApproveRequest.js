@@ -28,7 +28,7 @@ const ApproveRequest = ({ navigation }) => {
     fetchOrganizationId();
   }, []);
 
-  const { loading, error, data, refetch } = useQuery(GET_UNAPPROVED_USERS, {
+  const { data, loading, error, refetch } = useQuery(GET_UNAPPROVED_USERS, {
     variables: { organizationId },
     skip: !organizationId,
   });

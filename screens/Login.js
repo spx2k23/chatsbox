@@ -56,7 +56,8 @@ const Login = ({ navigation }) => {
         setErrorMessage(data.login.message);
       }
     },
-    onError: () => {
+    onError: (error) => {
+      console.log('GraphQL Error:', error);
       setErrorMessage('An error occurred. Please try again.');
     },
   });

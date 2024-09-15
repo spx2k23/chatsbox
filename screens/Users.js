@@ -1,36 +1,97 @@
-import { FlatList } from "react-native";
-import { View } from "react-native";
-import { Text } from "react-native";
-import ChatBox from "../components/ChatBox/ChatBox";
+import React, { useEffect, useState } from 'react';
+import { FlatList, View, Text, ActivityIndicator } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useQuery, gql } from '@apollo/client';
+import ChatBox from '../components/ChatBox/ChatBox';
+import { jwtDecode } from 'jwt-decode';
 
-const Users=()=>{
-
-    const data =[{
-        image:'https://scontent.fmaa15-1.fna.fbcdn.net/v/t39.30808-1/306163119_395338919425615_8855944441524828272_n.jpg?stp=dst-jpg_s200x200&_nc_cat=104&ccb=1-7&_nc_sid=f4b9fd&_nc_ohc=LMQL7y0yFOsQ7kNvgGyQMbS&_nc_ht=scontent.fmaa15-1.fna&oh=00_AYDO38sfis-pjVglKwWjMXzkaTzp_7Y5JkBybHEFn_E6dw&oe=66DA602D',
-        name:'Witcher',
-        email:'witcher@gmail.com',
-    },
-    {
-        image:'https://cdn.pixabay.com/photo/2023/01/06/12/38/ai-generated-7701143_640.jpg',
-        name:'drago',
-        email:'drago@gmail.com'
+const GET_USERS_IN_ORG = gql`
+  query GetUsersInOrganization($organizationId: ID!) {
+    getUsersInOrganization(organizationId: $organizationId) {
+      id
+      Name
+      Email
+      ProfilePicture
+      isFriend
+      isRequestSent
+      isRequestReceived
     }
-]
-    return(
-        <View>
-        <FlatList 
-        data={data}
-        keyExtractor={(data)=>data.email}
+  }
+`;
+
+const Users = ({ navigation }) => {
+  const [organizationId, setOrganizationId] = useState(null);
+  const [userId, setUserId] = useState(null);
+
+  useEffect(() => {
+    const fetchOrgAndUser = async () => {
+      try {
+        const orgId = await AsyncStorage.getItem('organization');
+        const token = await AsyncStorage.getItem('token');
+        const decodedToken = jwtDecode(token);
+        setOrganizationId(orgId);
+        setUserId(decodedToken.id);
+      } catch (error) {
+        console.error('Error fetching organization or user:', error);
+      }
+    };
+    fetchOrgAndUser();
+  }, []);
+
+  const { loading, error, data, refetch } = useQuery(GET_USERS_IN_ORG, {
+    variables: { organizationId },
+    skip: !organizationId,
+  });
+
+  useEffect(() => {
+    const unsubscribe = navigation.addListener('focus', () => {
+      if (organizationId) {
+        refetch();
+      }
+    });
+
+    return unsubscribe;
+  }, [navigation, organizationId]);
+
+  useEffect(() => {
+    if (error) {
+      console.error('GraphQL Error:', error);
+    }
+  }, [error]);
+
+  if (loading) {
+    return <ActivityIndicator />;
+  }
+
+  if (error) {
+    return <Text>Error loading users</Text>;
+  }
+
+  if (!data || !data.getUsersInOrganization) {
+    return <Text>No users found</Text>;
+  }
+
+  return (
+    <View>
+      <FlatList
+        data={data.getUsersInOrganization}
+        keyExtractor={(item) => item.id}
         renderItem={({ item }) => (
-            <ChatBox 
-              name={item.name} 
-              email={item.email} 
-              image={item.image} 
-              userId={item.email} 
-            />)}
-        />
-        </View>
-    );
-}
+          <ChatBox
+            image={item.ProfilePicture}
+            name={item.Name}
+            email={item.Email}
+            isFriend={item.isFriend}
+            isRequestSent={item.isRequestSent}
+            isRequestReceived={item.isRequestReceived}
+            userId={userId}
+            receiverId={item.id}
+            refetch={refetch}
+          />
+        )}
+      />
+    </View>
+  );
+};
 
 export default Users;

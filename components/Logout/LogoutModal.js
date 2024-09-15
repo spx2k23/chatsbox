@@ -9,6 +9,7 @@ export const LogoutModal = ({ isVisible, onClose,navigation}) => {
     const handleLogout = async () => {
         try { 
           await AsyncStorage.removeItem("token");
+          await AsyncStorage.removeItem("organization");
           navigation.navigate('Login');
         } catch (error) {
           console.error('Error clearing token', error);

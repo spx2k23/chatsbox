@@ -10,7 +10,7 @@
     "@jridgewell/gen-mapping" "^0.3.5"
     "@jridgewell/trace-mapping" "^0.3.24"
 
-"@apollo/client@^3.11.4":
+"@apollo/client@^3.11.5":
   version "3.11.5"
   resolved "https://registry.npmjs.org/@apollo/client/-/client-3.11.5.tgz"
   integrity sha512-gmTKgXhYH2Q3VT9vUWChuMy34gfK7n/EEJYc7kXt1GP7678Vz2L0xUlHSMEoPoqit317eamZjXQSyxlpn03lnQ==

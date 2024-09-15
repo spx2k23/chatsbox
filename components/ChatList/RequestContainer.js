@@ -50,12 +50,12 @@ const RequestContainer = ({ name, email, image, userId, refetch }) => {
           <Button 
             title="Approve" 
             buttonStyle={styles.approveButton} 
-            onPress={handleApprove} 
+            onPress={() => handleApprove(userId)}
           />
           <Button 
             title="Reject" 
             buttonStyle={styles.rejectButton} 
-            onPress={handleReject} 
+            onPress={() => handleReject(userId)}
           />
         </View>
       </View>

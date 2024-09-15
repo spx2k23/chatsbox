@@ -1,9 +1,47 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { StyleSheet, View, Image, Text, TouchableOpacity, Modal } from "react-native";
+import { gql, useMutation, useSubscription } from "@apollo/client";
 
-const ChatBox = ({ image, name, email }) => {
+const FRIEND_REQUEST_SUBSCRIPTION = gql`
+  subscription OnFriendRequestSent($receiverId: ID!) {
+    friendRequestSent(receiverId: $receiverId) {
+      senderId
+      receiverId
+      sender{
+        Name
+      }
+    }
+  }
+`;
+
+const SEND_FRIEND_REQUEST = gql`
+  mutation SendFriendRequest($senderId: ID!, $receiverId: ID!) {
+    sendFriendRequest(senderId: $senderId, receiverId: $receiverId) {
+      success
+      message
+    }
+  }
+`;
+
+const ChatBox = ({ image, name, email, isFriend, isRequestSent, isRequestReceived, userId, receiverId, refetch }) => {
   const [modalVisible, setModalVisible] = useState(false);
   const [pressed, setPressed] = useState(false);
+
+  const [sendFriendRequest] = useMutation(SEND_FRIEND_REQUEST);
+
+  const { data: subscriptionData } = useSubscription(FRIEND_REQUEST_SUBSCRIPTION, {
+    variables: { receiverId: userId },
+  });
+
+  useEffect(() => {
+    if (subscriptionData) {
+      const { senderId, receiverId, sender } = subscriptionData.friendRequestSent;
+      if (receiverId === userId) {
+        console.log(`New friend request from user ${sender.Name}`);
+        refetch();
+      }
+    }
+  }, [subscriptionData, userId, refetch]);
 
   const handlePressIn = () => {
     setPressed(true);
@@ -13,24 +51,49 @@ const ChatBox = ({ image, name, email }) => {
     setPressed(false);
   };
 
-  const handleSendRequest = () => {
+  const handleSendRequest = async () => {
     setModalVisible(false);
-    // Add your request sending logic here
-    console.log('Request sent to', name);
+    const { data } = await sendFriendRequest({
+      variables: {
+        senderId: userId,
+        receiverId,
+      },
+    });
+    if(data.sendFriendRequest.success){
+      refetch();
+    }
   };
+
+
+  let buttonLabel;
+  let buttonDisabled = false;
+
+  if (isFriend) {
+    buttonLabel = 'Friends';
+    buttonDisabled = true;
+  } else if (isRequestReceived) {
+    buttonLabel = 'Friend Request Pending';
+    buttonDisabled = true;
+  } else if (isRequestSent) {
+    buttonLabel = 'Request Send Pending';
+    buttonDisabled = true;
+  } else {
+    buttonLabel = 'Send Friend Request';
+  }
 
   return (
     <View>
       <TouchableOpacity
         onPressIn={handlePressIn}
         onPressOut={handlePressOut}
-        onPress={() => setModalVisible(true)}
+        onPress={() => !isFriend && !isRequestSent && !isRequestReceived && setModalVisible(true)}
       >
         <View style={[styles.card, pressed ? styles.pressed : null]}>
-          <Image source={{ uri: image }} style={styles.image} />
+          <Image source={{ uri: `data:image/jpeg;base64,${image}` }} style={styles.image} />
           <View style={styles.infoContainer}>
             <Text style={styles.name}>{name}</Text>
             <Text style={styles.email}>{email}</Text>
+            <Text style={styles.UserLabel}>{buttonLabel}</Text>
           </View>
         </View>
       </TouchableOpacity>
@@ -43,7 +106,7 @@ const ChatBox = ({ image, name, email }) => {
       >
         <View style={styles.modalContainer}>
           <View style={styles.modalContent}>
-            <Image source={{ uri: image }} style={styles.modalImage} />
+            <Image source={{ uri: `data:image/jpeg;base64,${image}` }} style={styles.modalImage} />
             <Text style={styles.modalText}>Send a request to {name}?</Text>
             <TouchableOpacity style={styles.button} onPress={handleSendRequest}>
               <Text style={styles.buttonText}>Send Request</Text>
@@ -135,6 +198,9 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: 'bold',
   },
+  UserLabel: {
+    fontSize: 14,
+  }
 });
 
 export default ChatBox;
