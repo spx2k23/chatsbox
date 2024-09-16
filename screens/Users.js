@@ -60,11 +60,12 @@ const Users = ({ navigation }) => {
   }, [navigation, organizationId]);
 
   const updateUserStatus = (userIdToUpdate, updatedFields) => {
-    setUsers((prevUsers) =>
-      prevUsers.map(user =>
+    setUsers((prevUsers) => {
+      const updatedUsers = prevUsers.map(user =>
         user.id === userIdToUpdate ? { ...user, ...updatedFields } : user
-      )
-    );
+      );
+      return updatedUsers;
+    });
   };
 
   if (loading) {
@@ -80,9 +81,9 @@ const Users = ({ navigation }) => {
   }
 
   // Separate friends, others, and requests
-  const friends = data.getUsersInOrganization.filter(user => user.isFriend);
-  const others = data.getUsersInOrganization.filter(user => !user.isFriend);
-  const requests = data.getUsersInOrganization.filter(
+  const friends = users.filter(user => user.isFriend);
+  const others = users.filter(user => !user.isFriend);
+  const requests = users.filter(
     user => user.isRequestSent || user.isRequestReceived
   );
 
@@ -164,8 +165,6 @@ const Users = ({ navigation }) => {
               isRequestReceived={item.isRequestReceived}
               userId={userId}
               receiverId={item.id}
-              refetch={refetch}
-              updateUserStatus={updateUserStatus}
             />
           )}
           ListHeaderComponent={<Text style={styles.header}>Search Results</Text>}
@@ -184,7 +183,7 @@ const Users = ({ navigation }) => {
               isRequestReceived={item.isRequestReceived}
               userId={userId}
               receiverId={item.id}
-              refetch={refetch}
+              updateUserStatus={updateUserStatus}
             />
           )}
         />
