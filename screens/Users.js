@@ -165,6 +165,7 @@ const Users = ({ navigation }) => {
               userId={userId}
               receiverId={item.id}
               refetch={refetch}
+              updateUserStatus={updateUserStatus}
             />
           )}
           ListHeaderComponent={<Text style={styles.header}>Search Results</Text>}
