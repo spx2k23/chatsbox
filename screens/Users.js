@@ -82,10 +82,8 @@ const Users = ({ navigation }) => {
 
   // Separate friends, others, and requests
   const friends = users.filter(user => user.isFriend);
-  const others = users.filter(user => !user.isFriend);
-  const requests = users.filter(
-    user => user.isRequestSent || user.isRequestReceived
-  );
+  const others = users.filter(user => !user.isFriend && !user.isRequestSent && !user.isRequestReceived);
+  const requests = users.filter(user => user.isRequestSent || user.isRequestReceived);
 
   // Select data based on tab choice
   let dataList;
@@ -165,6 +163,7 @@ const Users = ({ navigation }) => {
               isRequestReceived={item.isRequestReceived}
               userId={userId}
               receiverId={item.id}
+              updateUserStatus={updateUserStatus}
             />
           )}
           ListHeaderComponent={<Text style={styles.header}>Search Results</Text>}
