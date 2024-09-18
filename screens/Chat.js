@@ -1,9 +1,9 @@
-import React, { useState, useCallback } from 'react';
-import { View,TouchableOpacity,StyleSheet,Text} from 'react-native';
+import React, { useState, useCallback, useEffect, useLayoutEffect } from 'react';
+import { View, TouchableOpacity, StyleSheet, Text, Image, ActivityIndicator } from 'react-native';
 import { GiftedChat, InputToolbar, MessageImage } from 'react-native-gifted-chat';
 import * as ImagePicker from 'expo-image-picker';
 import * as DocumentPicker from 'expo-document-picker';
-import { Audio} from 'expo-av';
+import { Audio } from 'expo-av';
 import DocMessage from '../components/Chat/DocMessage';
 import TextMessage from '../components/Chat/TextMessage';
 import AudioMessage from '../components/Chat/AudioMessage';
@@ -11,55 +11,41 @@ import VideoMessage from '../components/Chat/VideoMessage';
 import { MaterialIcons } from '@expo/vector-icons';
 import CustomBubble from '../components/Chat/CustomBubble';
 import CustomSend from '../components/Chat/CustomSend';
+import { useNavigation, useRoute } from '@react-navigation/native';
 
+const Chat = () => {
+  const navigation = useNavigation();
+  const route = useRoute();
+  const { name, image } = route.params;
 
-const Chat = ({route}) => {
-  const user_id=route.params.user_id;
-  const name=route.params.name;
-  
-  
-  const [messages, setMessages] = useState([
-    {
-      _id: 1,
-      text: 'Hello! How are you?',
-      createdAt: new Date(),
-      user: {
-        _id: 2,
-        name: 'John Doe',
-      },
-    },
-    {
-      _id: 2,
-      text: 'I’m doing well, thanks for asking!',
-      createdAt: new Date(),
-      user: {
-        _id: 1,
-        name: 'Jane Smith',
-      },
-    },
-    {
-      _id: 3,
-      text: 'Have you checked out the new features?',
-      createdAt: new Date(),
-      user: {
-        _id: 2,
-        name: 'John Doe',
-      },
-    },
-    {
-      _id: 4,
-      text: 'Yes, they look great! I especially like the new chat interface.',
-      createdAt: new Date(),
-      user: {
-        _id: 1,
-        name: 'Jane Smith',
-      },
-    },
-  ]);
+  const user_id = 'Current_UserId';
+  const [messages, setMessages] = useState([]);
   const [recording, setRecording] = useState(null);
   const [soundUri, setSoundUri] = useState(null);
- 
-  
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    
+    const loadResources = async () => {
+      
+      setTimeout(() => setLoading(false), 1000); 
+    };
+
+    loadResources();
+  }, []);
+
+  useLayoutEffect(() => {
+    if (!loading) {
+      navigation.setOptions({
+        headerTitle: () => (
+          <View style={styles.headerContainer}>
+            <Image source={{ uri: image }} style={styles.headerImage} />
+            <Text style={styles.headerTitle}>{name}</Text>
+          </View>
+        ),
+      });
+    }
+  }, [navigation, name, image, loading]);
 
   const onSend = useCallback((messages = []) => {
     setMessages((previousMessages) =>
@@ -104,17 +90,17 @@ const Chat = ({route}) => {
   const handlePickDocument = async () => {
     try {
       const result = await DocumentPicker.getDocumentAsync({ type: '*/*' });
-      const resultData=result.assets[0]
-      const text=resultData.name;
-      const document=resultData.uri;
+      const resultData = result.assets[0];
+      const text = resultData.name;
+      const document = resultData.uri;
 
       if (!resultData.canceled) {
         const newMessage = {
           _id: Math.random().toString(),
           createdAt: new Date(),
           user: { _id: user_id, name: name },
-          text:text,
-          document:document, 
+          text: text,
+          document: document,
         };
         onSend([newMessage]);
       }
@@ -149,8 +135,8 @@ const Chat = ({route}) => {
         const newMessage = {
           _id: Math.random().toString(),
           createdAt: new Date(),
-          user: { _id: user_id, name:name },
-          audio: uri, 
+          user: { _id: user_id, name: name },
+          audio: uri,
         };
         onSend([newMessage]);
 
@@ -160,6 +146,7 @@ const Chat = ({route}) => {
       }
     }
   };
+
   const renderTime = (props) => {
     return (
       <Text
@@ -173,17 +160,18 @@ const Chat = ({route}) => {
       </Text>
     );
   };
+
   const renderMessageImage = (props) => <MessageImage {...props} />;
   const renderMessageVideo = (props) => {
     const { currentMessage } = props;
-    return (<VideoMessage currentMessage={currentMessage}/>);
+    return (<VideoMessage currentMessage={currentMessage} />);
   };
   const renderMessageText = (props) => {
     const { currentMessage } = props;
     if (currentMessage.document) {
-      return (<DocMessage currentMessage={currentMessage}/>);
+      return (<DocMessage currentMessage={currentMessage} />);
     }
-    return <TextMessage currentMessage={currentMessage}/>;
+    return <TextMessage currentMessage={currentMessage} />;
   };
 
   const renderMessageAudio = (props) => {
@@ -193,6 +181,14 @@ const Chat = ({route}) => {
       </View>
     );
   };
+
+  if (loading) {
+    return (
+      <View style={styles.loadingContainer}>
+        <ActivityIndicator size="large" color="#6200EE" />
+      </View>
+    );
+  }
 
   return (
     <View style={{ flex: 1 }}>
@@ -214,7 +210,7 @@ const Chat = ({route}) => {
             containerStyle={{ borderTopColor: '#eee', borderTopWidth: 1 }}
             renderActions={() => (
               <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-               <TouchableOpacity onPress={handlePickMedia} style={styles.cambtn}>
+                <TouchableOpacity onPress={handlePickMedia} style={styles.cambtn}>
                   <MaterialIcons name="camera-alt" size={24} color="#6200EE" />
                 </TouchableOpacity>
                 <TouchableOpacity onPress={handlePickDocument}>
@@ -227,17 +223,36 @@ const Chat = ({route}) => {
             )}
           />
         )}
-    />
+      />
     </View>
   );
 };
 
-export default Chat;
-
-const styles =StyleSheet.create({
-  cambtn:{
-        marginVertical:10,
-        marginHorizontal:10
-  }
+const styles = StyleSheet.create({
+  cambtn: {
+    marginVertical: 10,
+    marginHorizontal: 10
+  },
+  headerContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  headerImage: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    marginRight: 20,
+  },
+  headerTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+   
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
 });
 
+export default Chat;

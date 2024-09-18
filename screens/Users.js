@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import {FlatList,View, Text,StyleSheet,TextInput,Pressable} from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useQuery, gql } from '@apollo/client';
-import ChatBox from '../components/ChatBox/ChatBox';
+import UserBox from '../components/UserBox/UserBox';
 import { jwtDecode } from 'jwt-decode';
 import Loading from '../components/Loading/Loading';
 
@@ -154,7 +154,7 @@ const Users = ({ navigation }) => {
           data={filteredUsers}
           keyExtractor={(item) => item.id}
           renderItem={({ item }) => (
-            <ChatBox
+            <UserBox
               image={item.ProfilePicture}
               name={item.Name}
               email={item.Email}
@@ -173,7 +173,7 @@ const Users = ({ navigation }) => {
           data={dataList}
           keyExtractor={(item) => item.id}
           renderItem={({ item }) => (
-            <ChatBox
+            <UserBox
               image={item.ProfilePicture}
               name={item.Name}
               email={item.Email}

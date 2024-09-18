@@ -27,7 +27,7 @@ const App = () => {
           <Stack.Screen name="Register" component={Register} options={{ headerShown: false }} />
           <Stack.Screen name="OrganizationReg" component={OrganizationReg} options={{ headerShown: false }} />
           <Stack.Screen name="Chats" component={DrawerList} options={{ headerShown: false }}/>
-          <Stack.Screen name="Chat">
+          <Stack.Screen name="Chat" >
             {props => <Chat {...props} user_id={user_id} />}
           </Stack.Screen>
           <Stack.Screen name="ApproveRequest" component={ApproveRequest} />

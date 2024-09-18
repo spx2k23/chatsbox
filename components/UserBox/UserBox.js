@@ -23,7 +23,7 @@ const SEND_FRIEND_REQUEST = gql`
   }
 `;
 
-const ChatBox = ({ image, name, email, isFriend, isRequestSent, isRequestReceived, userId, receiverId, updateUserStatus }) => {
+const UserBox = ({ image, name, email, isFriend, isRequestSent, isRequestReceived, userId, receiverId, updateUserStatus }) => {
   const [modalVisible, setModalVisible] = useState(false);
   const [pressed, setPressed] = useState(false);
 
@@ -190,4 +190,4 @@ const styles = StyleSheet.create({
   }
 });
 
-export default ChatBox;
+export default UserBox;

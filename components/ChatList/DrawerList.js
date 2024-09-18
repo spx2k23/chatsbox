@@ -49,7 +49,7 @@ const DrawerList = () => {
         component={ChatList} 
         options={{ 
           drawerIcon: ({ color, size }) => (
-            <MaterialIcons name="person-add-alt" color={color} size={size} />
+            <MaterialIcons name="chat" color={color} size={size} />
           ),
           title: 'Chat List',
         }}
