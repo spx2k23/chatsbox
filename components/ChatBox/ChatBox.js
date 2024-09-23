@@ -3,7 +3,7 @@ import { StyleSheet, View, Image, Text, TouchableOpacity, Modal } from "react-na
 import { gql, useMutation, useSubscription } from "@apollo/client";
 
 const FRIEND_REQUEST_SUBSCRIPTION = gql`
-  subscription FriendRequestSent($receiverId: ID!) {
+  subscription OnFriendRequestSent($receiverId: ID!) {
     friendRequestSent(receiverId: $receiverId) {
       senderId
       receiverId
@@ -23,7 +23,7 @@ const SEND_FRIEND_REQUEST = gql`
   }
 `;
 
-const UserBox = ({ image, name, email, isFriend, isRequestSent, isRequestReceived, userId, receiverId, updateUserStatus }) => {
+const ChatBox = ({ image, name, email, isFriend, isRequestSent, isRequestReceived, userId, receiverId, updateUserStatus }) => {
   const [modalVisible, setModalVisible] = useState(false);
   const [pressed, setPressed] = useState(false);
 
@@ -193,4 +193,4 @@ const styles = StyleSheet.create({
   }
 });
 
-export default UserBox;
+export default ChatBox;
