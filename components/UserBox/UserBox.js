@@ -1,18 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { StyleSheet, View, Image, Text, TouchableOpacity, Modal } from "react-native";
-import { gql, useMutation, useSubscription } from "@apollo/client";
-
-const FRIEND_REQUEST_SUBSCRIPTION = gql`
-  subscription FriendRequestSent($receiverId: ID!) {
-    friendRequestSent(receiverId: $receiverId) {
-      senderId
-      receiverId
-      sender{
-        Name
-      }
-    }
-  }
-`;
+import { gql, useMutation } from "@apollo/client";
 
 const SEND_FRIEND_REQUEST = gql`
   mutation SendFriendRequest($senderId: ID!, $receiverId: ID!) {
@@ -28,19 +16,6 @@ const UserBox = ({ image, name, email, isFriend, isRequestSent, isRequestReceive
   const [pressed, setPressed] = useState(false);
 
   const [sendFriendRequest] = useMutation(SEND_FRIEND_REQUEST);
-
-  const { data, loading } = useSubscription(FRIEND_REQUEST_SUBSCRIPTION, {
-    variables: { receiverId: userId },
-    onData: ({ data }) => {
-      if (data) {
-        const { friendRequestSent } = data.data;
-        if (friendRequestSent) {
-          const { senderId } = friendRequestSent;
-          updateUserStatus(senderId, { isRequestReceived: true });
-        }
-      }
-    },
-  });
 
   const handleSendRequest = async () => {
     setModalVisible(false);

@@ -51,7 +51,7 @@ const ApproveRequest = ({ navigation }) => {
       <FlatList 
         data={data?.getUnapprovedUsers}
         renderItem={({ item }) => (
-          <RequestContainer 
+          <RequestContainer
             name={item.Name} 
             email={item.Email} 
             image={item.ProfilePicture} 

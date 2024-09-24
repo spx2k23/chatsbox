@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import {FlatList,View, Text,StyleSheet,TextInput,Pressable} from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { useQuery, gql } from '@apollo/client';
-import UserBox from '../components/UserBox/UserBox';
+import { useQuery, gql, useSubscription } from '@apollo/client';
 import { jwtDecode } from 'jwt-decode';
 import Loading from '../components/Loading/Loading';
+import UserBox from '../components/UserBox/UserBox';
+import FriendRequest from '../components/UserBox/FriendRequest';
 
 const GET_USERS_IN_ORG = gql`
   query GetUsersInOrganization($organizationId: ID!) {
@@ -16,6 +17,42 @@ const GET_USERS_IN_ORG = gql`
       isFriend
       isRequestSent
       isRequestReceived
+    }
+  }
+`;
+
+const FRIEND_REQUEST_SUBSCRIPTION = gql`
+  subscription FriendRequestSent($receiverId: ID!) {
+    friendRequestSent(receiverId: $receiverId) {
+      senderId
+      receiverId
+      sender{
+        Name
+      }
+    }
+  }
+`;
+
+const ACCEPT_FRIEND_SUBSCRIPTION = gql`
+  subscription FriendRequestAccept($senderId: ID!) {
+    friendRequestAccept(senderId: $senderId) {
+      senderId
+      receiverId
+      sender{
+        Name
+      }
+    }
+  }
+`;
+
+const REJECT_FRIEND_SUBSCRIPTION = gql`
+  subscription FriendRequestReject($receiverId: ID!) {
+    friendRequestReject(receiverId: $receiverId) {
+      senderId
+      receiverId
+      sender{
+        Name
+      }
     }
   }
 `;
@@ -50,10 +87,53 @@ const Users = ({ navigation }) => {
     },
   });
 
+  useSubscription(FRIEND_REQUEST_SUBSCRIPTION, {
+    variables: { receiverId: userId },
+    onData: ({ data }) => {
+      if (data) {
+        const { friendRequestSent } = data.data;
+        if (friendRequestSent) {
+          const { senderId } = friendRequestSent;
+          updateUserStatus(senderId, { isRequestReceived: true });
+        }
+      }
+    },
+  });
+
+  useSubscription(ACCEPT_FRIEND_SUBSCRIPTION, {
+    variables: { senderId: userId },
+    onData: ({ data }) => {
+      if (data) {
+        const { friendRequestAccept } = data.data;
+        if (friendRequestAccept) {
+          const { receiverId } = friendRequestAccept;
+          updateUserStatus(receiverId, { isRequestSent: false, isFriend: true });
+        }
+      }
+    },
+  });
+
+  useSubscription(REJECT_FRIEND_SUBSCRIPTION, {
+    variables: { receiverId: userId },
+    onData: ({ data }) => {
+      if (data) {
+        const { friendRequestReject } = data.data;
+        if (friendRequestReject) {
+          const { senderId } = friendRequestReject;
+          updateUserStatus(senderId, { isRequestSent: false });
+        }
+      }
+    },
+  });
+
   useEffect(() => {
     const unsubscribe = navigation.addListener('focus', () => {
       if (organizationId) {
-        refetch();
+        refetch().then(refetchData => {
+          if (refetchData.data) {
+            setUsers(refetchData.data.getUsersInOrganization);
+          }
+        });
       }
     });
     return unsubscribe;
@@ -172,19 +252,36 @@ const Users = ({ navigation }) => {
         <FlatList
           data={dataList}
           keyExtractor={(item) => item.id}
-          renderItem={({ item }) => (
-            <UserBox
-              image={item.ProfilePicture}
-              name={item.Name}
-              email={item.Email}
-              isFriend={item.isFriend}
-              isRequestSent={item.isRequestSent}
-              isRequestReceived={item.isRequestReceived}
-              userId={userId}
-              receiverId={item.id}
-              updateUserStatus={updateUserStatus}
-            />
-          )}
+          renderItem={({ item }) => {
+            if (currentTabChoice === 'requests') {
+              return (
+                <FriendRequest
+                  name={item.Name}
+                  email={item.Email}
+                  image={item.ProfilePicture}
+                  userId={userId}
+                  receiverId={item.id}
+                  isRequestSent={item.isRequestSent}
+                  isRequestReceived={item.isRequestReceived}
+                  updateUserStatus={updateUserStatus}
+                />
+              );
+            } else {
+              return (
+                <UserBox
+                  image={item.ProfilePicture}
+                  name={item.Name}
+                  email={item.Email}
+                  isFriend={item.isFriend}
+                  isRequestSent={item.isRequestSent}
+                  isRequestReceived={item.isRequestReceived}
+                  userId={userId}
+                  receiverId={item.id}
+                  updateUserStatus={updateUserStatus}
+                />
+              );
+            }
+          }}
         />
       )}
     </View>

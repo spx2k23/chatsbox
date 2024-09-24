@@ -47,14 +47,14 @@ const RequestContainer = ({ name, email, image, userId, refetch }) => {
         <Text style={styles.name}>{name}</Text>
         <Text style={styles.email}>{email}</Text>
         <View style={styles.buttonContainer}>
-          <Button 
-            title="Approve" 
-            buttonStyle={styles.approveButton} 
+          <Button
+            title="Approve"
+            buttonStyle={styles.approveButton}
             onPress={() => handleApprove(userId)}
           />
-          <Button 
-            title="Reject" 
-            buttonStyle={styles.rejectButton} 
+          <Button
+            title="Reject"
+            buttonStyle={styles.rejectButton}
             onPress={() => handleReject(userId)}
           />
         </View>
@@ -99,10 +99,10 @@ const styles = StyleSheet.create({
   approveButton: {
     backgroundColor: '#6200EE',
     marginRight: 10,
-    width:100
+    width: 100
   },
   rejectButton: {
     backgroundColor: '#B0BEC5',
-    width:100
+    width: 100
   },
 });

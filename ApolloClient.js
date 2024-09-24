@@ -32,12 +32,13 @@ const wsLink = new GraphQLWsLink(
         authorization: token ? `Bearer ${token}` : '',
       };
     },
-    onError: (error) => {
-      console.error('WebSocket Connection Error:', error);
-    },
+    shouldRetry: true,
     on: {
       connected: () => console.log("WebSocket Connected"),
       closed: () => console.log("WebSocket Disconnected"),
+    },
+    onError: (error) => {
+      console.error('WebSocket Connection Error:', error);
     },
   })
 );

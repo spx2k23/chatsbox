@@ -1,16 +1,11 @@
 import React, { useState} from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { DrawerContentScrollView, DrawerItemList } from '@react-navigation/drawer';
-
-
 import { LogoutModal } from '../Logout/LogoutModal';
 
 function DrawerHeader(props) {
  
   const [modalVisible, setModalVisible] = useState(false);
-
-
-  
 
   return (
     <View style={styles.container}>

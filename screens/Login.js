@@ -5,6 +5,7 @@ import Icon from 'react-native-vector-icons/MaterialIcons';
 import { useLazyQuery, gql } from '@apollo/client';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { jwtDecode } from 'jwt-decode';
+import Loading from '../components/Loading/Loading';
 
 const LOGIN_QUERY = gql`
   query Login($Email: String!, $Password: String!) {
@@ -77,6 +78,9 @@ const Login = ({ navigation }) => {
 
   return (
     <View style={styles.container}>
+      {loading && 
+        <Loading />
+      }
       <View style={styles.logoContainer}>
         <Icon name="chat" size={80} color="#6200EE" />
         <Text style={styles.logoText}>Bush</Text>
