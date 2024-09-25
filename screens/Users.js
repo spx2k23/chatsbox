@@ -101,7 +101,7 @@ const Users = ({ navigation }) => {
   });
 
   useSubscription(ACCEPT_FRIEND_SUBSCRIPTION, {
-    variables: { senderId: userId },
+    variables: { receiverId: userId },
     onData: ({ data }) => {
       if (data) {
         const { friendRequestAccept } = data.data;

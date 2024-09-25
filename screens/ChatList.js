@@ -1,11 +1,11 @@
-import React, { useState } from "react";
+import React from "react";
 import { FlatList, StyleSheet, View } from "react-native";
 import ChatBox from "../components/ChatList/ChatBox";
 import { useQuery, gql } from "@apollo/client";
 
 const GET_FRIENDS = gql`
-    query GetFriends($organizationId: ID!) {
-        getFriends(organizationId: $organizationId) {
+    query GetFriends {
+        getFriends {
             id
             Name
             ProfilePicture
@@ -15,36 +15,38 @@ const GET_FRIENDS = gql`
 `
 const ChatList = () => {
 
-    const [organizationId, setOrganizationId] = useState(null);
-
-    useEffect(() => {
-        const fetchOrganizationId = async () => {
-          const storedOrganizationId = await AsyncStorage.getItem('organization');
-          setOrganizationId(storedOrganizationId);
-        };
-    
-        fetchOrganizationId();
-      }, []);
-
-    const { loading, error, data} = useQuery(GET_FRIENDS, {
-        variables: { organizationId },
-        skip: !organizationId,
-    });
+    const { loading, error, data} = useQuery(GET_FRIENDS);
 
     const renderItem = ({ item }) => (
         <ChatBox 
             name={item.Name}
             image={item.ProfilePicture}
             id={item.id}  
-            lastmessage={item.lastmessage}  
-            lastmessage_time={item.lastmessage_time}  
+            lastmessage="it's secret bro!"  
+            lastmessage_time="just now"
         />
     );
+
+    if (loading) {
+        return (
+          <View style={styles.center}>
+            <ActivityIndicator size="large" color="#0000ff" />
+          </View>
+        );
+      }
+    
+      if (error) {
+        return (
+          <View style={styles.center}>
+            <Text>Error loading friends</Text>
+          </View>
+        );
+      }
 
     return (
         <View style={styles.container}>
             <FlatList
-                data={data.getFriends}
+                data={data?.getFriends}
                 keyExtractor={(item) => item.id}
                 renderItem={renderItem}
                 showsVerticalScrollIndicator={false}
