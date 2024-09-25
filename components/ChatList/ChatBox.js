@@ -2,7 +2,7 @@ import { useNavigation } from "@react-navigation/native";
 import React from "react";
 import { View, Image, Text, StyleSheet, TouchableOpacity } from "react-native";
 
-const ChatBox = ({ image, name, _id, lastmessage, lastmessage_time }) => {
+const ChatBox = ({ image, name, id, lastmessage, lastmessage_time }) => {
     const navigation = useNavigation(); // Moved inside the component
 
     const handleChatNavigation = () => {
@@ -14,7 +14,7 @@ const ChatBox = ({ image, name, _id, lastmessage, lastmessage_time }) => {
 
     return (
         <TouchableOpacity onPress={handleChatNavigation} style={styles.container}>
-            <Image source={{ uri: image }} style={styles.avatar} />
+            <Image source={{ uri: `data:image/jpeg;base64,${image}` }} style={styles.avatar} />
             <View style={styles.messageContainer}>
                 <View style={styles.messageHeader}>
                     <Text style={styles.name}>{name}</Text>
