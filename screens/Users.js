@@ -34,8 +34,8 @@ const FRIEND_REQUEST_SUBSCRIPTION = gql`
 `;
 
 const ACCEPT_FRIEND_SUBSCRIPTION = gql`
-  subscription FriendRequestAccept($senderId: ID!) {
-    friendRequestAccept(senderId: $senderId) {
+  subscription FriendRequestAccept($receiverId: ID!) {
+    friendRequestAccept(receiverId: $receiverId) {
       senderId
       receiverId
       sender{
@@ -106,8 +106,8 @@ const Users = ({ navigation }) => {
       if (data) {
         const { friendRequestAccept } = data.data;
         if (friendRequestAccept) {
-          const { receiverId } = friendRequestAccept;
-          updateUserStatus(receiverId, { isRequestSent: false, isFriend: true });
+          const { senderId } = friendRequestAccept;
+          updateUserStatus(senderId, { isRequestSent: false, isFriend: true });
         }
       }
     },
