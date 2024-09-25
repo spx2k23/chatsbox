@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { FlatList, StyleSheet, View } from "react-native";
 import ChatBox from "../components/ChatList/ChatBox";
 import { useQuery, gql } from "@apollo/client";
@@ -14,6 +14,17 @@ const GET_FRIENDS = gql`
 
 `
 const ChatList = () => {
+
+    const [organizationId, setOrganizationId] = useState(null);
+
+    useEffect(() => {
+        const fetchOrganizationId = async () => {
+          const storedOrganizationId = await AsyncStorage.getItem('organization');
+          setOrganizationId(storedOrganizationId);
+        };
+    
+        fetchOrganizationId();
+      }, []);
 
     const { loading, error, data} = useQuery(GET_FRIENDS, {
         variables: { organizationId },
