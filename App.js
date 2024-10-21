@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { ApolloProvider } from '@apollo/client';
@@ -10,11 +10,53 @@ import Chat from './screens/Chat';
 import DrawerList from './components/ChatList/DrawerList';
 import ApproveRequest from './screens/ApproveRequest';
 import { StatusBar } from 'react-native';
+import { setupDatabase } from './db_configs/dbSetup';
+import NetInfo from '@react-native-community/netinfo';
+import { gql, useMutation } from '@apollo/client';
+import showLocalNotification from './components/Notification.js/ShowNotification';
+
+const CHECK_PENDING_NOTIFICATIONS = gql`
+  mutation CheckPendingNotifications {
+    checkPendingNotifications {
+      success
+      pendingNotifications {
+        type
+        senderId
+        receiverId
+        message
+      }
+    }
+  }
+`;
 
 const Stack = createStackNavigator();
 
 const App = () => {
-  const [user_id, setUserId] = useState('');
+
+  const [checkPendingNotifications] = useMutation(CHECK_PENDING_NOTIFICATIONS);
+
+  useEffect(() => {
+    const unsubscribe = NetInfo.addEventListener(state => {
+      if (state.isConnected) {
+        checkPendingNotifications()
+          .then(response => {
+            const { pendingNotifications } = response.data.checkPendingNotifications;
+
+            if (pendingNotifications.length > 0) {
+              pendingNotifications.forEach(notification => {
+                showLocalNotification(notification.message);
+                // update local db
+              });
+            }
+          })
+          .catch(error => console.error('Error checking pending notifications', error));
+      }
+    });
+
+    return () => {
+      unsubscribe();
+    };
+  }, []);
 
   return (
     <ApolloProvider client={client}>
