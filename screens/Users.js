@@ -6,7 +6,7 @@ import { jwtDecode } from 'jwt-decode';
 import Loading from '../components/Loading/Loading';
 import UserBox from '../components/UserBox/UserBox';
 import FriendRequest from '../components/UserBox/FriendRequest';
-import showLocalNotification from '../components/Notification.js/ShowNotification';
+import showLocalNotification from '../components/Notification/ShowNotification';
 
 const GET_USERS_IN_ORG = gql`
   query GetUsersInOrganization($organizationId: ID!) {

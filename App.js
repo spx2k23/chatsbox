@@ -13,7 +13,7 @@ import { StatusBar } from 'react-native';
 import db, { setupDatabase } from './db_configs/dbSetup';
 import NetInfo from '@react-native-community/netinfo';
 import { gql, useMutation } from '@apollo/client';
-import showLocalNotification from './components/Notification.js/ShowNotification';
+import showLocalNotification from './components/Notification/ShowNotification';
 
 const CHECK_PENDING_NOTIFICATIONS = gql`
   mutation CheckPendingNotifications {
