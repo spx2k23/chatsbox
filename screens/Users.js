@@ -6,6 +6,7 @@ import { jwtDecode } from 'jwt-decode';
 import Loading from '../components/Loading/Loading';
 import UserBox from '../components/UserBox/UserBox';
 import FriendRequest from '../components/UserBox/FriendRequest';
+import showLocalNotification from '../components/Notification.js/ShowNotification';
 
 const GET_USERS_IN_ORG = gql`
   query GetUsersInOrganization($organizationId: ID!) {
@@ -38,7 +39,7 @@ const ACCEPT_FRIEND_SUBSCRIPTION = gql`
     friendRequestAccept(receiverId: $receiverId) {
       senderId
       receiverId
-      sender{
+      receiver{
         Name
       }
     }
@@ -93,8 +94,10 @@ const Users = ({ navigation }) => {
       if (data) {
         const { friendRequestSent } = data.data;
         if (friendRequestSent) {
-          const { senderId } = friendRequestSent;
+          const { senderId, sender } = friendRequestSent;
           updateUserStatus(senderId, { isRequestReceived: true });
+          const message = sender.Name + "send you a friend request";
+          showLocalNotification(message);
         }
       }
     },
@@ -106,8 +109,18 @@ const Users = ({ navigation }) => {
       if (data) {
         const { friendRequestAccept } = data.data;
         if (friendRequestAccept) {
-          const { senderId } = friendRequestAccept;
+          const { senderId, reciever } = friendRequestAccept;
           updateUserStatus(senderId, { isRequestSent: false, isFriend: true });
+          const message = reciever.Name + "send you a friend request";
+          showLocalNotification(message);
+          db.transaction(tx => {
+            tx.executeSql(
+              `INSERT INTO friends (userId, name, profilePicture, email, phoneNumber) VALUES (?, ?, ?, ?);`,
+              [reciever._id, reciever.Name, reciever.ProfilePicture, reciever.Email, reciever.MobileNumber],
+              () => console.log('Friend added successfully to local database'),
+              (txObj, error) => console.error('Error adding friend to database', error)
+            );
+          });
         }
       }
     },

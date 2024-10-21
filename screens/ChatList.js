@@ -39,7 +39,7 @@ const ChatList = () => {
           updateUserStatus(senderId, { isRequestSent: false, isFriend: true });
           db.transaction(tx => {
             tx.executeSql(
-              `INSERT INTO friends (userId, name, profilePicture, email, phoneNumber) VALUES (?, ?);`,
+              `INSERT INTO friends (userId, name, profilePicture, email, phoneNumber) VALUES (?, ?, ?, ?);`,
               [user._id, user.Name, user.ProfilePicture, user.Email, user.MobileNumber],
               () => console.log('Friend added successfully to local database'),
               (txObj, error) => console.error('Error adding friend to database', error)
