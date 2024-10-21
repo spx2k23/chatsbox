@@ -25,7 +25,7 @@ export const setupDatabase = () => {
         name TEXT NOT NULL,
         profilePicture TEXT NOT NULL,
         email TEXT NOT NULL,
-        phoneNumber NUMBER NOT NULL,
+        phoneNumber TEXT NOT NULL,
         UNIQUE(userId)
       );`,
       [],

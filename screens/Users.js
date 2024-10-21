@@ -39,8 +39,12 @@ const ACCEPT_FRIEND_SUBSCRIPTION = gql`
     friendRequestAccept(receiverId: $receiverId) {
       senderId
       receiverId
-      receiver{
-        Name
+      sender{
+        id,
+        Name,
+        ProfilePicture,
+        Email,
+        MobileNumber
       }
     }
   }
@@ -51,9 +55,6 @@ const REJECT_FRIEND_SUBSCRIPTION = gql`
     friendRequestReject(receiverId: $receiverId) {
       senderId
       receiverId
-      sender{
-        Name
-      }
     }
   }
 `;
@@ -109,14 +110,14 @@ const Users = ({ navigation }) => {
       if (data) {
         const { friendRequestAccept } = data.data;
         if (friendRequestAccept) {
-          const { senderId, reciever } = friendRequestAccept;
+          const { senderId, sender } = friendRequestAccept;
           updateUserStatus(senderId, { isRequestSent: false, isFriend: true });
-          const message = reciever.Name + "send you a friend request";
+          const message = sender.Name + "send you a friend request";
           showLocalNotification(message);
           db.transaction(tx => {
             tx.executeSql(
               `INSERT INTO friends (userId, name, profilePicture, email, phoneNumber) VALUES (?, ?, ?, ?);`,
-              [reciever._id, reciever.Name, reciever.ProfilePicture, reciever.Email, reciever.MobileNumber],
+              [sender.id, sender.Name, sender.ProfilePicture, sender.Email, sender.MobileNumber],
               () => console.log('Friend added successfully to local database'),
               (txObj, error) => console.error('Error adding friend to database', error)
             );

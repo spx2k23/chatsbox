@@ -10,7 +10,7 @@ import Chat from './screens/Chat';
 import DrawerList from './components/ChatList/DrawerList';
 import ApproveRequest from './screens/ApproveRequest';
 import { StatusBar } from 'react-native';
-import { setupDatabase } from './db_configs/dbSetup';
+import db, { setupDatabase } from './db_configs/dbSetup';
 import NetInfo from '@react-native-community/netinfo';
 import { gql, useMutation } from '@apollo/client';
 import showLocalNotification from './components/Notification.js/ShowNotification';
@@ -21,7 +21,13 @@ const CHECK_PENDING_NOTIFICATIONS = gql`
       success
       pendingNotifications {
         type
-        senderId
+        senderId{
+          id,
+          Name,
+          ProfilePicture,
+          Email,
+          MobileNumber
+        }
         receiverId
         message
       }
@@ -32,6 +38,10 @@ const CHECK_PENDING_NOTIFICATIONS = gql`
 const Stack = createStackNavigator();
 
 const App = () => {
+
+  useEffect(() => {
+    setupDatabase();
+  }, []);
 
   const [checkPendingNotifications] = useMutation(CHECK_PENDING_NOTIFICATIONS);
 
@@ -45,7 +55,17 @@ const App = () => {
             if (pendingNotifications.length > 0) {
               pendingNotifications.forEach(notification => {
                 showLocalNotification(notification.message);
-                // update local db
+                if(notification.type === 'FRIEND_REQUEST_ACCEPT') {
+                  const user = notification.senderId
+                  db.transaction(tx => {
+                    tx.executeSql(
+                      `INSERT INTO friends (userId, name, profilePicture, email, phoneNumber) VALUES (?, ?, ?, ?);`,
+                      [user._id, user.Name, user.ProfilePicture, user.Email, user.MobileNumber],
+                      () => console.log('Friend added successfully to local database'),
+                      (txObj, error) => console.error('Error adding friend to database', error)
+                    );
+                  });
+                }
               });
             }
           })
