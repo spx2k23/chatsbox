@@ -1,18 +1,8 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { FlatList, StyleSheet, View } from "react-native";
 import ChatBox from "../components/ChatList/ChatBox";
-import { useQuery, gql, useSubscription } from "@apollo/client";
+import { gql, useSubscription } from "@apollo/client";
 import db from "../db_configs/dbSetup";
-
-const GET_FRIENDS = gql`
-  query GetFriends {
-    getFriends {
-      id
-      Name
-      ProfilePicture
-    }
-  }
-`;
 
 const ACCEPT_FRIEND_SUBSCRIPTION = gql`
   subscription FriendRequestAccept($receiverId: ID!) {
@@ -26,7 +16,12 @@ const ACCEPT_FRIEND_SUBSCRIPTION = gql`
 
 const ChatList = () => {
 
-  const { loading, error, data } = useQuery(GET_FRIENDS);
+  const [friends, setFriends] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetchFriendsFromDB();
+  }, []);
 
   useSubscription(ACCEPT_FRIEND_SUBSCRIPTION, {
     variables: { receiverId: userId },
@@ -50,10 +45,27 @@ const ChatList = () => {
     },
   });
 
+  const fetchFriendsFromDB = () => {
+    db.transaction(tx => {
+      tx.executeSql(
+        `SELECT * FROM friends;`,
+        [],
+        (txObj, { rows: { _array } }) => {
+          setFriends(_array);
+          setLoading(false);
+        },
+        (txObj, error) => {
+          console.error('Error fetching friends from SQLite', error);
+          setLoading(false);
+        }
+      );
+    });
+  };
+
   const renderItem = ({ item }) => (
     <ChatBox
-      name={item.Name}
-      image={item.ProfilePicture}
+      name={item.name}
+      image={item.profilePicture}
       id={item.id}
       lastmessage="it's secret bro!"
       lastmessage_time="just now"
@@ -68,10 +80,10 @@ const ChatList = () => {
     );
   }
 
-  if (error) {
+  if (friends.length === 0) {
     return (
       <View style={styles.center}>
-        <Text>Error loading friends</Text>
+        <Text>No friends found</Text>
       </View>
     );
   }
@@ -79,8 +91,8 @@ const ChatList = () => {
   return (
     <View style={styles.container}>
       <FlatList
-        data={data?.getFriends}
-        keyExtractor={(item) => item.id}
+        data={friends}
+        keyExtractor={(item) => item.userId.toString()}
         renderItem={renderItem}
         showsVerticalScrollIndicator={false}
       />
