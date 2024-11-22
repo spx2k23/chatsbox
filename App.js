@@ -15,25 +15,25 @@ import NetInfo from '@react-native-community/netinfo';
 import { gql, useMutation } from '@apollo/client';
 // import showLocalNotification from './components/Notification/ShowNotification';
 
-const CHECK_PENDING_NOTIFICATIONS = gql`
-  mutation CheckPendingNotifications {
-    checkPendingNotifications {
-      success
-      pendingNotifications {
-        type
-        senderId{
-          id,
-          Name,
-          ProfilePicture,
-          Email,
-          MobileNumber
-        }
-        receiverId
-        message
-      }
-    }
-  }
-`;
+// const CHECK_PENDING_NOTIFICATIONS = gql`
+//   mutation CheckPendingNotifications {
+//     checkPendingNotifications {
+//       success
+//       pendingNotifications {
+//         type
+//         senderId{
+//           id,
+//           Name,
+//           ProfilePicture,
+//           Email,
+//           MobileNumber
+//         }
+//         receiverId
+//         message
+//       }
+//     }
+//   }
+// `;
 
 const Stack = createStackNavigator();
 
@@ -45,37 +45,37 @@ const App = () => {
   console.log(db);
   
 
-  const [checkPendingNotifications] = useMutation(CHECK_PENDING_NOTIFICATIONS);
+  // const [checkPendingNotifications] = useMutation(CHECK_PENDING_NOTIFICATIONS);
 
-  useEffect(() => {
-    const unsubscribe = NetInfo.addEventListener(state => {
-      if (state.isConnected) {
-        checkPendingNotifications()
-          .then(response => {
-            const { pendingNotifications } = response.data.checkPendingNotifications;
+  // useEffect(() => {
+  //   const unsubscribe = NetInfo.addEventListener(state => {
+  //     if (state.isConnected) {
+  //       checkPendingNotifications()
+  //         .then(response => {
+  //           const { pendingNotifications } = response.data.checkPendingNotifications;
 
-            if (pendingNotifications.length > 0) {
-              pendingNotifications.forEach(notification => {
-                // showLocalNotification(notification.message);
-                if(notification.type === 'FRIEND_REQUEST_ACCEPT') {
-                  const user = notification.senderId;
-                    db.runAsync(
-                      `INSERT INTO friends (userId, name, profilePicture, email, phoneNumber) VALUES (?, ?, ?, ?, ?)
-                      ON CONFLICT(userId) DO NOTHING;`,
-                      [user.id, user.Name, user.ProfilePicture, user.Email, user.MobileNumber]
-                    )
-                }
-              });
-            }
-          })
-          .catch(error => console.error('Error checking pending notifications', error));
-      }
-    });
+  //           if (pendingNotifications.length > 0) {
+  //             pendingNotifications.forEach(notification => {
+  //               // showLocalNotification(notification.message);
+  //               if(notification.type === 'FRIEND_REQUEST_ACCEPT') {
+  //                 const user = notification.senderId;
+  //                   db.runAsync(
+  //                     `INSERT INTO friends (userId, name, profilePicture, email, phoneNumber) VALUES (?, ?, ?, ?, ?)
+  //                     ON CONFLICT(userId) DO NOTHING;`,
+  //                     [user.id, user.Name, user.ProfilePicture, user.Email, user.MobileNumber]
+  //                   )
+  //               }
+  //             });
+  //           }
+  //         })
+  //         .catch(error => console.error('Error checking pending notifications', error));
+  //     }
+  //   });
 
-    return () => {
-      unsubscribe();
-    };
-  }, []);
+  //   return () => {
+  //     unsubscribe();
+  //   };
+  // }, []);
 
   return (
     <ApolloProvider client={client}>
