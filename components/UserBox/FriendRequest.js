@@ -38,14 +38,11 @@ const FriendRequest = ({ name, email, image, userId, receiverId, isRequestSent, 
     if (data.acceptFriendRequest.success) {
       const user = data.acceptFriendRequest.sender
         updateUserStatus(receiverId, { isRequestReceived: false, isFriend: true });
-        db.transaction(tx => {
-          tx.executeSql(
-            `INSERT INTO friends (userId, name, profilePicture, email, phoneNumber) VALUES (?, ?);`,
-            [user._id, user.Name, user.ProfilePicture, user.Email, user.MobileNumber],
-            () => console.log('Friend added successfully to local database'),
-            (txObj, error) => console.error('Error adding friend to database', error)
-          );
-        });
+        db.runAsync(
+          `INSERT INTO friends (userId, name, profilePicture, email, phoneNumber) VALUES (?, ?, ?, ?, ?)
+          ON CONFLICT(userId) DO NOTHING;`,
+          [user.id, user.Name, user.ProfilePicture, user.Email, user.MobileNumber]
+        )
     }
   };
 

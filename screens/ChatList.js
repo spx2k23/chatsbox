@@ -32,34 +32,28 @@ const ChatList = () => {
           const user = friendRequestAccept.sender;
           const { senderId } = friendRequestAccept;
           updateUserStatus(senderId, { isRequestSent: false, isFriend: true });
-          db.transaction(tx => {
-            tx.executeSql(
-              `INSERT INTO friends (userId, name, profilePicture, email, phoneNumber) VALUES (?, ?, ?, ?);`,
-              [user._id, user.Name, user.ProfilePicture, user.Email, user.MobileNumber],
-              () => console.log('Friend added successfully to local database'),
-              (txObj, error) => console.error('Error adding friend to database', error)
-            );
-          });
+          db.runAsync(
+            `
+            INSERT INTO friends (userId, name, profilePicture, email, phoneNumber) 
+            VALUES (?, ?, ?, ?, ?) 
+            ON CONFLICT(userId) DO NOTHING;
+            `,
+            [user.id, user.Name, user.ProfilePicture, user.Email, user.MobileNumber]
+          ).then(() => fetchFriendsFromDB());
         }
       }
     },
   });
 
-  const fetchFriendsFromDB = () => {
-    db.transaction(tx => {
-      tx.executeSql(
-        `SELECT * FROM friends;`,
-        [],
-        (txObj, { rows: { _array } }) => {
-          setFriends(_array);
-          setLoading(false);
-        },
-        (txObj, error) => {
-          console.error('Error fetching friends from SQLite', error);
-          setLoading(false);
-        }
-      );
-    });
+  const fetchFriendsFromDB = async () => {
+    try {
+      const friends = await db.getAllAsync('SELECT * FROM friends');
+      setFriends(friends);
+    } catch (error) {
+      console.error('Error fetching friends from SQLite:', error);
+    } finally {
+      setLoading(false);
+    }
   };
 
   const renderItem = ({ item }) => (

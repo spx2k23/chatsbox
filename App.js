@@ -13,7 +13,7 @@ import { StatusBar } from 'react-native';
 import db, { setupDatabase } from './db_configs/dbSetup';
 import NetInfo from '@react-native-community/netinfo';
 import { gql, useMutation } from '@apollo/client';
-import showLocalNotification from './components/Notification/ShowNotification';
+// import showLocalNotification from './components/Notification/ShowNotification';
 
 const CHECK_PENDING_NOTIFICATIONS = gql`
   mutation CheckPendingNotifications {
@@ -42,6 +42,8 @@ const App = () => {
   useEffect(() => {
     setupDatabase();
   }, []);
+  console.log(db);
+  
 
   const [checkPendingNotifications] = useMutation(CHECK_PENDING_NOTIFICATIONS);
 
@@ -54,17 +56,14 @@ const App = () => {
 
             if (pendingNotifications.length > 0) {
               pendingNotifications.forEach(notification => {
-                showLocalNotification(notification.message);
+                // showLocalNotification(notification.message);
                 if(notification.type === 'FRIEND_REQUEST_ACCEPT') {
-                  const user = notification.senderId
-                  db.transaction(tx => {
-                    tx.executeSql(
-                      `INSERT INTO friends (userId, name, profilePicture, email, phoneNumber) VALUES (?, ?, ?, ?);`,
-                      [user._id, user.Name, user.ProfilePicture, user.Email, user.MobileNumber],
-                      () => console.log('Friend added successfully to local database'),
-                      (txObj, error) => console.error('Error adding friend to database', error)
-                    );
-                  });
+                  const user = notification.senderId;
+                    db.runAsync(
+                      `INSERT INTO friends (userId, name, profilePicture, email, phoneNumber) VALUES (?, ?, ?, ?, ?)
+                      ON CONFLICT(userId) DO NOTHING;`,
+                      [user.id, user.Name, user.ProfilePicture, user.Email, user.MobileNumber]
+                    )
                 }
               });
             }
@@ -83,15 +82,11 @@ const App = () => {
       <StatusBar />
       <NavigationContainer>
         <Stack.Navigator initialRouteName="Login" >
-          <Stack.Screen name="Login" options={{ headerShown: false }}>
-            {props => <Login {...props} setUserId={setUserId} />}
-          </Stack.Screen>
+          <Stack.Screen name="Login" component={Login} options={{ headerShown: false }} />
           <Stack.Screen name="Register" component={Register} options={{ headerShown: false }} />
           <Stack.Screen name="OrganizationReg" component={OrganizationReg} options={{ headerShown: false }} />
           <Stack.Screen name="Chats" component={DrawerList} options={{ headerShown: false }}/>
-          <Stack.Screen name="Chat" >
-            {props => <Chat {...props} user_id={user_id} />}
-          </Stack.Screen>
+          <Stack.Screen name="Chat" component={Chat} />
           <Stack.Screen name="ApproveRequest" component={ApproveRequest} />
         </Stack.Navigator>
       </NavigationContainer>

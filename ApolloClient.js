@@ -6,7 +6,7 @@ import { GraphQLWsLink } from '@apollo/client/link/subscriptions';
 import { createClient } from 'graphql-ws';
 
 const httpLink = createHttpLink({
-  uri: 'http://192.168.96.253:5000/graphql',
+  uri: 'http://192.168.202.253:5000/graphql',
   // uri: 'http://192.168.100.4:5000/graphql',
 });
 
@@ -24,7 +24,7 @@ const link = authLink.concat(httpLink);
 
 const wsLink = new GraphQLWsLink(
   createClient({
-    url: 'ws://192.168.96.253:5000/graphql',
+    url: 'ws://192.168.202.253:5000/graphql',
     // uri: 'ws://192.168.100.4:5000/graphql',
     connectionParams: async () => {
       const token = await AsyncStorage.getItem('token');

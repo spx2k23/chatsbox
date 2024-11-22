@@ -6,7 +6,7 @@ import { jwtDecode } from 'jwt-decode';
 import Loading from '../components/Loading/Loading';
 import UserBox from '../components/UserBox/UserBox';
 import FriendRequest from '../components/UserBox/FriendRequest';
-import showLocalNotification from '../components/Notification/ShowNotification';
+// import showLocalNotification from '../components/Notification/ShowNotification';
 
 const GET_USERS_IN_ORG = gql`
   query GetUsersInOrganization($organizationId: ID!) {
@@ -98,7 +98,7 @@ const Users = ({ navigation }) => {
           const { senderId, sender } = friendRequestSent;
           updateUserStatus(senderId, { isRequestReceived: true });
           const message = sender.Name + "send you a friend request";
-          showLocalNotification(message);
+          // showLocalNotification(message);
         }
       }
     },
@@ -113,7 +113,7 @@ const Users = ({ navigation }) => {
           const { senderId, sender } = friendRequestAccept;
           updateUserStatus(senderId, { isRequestSent: false, isFriend: true });
           const message = sender.Name + "send you a friend request";
-          showLocalNotification(message);
+          // showLocalNotification(message);
           db.transaction(tx => {
             tx.executeSql(
               `INSERT INTO friends (userId, name, profilePicture, email, phoneNumber) VALUES (?, ?, ?, ?);`,
