@@ -1,24 +1,17 @@
-import * as SQLite from 'expo-sqlite';
 
-const db = SQLite.openDatabaseAsync('chatApp.db');
 
-export const setupDatabase = async () => {
+export const setupDatabase = async (db) => {
   try {
-    await db.execAsync(`PRAGMA journal_mode = WAL;`);
-
-    await db.runAsync(
-      `CREATE TABLE IF NOT EXISTS messages (
+    await db.execAsync(`
+      PRAGMA journal_mode = WAL;
+      CREATE TABLE IF NOT EXISTS messages (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         userId TEXT,
         message TEXT,
         timestamp DATETIME DEFAULT CURRENT_TIMESTAMP,
         delivered BOOLEAN
-      );`
-    );
-    console.log('Messages table created successfully');
-
-    await db.runAsync(
-      `CREATE TABLE IF NOT EXISTS friends (
+      );
+      CREATE TABLE IF NOT EXISTS friends (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         userId TEXT NOT NULL,
         name TEXT NOT NULL,
@@ -26,12 +19,10 @@ export const setupDatabase = async () => {
         email TEXT NOT NULL,
         phoneNumber TEXT NOT NULL,
         UNIQUE(userId)
-      );`
-    );
-    console.log('Friends table created successfully');
+      );
+    `);
+    console.log('Database initialized successfully');
   } catch (error) {
-    console.error('Error setting up database', error);
+    console.error('Error while initializing database : ', error);
   }
 };
-
-export default db;

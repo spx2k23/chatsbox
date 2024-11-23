@@ -44,34 +44,34 @@ const ChatList = () => {
           const user = friendRequestAccept.sender;
           const { senderId } = friendRequestAccept;
           updateUserStatus(senderId, { isRequestSent: false, isFriend: true });
-        //   db.transaction(tx => {
-        //     tx.executeSql(
-        //       `INSERT INTO friends (userId, name, profilePicture, email, phoneNumber) VALUES (?, ?, ?, ?);`,
-        //       [user._id, user.Name, user.ProfilePicture, user.Email, user.MobileNumber],
-        //       () => console.log('Friend added successfully to local database'),
-        //       (txObj, error) => console.error('Error adding friend to database', error)
-        //     );
-        //   });
+          db.transaction(tx => {
+            tx.executeSql(
+              `INSERT INTO friends (userId, name, profilePicture, email, phoneNumber) VALUES (?, ?, ?, ?);`,
+              [user._id, user.Name, user.ProfilePicture, user.Email, user.MobileNumber],
+              () => console.log('Friend added successfully to local database'),
+              (txObj, error) => console.error('Error adding friend to database', error)
+            );
+          });
         }
       }
     },
   });
 
   const fetchFriendsFromDB = () => {
-    // db.transaction(tx => {
-    //   tx.executeSql(
-    //     `SELECT * FROM friends;`,
-    //     [],
-    //     (txObj, { rows: { _array } }) => {
-    //       setFriends(_array);
-    //       setLoading(false);
-    //     },
-    //     (txObj, error) => {
-    //       console.error('Error fetching friends from SQLite', error);
-    //       setLoading(false);
-    //     }
-    //   );
-    // });
+    db.transaction(tx => {
+      tx.executeSql(
+        `SELECT * FROM friends;`,
+        [],
+        (txObj, { rows: { _array } }) => {
+          setFriends(_array);
+          setLoading(false);
+        },
+        (txObj, error) => {
+          console.error('Error fetching friends from SQLite', error);
+          setLoading(false);
+        }
+      );
+    });
   };
 
   const renderItem = ({ item }) => (
