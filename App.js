@@ -4,9 +4,8 @@ import { createStackNavigator } from '@react-navigation/stack';
 import { ApolloProvider } from '@apollo/client';
 import { StatusBar } from 'react-native';
 import { SQLiteProvider, useSQLiteContext } from 'expo-sqlite';
-import { gql, useMutation } from '@apollo/client';
-import NetInfo from '@react-native-community/netinfo';
-// import { setupDatabase } from './db_configs/dbSetup';
+// import { gql, useMutation } from '@apollo/client';
+// import NetInfo from '@react-native-community/netinfo';
 
 import client from './ApolloClient';
 import Login from './screens/Login';
@@ -15,6 +14,9 @@ import OrganizationReg from './screens/OrganizationReg';
 import Chat from './screens/Chat';
 import DrawerList from './components/ChatList/DrawerList';
 import ApproveRequest from './screens/ApproveRequest';
+import { initializeDatabase } from './db_configs/dbSetup';
+// import AsyncStorage from '@react-native-async-storage/async-storage';
+// import { jwtDecode } from 'jwt-decode';
 // import showLocalNotification from './components/Notification/ShowNotification';
 
 // const CHECK_PENDING_NOTIFICATIONS = gql`
@@ -41,55 +43,44 @@ const Stack = createStackNavigator();
 
 const App = () => {
 
-  const initializeDatabase = async (db) => {
-    try {
-      await db.execAsync(`
-        PRAGMA journal_mode = WAL;
-        CREATE TABLE IF NOT EXISTS messages (
-          id INTEGER PRIMARY KEY AUTOINCREMENT,
-          userId TEXT,
-          message TEXT,
-          timestamp DATETIME DEFAULT CURRENT_TIMESTAMP,
-          delivered BOOLEAN
-        );
-        
-      `);
-      console.log('Database initialized successfully');
-    } catch (error) {
-      console.error('Error while initializing database : ', error);
-    }
-  };
-
   // const [checkPendingNotifications] = useMutation(CHECK_PENDING_NOTIFICATIONS);
 
+  // const isTokenExpired = (token) => {
+  //   try {
+  //     const decoded = jwtDecode(token);
+  //     const currentTime = Math.floor(Date.now() / 1000);
+  //     return decoded.exp < currentTime;
+  //   } catch (error) {
+  //     console.error('Error decoding token:', error);
+  //     return true;
+  //   }
+  // };
+
   // useEffect(() => {
-  //   const unsubscribe = NetInfo.addEventListener(state => {
-  //     if (state.isConnected) {
-  //       checkPendingNotifications()
-  //         .then(response => {
-  //           const { pendingNotifications } = response.data.checkPendingNotifications;
-
-  //           if (pendingNotifications.length > 0) {
-  //             pendingNotifications.forEach(notification => {
-  //               // showLocalNotification(notification.message);
-  //               if(notification.type === 'FRIEND_REQUEST_ACCEPT') {
-  //                 const user = notification.senderId;
-  //                   db.runAsync(
-  //                     `INSERT INTO friends (userId, name, profilePicture, email, phoneNumber) VALUES (?, ?, ?, ?, ?)
-  //                     ON CONFLICT(userId) DO NOTHING;`,
-  //                     [user.id, user.Name, user.ProfilePicture, user.Email, user.MobileNumber]
-  //                   )
+  //   const initialize = async () => {
+  //     const token = await AsyncStorage.getItem('token');
+  //     if (token && !isTokenExpired(token)) {
+  //       const unsubscribe = NetInfo.addEventListener(state => {
+  //         if (state.isConnected) {
+  //           checkPendingNotifications()
+  //             .then(response => {
+  //               const { pendingNotifications } = response.data.checkPendingNotifications;
+  //               if (pendingNotifications.length > 0) {
+  //                 pendingNotifications.forEach(notification => {
+  //                   // Handle friend requests or other notifications
+  //                 });
   //               }
-  //             });
-  //           }
-  //         })
-  //         .catch(error => console.error('Error checking pending notifications', error));
+  //             })
+  //             .catch(error => console.error('Error checking pending notifications', error));
+  //         }
+  //       });
+  //       return () => {
+  //         unsubscribe();
+  //       };
   //     }
-  //   });
-
-  //   return () => {
-  //     unsubscribe();
   //   };
+  
+  //   initialize();
   // }, []);
 
   return (

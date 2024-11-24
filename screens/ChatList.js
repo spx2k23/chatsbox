@@ -2,8 +2,10 @@ import React, { useEffect, useState } from "react";
 import { FlatList, StyleSheet, View } from "react-native";
 import ChatBox from "../components/ChatList/ChatBox";
 import { gql, useSubscription } from "@apollo/client";
-import db from "../db_configs/dbSetup";
 import Loading from "../components/Loading/Loading";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { jwtDecode } from "jwt-decode";
+import { useSQLiteContext } from "expo-sqlite";
 
 const ACCEPT_FRIEND_SUBSCRIPTION = gql`
   subscription FriendRequestAccept($receiverId: ID!) {
@@ -16,6 +18,8 @@ const ACCEPT_FRIEND_SUBSCRIPTION = gql`
 `;
 
 const ChatList = () => {
+
+  const db = useSQLiteContext();
 
   const [friends, setFriends] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -37,41 +41,28 @@ const ChatList = () => {
 
   useSubscription(ACCEPT_FRIEND_SUBSCRIPTION, {
     variables: { receiverId: userId },
-    onData: ({ data }) => {
+    onData: async ({ data })  => {
       if (data) {
         const { friendRequestAccept } = data.data;
         if (friendRequestAccept) {
           const user = friendRequestAccept.sender;
           const { senderId } = friendRequestAccept;
           updateUserStatus(senderId, { isRequestSent: false, isFriend: true });
-          db.transaction(tx => {
-            tx.executeSql(
-              `INSERT INTO friends (userId, name, profilePicture, email, phoneNumber) VALUES (?, ?, ?, ?);`,
-              [user._id, user.Name, user.ProfilePicture, user.Email, user.MobileNumber],
-              () => console.log('Friend added successfully to local database'),
-              (txObj, error) => console.error('Error adding friend to database', error)
-            );
-          });
+          const userExist = db.getFirstAsync('SELECT * FROM friends WHERE userId = ?', [user._id]);
+          if(!userExist){
+            await db.runAsync('INSERT INTO friends (userId, name, profilePicture, email, phoneNumber) VALUES (?, ?, ?, ?)',
+              [user._id, user.Name, user.ProfilePicture, user.Email, user.MobileNumber]
+            )
+          }
         }
       }
     },
   });
 
   const fetchFriendsFromDB = () => {
-    db.transaction(tx => {
-      tx.executeSql(
-        `SELECT * FROM friends;`,
-        [],
-        (txObj, { rows: { _array } }) => {
-          setFriends(_array);
-          setLoading(false);
-        },
-        (txObj, error) => {
-          console.error('Error fetching friends from SQLite', error);
-          setLoading(false);
-        }
-      );
-    });
+    const friends = db.getAllAsync('SELECT * FROM friends');
+    setFriends(friends);
+    setLoading(false);
   };
 
   const renderItem = ({ item }) => (
