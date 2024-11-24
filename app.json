@@ -9,7 +9,15 @@
     "splash": {
       "image": "./assets/splash.png",
       "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
+      "backgroundColor": "#ffffff",
+      "plugins": [
+    [
+      "expo-build-properties",
+      {
+        "newArchEnabled": true
+      }
+    ]
+  ]
     },
     "ios": {
       "supportsTablet": true
