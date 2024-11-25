@@ -7,6 +7,7 @@ import DrawerHeader from '../../components/ChatList/DrawerHeader'; // Update the
 import { MaterialIcons } from '@expo/vector-icons';
 import { jwtDecode } from 'jwt-decode';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { Platform } from 'react-native';
 
 const Drawer = createDrawerNavigator();
 
@@ -30,6 +31,7 @@ const DrawerList = () => {
       screenOptions={{
         drawerStyle: {
           backgroundColor: '#fff',
+          width:300,
         },
         drawerActiveBackgroundColor: '#6200EE',
         drawerActiveTintColor: '#fff',
@@ -39,7 +41,7 @@ const DrawerList = () => {
           elevation: 0, // Android shadow removal
           shadowOpacity: 0, // iOS shadow removal
         },
-        headerStatusBarHeight: 14, // Adjust if needed
+        headerStatusBarHeight:Platform.OS=='ios'?50:10, // Adjust if needed
         headerTintColor:'#6200EE',
         headerTitleAlign:'center'
       }}

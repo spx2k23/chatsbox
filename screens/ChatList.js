@@ -19,13 +19,24 @@ const ACCEPT_FRIEND_SUBSCRIPTION = gql`
 
 const ChatList = () => {
 
+  const data=[{
+    name:'Drago',
+    id:25,
+    image:'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQSOS1l3ChxcZAgXtI2AKpv4KliooS_mFGk3A&s',
+    userId:25
+  }]
+
   const db = useSQLiteContext();
 
   const [friends, setFriends] = useState([]);
   const [loading, setLoading] = useState(true);
   const [userId, setUserId] = useState(null);
 
+ 
+  
+
   useEffect(() => {
+    
     fetchFriendsFromDB();
     const fetchOrgAndUser = async () => {
       try {
@@ -65,6 +76,8 @@ const ChatList = () => {
     setLoading(false);
   };
 
+ 
+
   const renderItem = ({ item }) => (
     <ChatBox
       name={item.name}
@@ -90,6 +103,7 @@ const ChatList = () => {
       </View>
     );
   }
+
 
   return (
     <View style={styles.container}>

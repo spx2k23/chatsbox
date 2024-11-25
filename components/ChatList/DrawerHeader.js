@@ -1,5 +1,5 @@
 import React, { useState} from 'react';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity,Platform } from 'react-native';
 import { DrawerContentScrollView, DrawerItemList } from '@react-navigation/drawer';
 import { LogoutModal } from '../Logout/LogoutModal';
 
@@ -19,6 +19,7 @@ function DrawerHeader(props) {
       <TouchableOpacity
         style={styles.logoutButton}
         onPress={() => setModalVisible(true)}
+        activeOpacity={1}
       >
         <Text style={styles.logoutText}>Logout</Text>
       </TouchableOpacity>
@@ -38,7 +39,8 @@ const styles = StyleSheet.create({
   header: {
     padding: 20,
     backgroundColor: '#6200EE',
-    height:100,
+    height:Platform.OS=='ios'?100:80,
+    paddingTop:Platform.OS=='ios'?60:0,
     marginBottom:10,
     justifyContent:'center'
   },
@@ -50,7 +52,7 @@ const styles = StyleSheet.create({
   },
   logoutButton: {
     padding: 15,
-    backgroundColor: '#832dfc',
+    backgroundColor: '#6200EE',
     alignItems: 'center',
   },
   logoutText: {
@@ -58,9 +60,12 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
   poweredbytext:{
-    color:'#832dfc',
+    backgroundColor:'#6200EE',
+    color:'#fff',
     textAlign:'center',
-    marginBottom:5
+    padding:8,
+    borderBottomColor:"#fff",
+    borderBottomWidth:Platform.OS=='ios'?0:1
   }
 });
 

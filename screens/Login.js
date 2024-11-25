@@ -91,7 +91,7 @@ const Login = ({ navigation }) => {
           placeholderTextColor="#B0BEC5"
           keyboardType='email-address'
           value={email}
-          onChangeText={(text) => setEmail(text)}
+          onChangeText={(text) => setEmail(text.toLowerCase(text))}
           leftIcon={{ type: 'font-awesome', name: 'envelope', color: '#6200EE' }}
           inputStyle={styles.inputText}
           containerStyle={styles.inputField}
