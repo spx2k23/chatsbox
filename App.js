@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import { NavigationContainer } from '@react-navigation/native';
+import { NavigationContainer, } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { ApolloProvider } from '@apollo/client';
-import { StatusBar } from 'react-native';
+import { StatusBar,StyleSheet,TouchableOpacity } from 'react-native';
 import { SQLiteProvider, useSQLiteContext } from 'expo-sqlite';
+import { MaterialIcons } from '@expo/vector-icons';
 // import { gql, useMutation } from '@apollo/client';
 // import NetInfo from '@react-native-community/netinfo';
 
@@ -15,6 +16,7 @@ import Chat from './screens/Chat';
 import DrawerList from './components/ChatList/DrawerList';
 import ApproveRequest from './screens/ApproveRequest';
 import { initializeDatabase } from './db_configs/dbSetup';
+import Profile from './screens/Profile';
 // import AsyncStorage from '@react-native-async-storage/async-storage';
 // import { jwtDecode } from 'jwt-decode';
 // import showLocalNotification from './components/Notification/ShowNotification';
@@ -95,6 +97,16 @@ const App = () => {
             <Stack.Screen name="Chats" component={DrawerList} options={{ headerShown: false }}/>
             <Stack.Screen name="Chat" component={Chat} />
             <Stack.Screen name="ApproveRequest" component={ApproveRequest} />
+            <Stack.Screen name="Profile" component={Profile} options={({ navigation }) => ({
+                headerLeft: () => (
+                  <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backIconContainer}>
+                    <MaterialIcons name="arrow-back" size={24} color="#6200EE" />
+                  </TouchableOpacity>
+                ),
+                headerTitle: '',  // Hide the title
+                headerShown: true, // Ensure header is shown
+              })}
+            />
           </Stack.Navigator>
         </NavigationContainer>
       </ApolloProvider>
@@ -103,3 +115,9 @@ const App = () => {
 };
 
 export default App;
+
+const styles=StyleSheet.create({
+backIconContainer:{
+  paddingLeft: 10,
+}
+});

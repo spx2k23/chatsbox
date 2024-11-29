@@ -8,6 +8,7 @@ import { MaterialIcons } from '@expo/vector-icons';
 import { jwtDecode } from 'jwt-decode';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Platform } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
 
 const Drawer = createDrawerNavigator();
 
@@ -24,7 +25,16 @@ const DrawerList = () => {
     };
     checkSuperAdminStatus();
   }, []);
-
+  const navigation=useNavigation();
+  const profileIcon = () => (
+    <MaterialIcons
+      name="account-circle"
+      size={30}
+      color="#6200EE"
+      style={{ marginRight: 15 }}
+      onPress={() => navigation.navigate('Profile')} // Navigate to Profile screen
+    />
+  );
   return (
     <Drawer.Navigator
       drawerContent={(props) => <DrawerHeader {...props} />}
@@ -54,6 +64,7 @@ const DrawerList = () => {
             <MaterialIcons name="chat" color={color} size={size} />
           ),
           title: 'Chat List',
+          headerRight: profileIcon,
         }}
       />
       <Drawer.Screen 
@@ -64,6 +75,7 @@ const DrawerList = () => {
             <MaterialIcons name="people-outline" color={color} size={size} />
           ),
           title: 'Users',
+          headerRight: profileIcon,
         }}
       />
       {isSuperAdmin&&<Drawer.Screen 
