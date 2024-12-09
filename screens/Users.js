@@ -114,14 +114,11 @@ const Users = ({ navigation }) => {
           updateUserStatus(senderId, { isRequestSent: false, isFriend: true });
           const message = sender.Name + "send you a friend request";
           // showLocalNotification(message);
-          db.transaction(tx => {
-            tx.executeSql(
-              `INSERT INTO friends (userId, name, profilePicture, email, phoneNumber) VALUES (?, ?, ?, ?);`,
-              [sender.id, sender.Name, sender.ProfilePicture, sender.Email, sender.MobileNumber],
-              () => console.log('Friend added successfully to local database'),
-              (txObj, error) => console.error('Error adding friend to database', error)
-            );
-          });
+          db.runAsync(
+            `INSERT INTO friends (userId, name, profilePicture, email, phoneNumber) VALUES (?, ?, ?, ?, ?)
+            ON CONFLICT(userId) DO NOTHING;`,
+            [sender.id, sender.Name, sender.ProfilePicture, sender.Email, sender.MobileNumber]
+          )
         }
       }
     },
