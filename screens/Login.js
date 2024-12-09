@@ -34,7 +34,7 @@ const Login = ({ navigation }) => {
             await AsyncStorage.removeItem("token");
             navigation.navigate("Login");
           } else {
-            navigation.navigate("Chats");
+            navigation.replace("Chats");
           }
         } else {
           console.log("No token found");
@@ -52,7 +52,7 @@ const Login = ({ navigation }) => {
       if (data.login.success) {
         await AsyncStorage.setItem('token', data.login.token);
         await AsyncStorage.setItem('organization', data.login.organization);
-        navigation.navigate('Chats');
+        navigation.replace('Chats');
       } else {
         setErrorMessage(data.login.message);
       }

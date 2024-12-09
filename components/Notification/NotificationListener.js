@@ -1,5 +1,5 @@
-import React, { useEffect } from "react";
-import { useSubscription } from "@apollo/client";
+import React, { useEffect ,useState} from "react";
+import { useSubscription ,gql} from "@apollo/client";
 import * as Notifications from "expo-notifications";
 
 const NOTIFICATION_SUBSCRIPTION = gql`
@@ -30,8 +30,8 @@ const NotificationListener = () => {
   });
 
   useEffect(() => {
-    const { type } = data.notification;
-    if (data.type === "FRIEND_REQUEST_ACCEPT") {
+    const  type  = data?.notification?.type;
+    if (type === "FRIEND_REQUEST_ACCEPT") {
       db.runAsync(
         `INSERT INTO friends (userId, name, profilePicture, email, phoneNumber) VALUES (?, ?, ?, ?, ?)
         ON CONFLICT(userId) DO NOTHING;`,
