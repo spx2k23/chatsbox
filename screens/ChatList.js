@@ -71,8 +71,8 @@ const ChatList = () => {
   });
 
   const fetchFriendsFromDB = () => {
-    const friends = db.getAllAsync('SELECT * FROM friends');
-    setFriends(friends);
+    const fetchFriends = db.getAllAsync('SELECT * FROM friends');
+    setFriends(fetchFriends);
     setLoading(false);
   };
 
