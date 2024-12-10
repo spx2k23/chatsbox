@@ -15,7 +15,6 @@ function DrawerHeader(props) {
       <DrawerContentScrollView {...props}>
         <DrawerItemList {...props} />
       </DrawerContentScrollView>
-      <Text style={styles.poweredbytext}>Powered by Sprexcel</Text>
       <TouchableOpacity
         style={styles.logoutButton}
         onPress={() => setModalVisible(true)}
@@ -59,14 +58,7 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontSize: 16,
   },
-  poweredbytext:{
-    backgroundColor:'#6200EE',
-    color:'#fff',
-    textAlign:'center',
-    padding:8,
-    borderBottomColor:"#fff",
-    borderBottomWidth:Platform.OS=='ios'?0:1
-  }
+  
 });
 
 export default DrawerHeader;

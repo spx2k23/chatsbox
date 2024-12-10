@@ -6,6 +6,8 @@ import { jwtDecode } from 'jwt-decode';
 import Loading from '../components/Loading/Loading';
 import UserBox from '../components/UserBox/UserBox';
 import FriendRequest from '../components/UserBox/FriendRequest';
+import CustomError from '../components/Error';
+import CustomNotFound from '../components/NotFound';
 // import showLocalNotification from '../components/Notification/ShowNotification';
 
 const GET_USERS_IN_ORG = gql`
@@ -164,11 +166,11 @@ const Users = ({ navigation }) => {
   }
 
   if (error) {
-    return <Text>Error loading users</Text>;
+    return <CustomError title={'Error occured'}/>;
   }
 
   if (!data || !data.getUsersInOrganization) {
-    return <Text>No users found</Text>;
+    return <CustomNotFound title={'No data available'}/>;
   }
 
   // Separate friends, others, and requests

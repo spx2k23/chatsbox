@@ -4,6 +4,7 @@ import { useQuery, gql } from '@apollo/client';
 import RequestContainer from '../components/ChatList/RequestContainer';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Loading from '../components/Loading/Loading';
+import CustomError  from '../components/Error';
 
 const GET_UNAPPROVED_USERS = gql`
   query GetUnapprovedUsers($organizationId: ID!) {
@@ -44,7 +45,7 @@ const ApproveRequest = ({ navigation }) => {
   }, [navigation, organizationId]);
 
   if (loading) return <Loading/>
-  if (error) return <View><Text>Error loading data</Text></View>;
+  if (error) return <CustomError title={'Error occured'}/>;
 
   return (
     <View style={styles.container}>
