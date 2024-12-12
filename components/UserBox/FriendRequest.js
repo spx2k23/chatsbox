@@ -9,7 +9,13 @@ const ACCEPT_FRIEND_REQUEST = gql`
     acceptFriendRequest(senderId: $senderId, receiverId: $receiverId) {
       success
       message
-      sender
+      sender {
+        id
+        Name
+        ProfilePicture
+        Email
+        MobileNumber
+      }
     }
   }
 `;

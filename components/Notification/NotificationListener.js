@@ -1,6 +1,7 @@
-import React, { useEffect ,useState} from "react";
-import { useSubscription ,gql} from "@apollo/client";
+import React, { useEffect, useState } from "react";
+import { useSubscription, gql } from "@apollo/client";
 import * as Notifications from "expo-notifications";
+import { useSQLiteContext } from "expo-sqlite";
 
 const NOTIFICATION_SUBSCRIPTION = gql`
   subscription Notification($receiverId: ID!) {
@@ -13,6 +14,8 @@ const NOTIFICATION_SUBSCRIPTION = gql`
 `;
 
 const NotificationListener = () => {
+
+  const db = useSQLiteContext();
 
   const [UserId, setUserId] = useState();
   const getUserId = async () => {
