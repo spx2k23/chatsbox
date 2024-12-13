@@ -96,8 +96,8 @@ const styles = StyleSheet.create({
     elevation: 0,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
+    shadowOpacity: 0.15,
+    shadowRadius: 1.84,
   },
   pressed: {
     shadowOffset: { width: 0, height: -2 },
