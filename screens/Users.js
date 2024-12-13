@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react';
-import {FlatList,View, Text,StyleSheet,TextInput,Pressable} from 'react-native';
+import React, { useEffect, useState, useMemo } from 'react';
+import { FlatList, View, Text, StyleSheet, TextInput, Pressable ,Platform} from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useQuery, gql, useSubscription } from '@apollo/client';
 import { jwtDecode } from 'jwt-decode';
@@ -8,7 +8,6 @@ import UserBox from '../components/UserBox/UserBox';
 import FriendRequest from '../components/UserBox/FriendRequest';
 import CustomError from '../components/Error';
 import CustomNotFound from '../components/NotFound';
-// import showLocalNotification from '../components/Notification/ShowNotification';
 
 const GET_USERS_IN_ORG = gql`
   query GetUsersInOrganization($organizationId: ID!) {
@@ -29,7 +28,7 @@ const FRIEND_REQUEST_SUBSCRIPTION = gql`
     friendRequestSent(receiverId: $receiverId) {
       senderId
       receiverId
-      sender{
+      sender {
         Name
       }
     }
@@ -41,11 +40,11 @@ const ACCEPT_FRIEND_SUBSCRIPTION = gql`
     friendRequestAccept(receiverId: $receiverId) {
       senderId
       receiverId
-      sender{
-        id,
-        Name,
-        ProfilePicture,
-        Email,
+      sender {
+        id
+        Name
+        ProfilePicture
+        Email
         MobileNumber
       }
     }
@@ -99,8 +98,6 @@ const Users = ({ navigation }) => {
         if (friendRequestSent) {
           const { senderId, sender } = friendRequestSent;
           updateUserStatus(senderId, { isRequestReceived: true });
-          const message = sender.Name + "send you a friend request";
-          // showLocalNotification(message);
         }
       }
     },
@@ -114,13 +111,6 @@ const Users = ({ navigation }) => {
         if (friendRequestAccept) {
           const { senderId, sender } = friendRequestAccept;
           updateUserStatus(senderId, { isRequestSent: false, isFriend: true });
-          const message = sender.Name + "send you a friend request";
-          // showLocalNotification(message);
-          db.runAsync(
-            `INSERT INTO friends (userId, name, profilePicture, email, phoneNumber) VALUES (?, ?, ?, ?, ?)
-            ON CONFLICT(userId) DO NOTHING;`,
-            [sender.id, sender.Name, sender.ProfilePicture, sender.Email, sender.MobileNumber]
-          )
         }
       }
     },
@@ -161,24 +151,29 @@ const Users = ({ navigation }) => {
     });
   };
 
+  const filteredUsers = useMemo(() => {
+    return users.filter(user =>
+      user.Name.toLowerCase().includes(searchText.toLowerCase()) ||
+      user.Email.toLowerCase().includes(searchText.toLowerCase())
+    );
+  }, [searchText, users]);
+
   if (loading) {
-    return <Loading/>;
+    return <Loading />;
   }
 
   if (error) {
-    return <CustomError title={'Error occured'}/>;
+    return <CustomError title="Error occurred" />;
   }
 
   if (!data || !data.getUsersInOrganization) {
-    return <CustomNotFound title={'No data available'}/>;
+    return <CustomNotFound title="No data available" />;
   }
 
-  // Separate friends, others, and requests
   const friends = users.filter(user => user.isFriend);
   const others = users.filter(user => !user.isFriend && !user.isRequestSent && !user.isRequestReceived);
   const requests = users.filter(user => user.isRequestSent || user.isRequestReceived);
 
-  // Select data based on tab choice
   let dataList;
   if (currentTabChoice === 'friends') {
     dataList = friends;
@@ -188,11 +183,7 @@ const Users = ({ navigation }) => {
     dataList = requests;
   }
 
-  // Handle search logic
-  const filteredUsers = users.filter(user =>
-    user.Name.toLowerCase().includes(searchText.toLowerCase()) ||
-    user.Email.toLowerCase().includes(searchText.toLowerCase())
-  );
+  const requestCount = requests.length;
 
   return (
     <View style={styles.container}>
@@ -217,6 +208,7 @@ const Users = ({ navigation }) => {
             Friends
           </Text>
         </Pressable>
+
         <Pressable
           onPress={() => setCurrentTabChoice('others')}
           style={[
@@ -228,16 +220,19 @@ const Users = ({ navigation }) => {
             Others
           </Text>
         </Pressable>
+
         <Pressable
           onPress={() => setCurrentTabChoice('requests')}
           style={[
             styles.tabButton,
             currentTabChoice === 'requests' && styles.activeTab,
+            styles.requesttab,
           ]}
         >
           <Text style={currentTabChoice === 'requests' ? styles.activeText : null}>
             Requests
           </Text>
+          {requestCount > 0 && <Text style={styles.requestNumber}>{requestCount}</Text>}
         </Pressable>
       </View>
 
@@ -312,26 +307,53 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     padding: 10,
     marginBottom: 10,
-    marginTop:6,
-    width:'90%',
-    alignSelf:'center'
+    marginTop: 6,
+    width: '90%',
+    alignSelf: 'center',
   },
   tabContainer: {
     flexDirection: 'row',
     justifyContent: 'space-around',
-    marginBottom: 2,
+    marginBottom: 10,
   },
   tabButton: {
+    flexDirection: 'row', // Align text and number horizontally
+    alignItems: 'center', // Ensure both are vertically centered
     paddingVertical: 10,
     paddingHorizontal: 20,
     borderRadius: 5,
   },
-
-  activeText: {
+  activeText:{
     color: '#6200EE',
-    fontSize:16,
+    fontSize: 16,
     fontWeight: 'bold',
-    textDecorationLine: 'underline'
+    borderBottomWidth:1,  // Thinner border on iOS, thicker on Android
+    borderBottomColor: '#6200EE',  // Color of the underline
+    paddingBottom: Platform.OS === 'ios' ? 2 : 1, // Add padding to ensure the underline isn't too close to the text
+  },
+  requestNumber: {
+    color: '#fff',
+    backgroundColor: '#6200EE',
+    paddingHorizontal: 8, // Increase padding to make the circle larger
+    paddingVertical: 4, // Adjust vertical padding for balance
+    borderRadius: 50, // Use a smaller number for perfect circle, making it more rounded
+    marginLeft: 8, // Space between "Requests" text and the number
+    fontSize: 12, // Increase font size slightly for better visibility
+    fontWeight: 'bold',
+    alignItems: 'center',
+    justifyContent: 'center',
+    textAlign: 'center', // Ensure the text is centered
+    height: 24, // Fixed height for a more consistent circle size
+    width: 24, // Fixed width for a perfect circle
+  },  
+  requesttab: {
+    display: 'flex',
+  },
+ 
+  header: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginVertical: 10,
   },
 });
 
