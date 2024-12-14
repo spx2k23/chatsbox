@@ -2,6 +2,7 @@ import React, { useState} from 'react';
 import { View, Text, StyleSheet, TouchableOpacity,Platform } from 'react-native';
 import { DrawerContentScrollView, DrawerItemList } from '@react-navigation/drawer';
 import { LogoutModal } from '../Logout/LogoutModal';
+import { MaterialIcons } from '@expo/vector-icons';
 
 function DrawerHeader(props) {
  
@@ -21,6 +22,7 @@ function DrawerHeader(props) {
         activeOpacity={1}
       >
         <Text style={styles.logoutText}>Logout</Text>
+        <MaterialIcons name="exit-to-app" size={24} color='#fff'/>
       </TouchableOpacity>
       <LogoutModal
         isVisible={modalVisible}
@@ -38,27 +40,28 @@ const styles = StyleSheet.create({
   header: {
     padding: 20,
     backgroundColor: '#6200EE',
-    height:Platform.OS=='ios'?100:80,
-    paddingTop:Platform.OS=='ios'?60:0,
-    marginBottom:10,
-    justifyContent:'center'
+    height: Platform.OS === 'ios' ? 100 : 80,
+    paddingTop: Platform.OS === 'ios' ? 60 : 0,
+    marginBottom: 10,
+    justifyContent: 'center',
   },
   heading: {
     color: '#fff',
     fontSize: 20,
     fontWeight: 'bold',
-    textAlign:'center',
+    textAlign: 'center',
   },
   logoutButton: {
-    padding: 15,
+    paddingVertical: 15,
     backgroundColor: '#6200EE',
+    flexDirection: 'row',
     alignItems: 'center',
+    justifyContent: 'center',
   },
   logoutText: {
     color: '#fff',
     fontSize: 16,
+    marginRight: 8, // Add some space between the icon and the text
   },
-  
 });
-
 export default DrawerHeader;

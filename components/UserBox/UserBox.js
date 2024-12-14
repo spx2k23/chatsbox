@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { StyleSheet, View, Image, Text, TouchableOpacity, Modal } from "react-native";
 import { gql, useMutation } from "@apollo/client";
+import ProfileModal from "../ProfileModal";
 
 const SEND_FRIEND_REQUEST = gql`
   mutation SendFriendRequest($senderId: ID!, $receiverId: ID!) {
@@ -51,7 +52,7 @@ const UserBox = ({ image, name, email, isFriend, isRequestSent, isRequestReceive
       <TouchableOpacity
         onPressIn={() => setPressed(true)}
         onPressOut={() => setPressed(false)}
-        onPress={() => !isFriend && !isRequestSent && !isRequestReceived && setModalVisible(true)}
+        onPress={() => !isRequestSent && !isRequestReceived && setModalVisible(true)}
       >
         <View style={[styles.card, pressed ? styles.pressed : null]}>
           <Image source={{ uri: `data:image/jpeg;base64,${image}` }} style={styles.image} />
@@ -62,8 +63,8 @@ const UserBox = ({ image, name, email, isFriend, isRequestSent, isRequestReceive
           </View>
         </View>
       </TouchableOpacity>
-
-      <Modal
+      <ProfileModal name={name} image={image} email={email} setModalVisible={setModalVisible} modalVisible={modalVisible} isFriend={isFriend}/>
+      {/* <Modal
         animationType="slide"
         transparent={true}
         visible={modalVisible}
@@ -81,7 +82,7 @@ const UserBox = ({ image, name, email, isFriend, isRequestSent, isRequestReceive
             </TouchableOpacity>
           </View>
         </View>
-      </Modal>
+      </Modal> */}
     </View>
   );
 };

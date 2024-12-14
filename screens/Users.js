@@ -90,6 +90,8 @@ const Users = ({ navigation }) => {
       setUsers(data.getUsersInOrganization);
     },
   });
+  
+
 
   const friendRequestSubscription = useSubscription(FRIEND_REQUEST_SUBSCRIPTION, {
     variables: { receiverId: userId },
@@ -163,6 +165,8 @@ const Users = ({ navigation }) => {
       user.Name.toLowerCase().includes(searchText.toLowerCase()) ||
       user.Email.toLowerCase().includes(searchText.toLowerCase());
 
+
+      
     const isInCurrentTab =
       currentTabChoice === 'friends'
         ? user.isFriend
@@ -172,6 +176,7 @@ const Users = ({ navigation }) => {
 
     return matchesSearch && isInCurrentTab;
   });
+
 
   if (loading) {
     return <Loading />;
