@@ -4,11 +4,11 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useQuery, gql, useSubscription } from '@apollo/client';
 import { jwtDecode } from 'jwt-decode';
 import Loading from '../components/Loading/Loading';
+import { useSQLiteContext } from 'expo-sqlite';
 import UserBox from '../components/UserBox/UserBox';
 import FriendRequest from '../components/UserBox/FriendRequest';
 import CustomError from '../components/Error';
 import CustomNotFound from '../components/NotFound';
-import { useSQLiteContext } from 'expo-sqlite';
 
 const GET_USERS_IN_ORG = gql`
   query GetUsersInOrganization($organizationId: ID!) {
@@ -29,9 +29,6 @@ const FRIEND_REQUEST_SUBSCRIPTION = gql`
     friendRequestSent(receiverId: $receiverId) {
       senderId
       receiverId
-      sender {
-        Name
-      }
     }
   }
 `;
@@ -100,7 +97,7 @@ const Users = ({ navigation }) => {
       if (data) {
         const { friendRequestSent } = data.data;
         if (friendRequestSent) {
-          const { senderId, sender } = friendRequestSent;
+          const { senderId } = friendRequestSent;
           updateUserStatus(senderId, { isRequestReceived: true });
         }
       }
@@ -115,8 +112,6 @@ const Users = ({ navigation }) => {
         if (friendRequestAccept) {
           const { senderId, sender } = friendRequestAccept;
           updateUserStatus(senderId, { isRequestSent: false, isFriend: true });
-          const message = sender.Name + "send you a friend request";
-          // showLocalNotification(message);
           await db.runAsync(
             `INSERT INTO friends (userId, name, profilePicture, email, phoneNumber) VALUES (?, ?, ?, ?, ?)
             ON CONFLICT(userId) DO NOTHING;`,
@@ -172,8 +167,6 @@ const Users = ({ navigation }) => {
     const matchesSearch =
       user.Name.toLowerCase().includes(searchText.toLowerCase()) ||
       user.Email.toLowerCase().includes(searchText.toLowerCase());
-
-
       
     const isInCurrentTab =
       currentTabChoice === 'friends'
@@ -184,7 +177,6 @@ const Users = ({ navigation }) => {
 
     return matchesSearch && isInCurrentTab;
   });
-
 
   if (loading) {
     return <Loading />;

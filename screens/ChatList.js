@@ -2,8 +2,6 @@ import React, { useEffect, useState } from "react";
 import { FlatList, StyleSheet, View } from "react-native";
 import ChatBox from "../components/ChatList/ChatBox";
 import Loading from "../components/Loading/Loading";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import { jwtDecode } from "jwt-decode";
 import { useSQLiteContext } from "expo-sqlite";
 
 const ChatList = () => {
@@ -12,26 +10,14 @@ const ChatList = () => {
 
   const [friends, setFriends] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [userId, setUserId] = useState(null);
 
   useEffect(() => {
-    
     fetchFriendsFromDB();
-    const fetchOrgAndUser = async () => {
-      try {
-        const token = await AsyncStorage.getItem('token');
-        const decodedToken = jwtDecode(token);
-        setUserId(decodedToken.id);
-      } catch (error) {
-        console.error('Error fetching organization or user:', error);
-      }
-    };
-    fetchOrgAndUser();
   }, []);
 
   const fetchFriendsFromDB = async () => {
-    const fetchFriends = await db.getAllAsync('SELECT * FROM friends');
-    setFriends(fetchFriends);
+    const fetchAllFriends = await db.getAllAsync('SELECT * FROM friends');
+    setFriends(fetchAllFriends);
     setLoading(false);
   };
 

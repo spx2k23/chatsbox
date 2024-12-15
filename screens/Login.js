@@ -6,6 +6,7 @@ import { useLazyQuery, gql } from '@apollo/client';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { jwtDecode } from 'jwt-decode';
 import Loading from '../components/Loading/Loading';
+import { useSQLiteContext } from 'expo-sqlite';
 
 const LOGIN_QUERY = gql`
   query Login($Email: String!, $Password: String!) {
@@ -14,11 +15,21 @@ const LOGIN_QUERY = gql`
       message
       token
       organization
+      user {
+        id
+        Name
+        ProfilePicture
+        Email
+        MobileNumber
+      }
     }
   }
 `;
 
 const Login = ({ navigation }) => {
+
+  const db = useSQLiteContext();
+
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
@@ -52,7 +63,17 @@ const Login = ({ navigation }) => {
       if (data.login.success) {
         await AsyncStorage.setItem('token', data.login.token);
         await AsyncStorage.setItem('organization', data.login.organization);
+        const user = data.login.user;
         navigation.replace('Chats');
+        const firstRow = await db.getFirstAsync('SELECT * FROM user');
+        await db.runAsync(
+          `DELETE FROM user WHERE value = $userId`, {userId : firstRow.userId}
+        )
+        await db.runAsync(
+          `INSERT INTO user (userId, name, profilePicture, email, phoneNumber) VALUES (?, ?, ?, ?, ?)
+          ON CONFLICT(userId) DO NOTHING;`,
+          [user.id, user.Name, user.ProfilePicture, user.Email, user.MobileNumber]
+        )
       } else {
         setErrorMessage(data.login.message);
       }

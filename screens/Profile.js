@@ -1,17 +1,31 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, Text, TextInput, StyleSheet, ScrollView, TouchableOpacity, Image } from "react-native";
 import { MaterialIcons } from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
+import { useSQLiteContext } from 'expo-sqlite';
 
 const Profile = ({ navigation }) => {
+
+    const db = useSQLiteContext();
+
     const [isEditingName, setIsEditingName] = useState(false);
     const [isEditingBio, setIsEditingBio] = useState(false);
     const [isEditingCompanyName, setIsEditingCompanyName] = useState(false);
 
-    const [name, setName] = useState("Your Name");
+    const [name, setName] = useState();
     const [companyName, setCompanyName] = useState("Company Name");
     const [bio, setBio] = useState("This is your bio !");
     const [profilePic, setProfilePic] = useState(null);
+
+    useEffect(() => {
+        fetchUser();
+    }, []);
+
+    const fetchUser = async () => {
+        const user = db.getFirstAsync('SELECT * FROM user');
+        setName(user.name);
+    }
+
 
     const pickImage = async () => {
         let permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
