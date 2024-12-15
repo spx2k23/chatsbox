@@ -29,9 +29,8 @@ const ChatList = () => {
     fetchOrgAndUser();
   }, []);
 
-  const fetchFriendsFromDB = () => {
-    const fetchFriends = db.getAllAsync('SELECT * FROM friends');
-    console.log(fetchFriends);
+  const fetchFriendsFromDB = async () => {
+    const fetchFriends = await db.getAllAsync('SELECT * FROM friends');
     setFriends(fetchFriends);
     setLoading(false);
   };

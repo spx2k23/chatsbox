@@ -38,37 +38,31 @@ const FriendRequest = ({ name, email, image, userId, receiverId, isRequestSent, 
 
   const handleAccept = async (userId) => {
     const { data } = await acceptFriendRequest({
-        variables: { 
-            senderId: userId,
-            receiverId,
-         }
+      variables: {
+        senderId: userId,
+        receiverId,
+      }
     });
     if (data.acceptFriendRequest.success) {
       const user = data.acceptFriendRequest.sender
-        updateUserStatus(receiverId, { isRequestReceived: false, isFriend: true });
-        console.log(user.id, user.Name, user.Email, user.MobileNumber);
-        const result = await db.runAsync(
-          `INSERT INTO friends (userId, name, profilePicture, email, phoneNumber) VALUES (?, ?, ?, ?, ?)
+      updateUserStatus(receiverId, { isRequestReceived: false, isFriend: true });
+      await db.runAsync(
+        `INSERT INTO friends (userId, name, profilePicture, email, phoneNumber) VALUES (?, ?, ?, ?, ?)
           ON CONFLICT(userId) DO NOTHING;`,
-          [user.id, user.Name, user.ProfilePicture, user.Email, user.MobileNumber]
-        )
-        if (result.rowsAffected > 0) {
-          console.log("Data added successfully!");
-        } else {
-          console.log("Data was not added (possible conflict or no change).");
-        }
+        [user.id, user.Name, user.ProfilePicture, user.Email, user.MobileNumber]
+      )
     }
   };
 
   const handleReject = async (userId) => {
     const { data } = await rejectFriendRequest({
-        variables: { 
-            senderId: userId,
-            receiverId,
-        }
+      variables: {
+        senderId: userId,
+        receiverId,
+      }
     });
     if (data.rejectFriendRequest.success) {
-        updateUserStatus(receiverId, { isRequestReceived: false });
+      updateUserStatus(receiverId, { isRequestReceived: false });
     }
   };
 
@@ -79,30 +73,30 @@ const FriendRequest = ({ name, email, image, userId, receiverId, isRequestSent, 
         <Text style={styles.name}>{name}</Text>
         <Text style={styles.email}>{email}</Text>
         <View>
-            {
-                isRequestReceived && (
-                    <View style={styles.buttonContainer}>
-                        <Button 
-                          title="Accept" 
-                          buttonStyle={styles.acceptButton} 
-                          onPress={() => handleAccept(userId)}
-                        />
-                        <Button 
-                          title="Reject" 
-                          buttonStyle={styles.rejectButton} 
-                          onPress={() => handleReject(userId)}
-                        />
-                    </View>
+          {
+            isRequestReceived && (
+              <View style={styles.buttonContainer}>
+                <Button
+                  title="Accept"
+                  buttonStyle={styles.acceptButton}
+                  onPress={() => handleAccept(userId)}
+                />
+                <Button
+                  title="Reject"
+                  buttonStyle={styles.rejectButton}
+                  onPress={() => handleReject(userId)}
+                />
+              </View>
 
-                )
-            }
-            {
-                isRequestSent && (
-                    <View>
-                        <Text>send friend request</Text>
-                    </View>
-                )
-            }
+            )
+          }
+          {
+            isRequestSent && (
+              <View>
+                <Text>send friend request</Text>
+              </View>
+            )
+          }
         </View>
       </View>
     </View>
@@ -145,10 +139,10 @@ const styles = StyleSheet.create({
   acceptButton: {
     backgroundColor: '#6200EE',
     marginRight: 10,
-    width:100
+    width: 100
   },
   rejectButton: {
     backgroundColor: '#B0BEC5',
-    width:100
+    width: 100
   },
 });
