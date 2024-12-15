@@ -8,7 +8,7 @@ const CHECK_PENDING_NOTIFICATIONS = gql`
       success
       pendingNotifications {
         type
-        senderId {
+        sender {
           id
           Name
           ProfilePicture

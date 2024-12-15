@@ -15,6 +15,8 @@ const ProfileModal = ({ setModalVisible, image, name, email, modalVisible, userI
   const [sendFriendRequest] = useMutation(SEND_FRIEND_REQUEST);
 
   const handleSendRequest = async () => {
+    console.log(userId,receiverId);
+    
     setModalVisible(false);
     const { data } = await sendFriendRequest({
       variables: { senderId: userId, receiverId },

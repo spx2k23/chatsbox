@@ -2,7 +2,7 @@ import React from 'react';
 import { View, Text, StyleSheet, Image } from 'react-native';
 import { Button } from 'react-native-elements';
 import { gql, useMutation } from "@apollo/client";
-import db from '../../db_configs/dbSetup';
+import { useSQLiteContext } from 'expo-sqlite';
 
 const ACCEPT_FRIEND_REQUEST = gql`
   mutation AcceptFriendRequest($senderId: ID!, $receiverId: ID!) {
@@ -31,6 +31,8 @@ const REJECT_FRIEND_REQUEST = gql`
 
 const FriendRequest = ({ name, email, image, userId, receiverId, isRequestSent, isRequestReceived, updateUserStatus }) => {
 
+  const db = useSQLiteContext();
+
   const [acceptFriendRequest] = useMutation(ACCEPT_FRIEND_REQUEST);
   const [rejectFriendRequest] = useMutation(REJECT_FRIEND_REQUEST);
 
@@ -44,11 +46,17 @@ const FriendRequest = ({ name, email, image, userId, receiverId, isRequestSent, 
     if (data.acceptFriendRequest.success) {
       const user = data.acceptFriendRequest.sender
         updateUserStatus(receiverId, { isRequestReceived: false, isFriend: true });
-        db.runAsync(
+        console.log(user.id, user.Name, user.Email, user.MobileNumber);
+        const result = await db.runAsync(
           `INSERT INTO friends (userId, name, profilePicture, email, phoneNumber) VALUES (?, ?, ?, ?, ?)
           ON CONFLICT(userId) DO NOTHING;`,
           [user.id, user.Name, user.ProfilePicture, user.Email, user.MobileNumber]
         )
+        if (result.rowsAffected > 0) {
+          console.log("Data added successfully!");
+        } else {
+          console.log("Data was not added (possible conflict or no change).");
+        }
     }
   };
 

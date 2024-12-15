@@ -8,6 +8,7 @@ import UserBox from '../components/UserBox/UserBox';
 import FriendRequest from '../components/UserBox/FriendRequest';
 import CustomError from '../components/Error';
 import CustomNotFound from '../components/NotFound';
+import { useSQLiteContext } from 'expo-sqlite';
 
 const GET_USERS_IN_ORG = gql`
   query GetUsersInOrganization($organizationId: ID!) {
@@ -68,6 +69,8 @@ const Users = ({ navigation }) => {
   const [users, setUsers] = useState([]);
   const [requestCount, setRequestCount] = useState(0); // Managing request count
 
+  const db = useSQLiteContext();
+
   useEffect(() => {
     const fetchOrgAndUser = async () => {
       try {
@@ -90,10 +93,8 @@ const Users = ({ navigation }) => {
       setUsers(data.getUsersInOrganization);
     },
   });
-  
 
-
-  const friendRequestSubscription = useSubscription(FRIEND_REQUEST_SUBSCRIPTION, {
+  useSubscription(FRIEND_REQUEST_SUBSCRIPTION, {
     variables: { receiverId: userId },
     onData: ({ data }) => {
       if (data) {
@@ -106,20 +107,27 @@ const Users = ({ navigation }) => {
     },
   });
 
-  const acceptFriendSubscription = useSubscription(ACCEPT_FRIEND_SUBSCRIPTION, {
+  useSubscription(ACCEPT_FRIEND_SUBSCRIPTION, {
     variables: { receiverId: userId },
-    onData: ({ data }) => {
+    onData: async ({ data }) => {
       if (data) {
         const { friendRequestAccept } = data.data;
         if (friendRequestAccept) {
           const { senderId, sender } = friendRequestAccept;
           updateUserStatus(senderId, { isRequestSent: false, isFriend: true });
+          const message = sender.Name + "send you a friend request";
+          // showLocalNotification(message);
+          await db.runAsync(
+            `INSERT INTO friends (userId, name, profilePicture, email, phoneNumber) VALUES (?, ?, ?, ?, ?)
+            ON CONFLICT(userId) DO NOTHING;`,
+            [sender.id, sender.Name, sender.ProfilePicture, sender.Email, sender.MobileNumber]
+          )
         }
       }
     },
   });
 
-  const rejectFriendSubscription = useSubscription(REJECT_FRIEND_SUBSCRIPTION, {
+  useSubscription(REJECT_FRIEND_SUBSCRIPTION, {
     variables: { receiverId: userId },
     onData: ({ data }) => {
       if (data) {

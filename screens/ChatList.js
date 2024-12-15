@@ -1,39 +1,18 @@
 import React, { useEffect, useState } from "react";
 import { FlatList, StyleSheet, View } from "react-native";
 import ChatBox from "../components/ChatList/ChatBox";
-import { gql, useSubscription } from "@apollo/client";
 import Loading from "../components/Loading/Loading";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { jwtDecode } from "jwt-decode";
 import { useSQLiteContext } from "expo-sqlite";
 
-const ACCEPT_FRIEND_SUBSCRIPTION = gql`
-  subscription FriendRequestAccept($receiverId: ID!) {
-    friendRequestAccept(receiverId: $receiverId) {
-      senderId
-      receiverId
-      sender
-    }
-  }
-`;
-
 const ChatList = () => {
-
-  const data=[{
-    name:'Drago',
-    id:25,
-    image:'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQSOS1l3ChxcZAgXtI2AKpv4KliooS_mFGk3A&s',
-    userId:25
-  }]
 
   const db = useSQLiteContext();
 
   const [friends, setFriends] = useState([]);
   const [loading, setLoading] = useState(true);
   const [userId, setUserId] = useState(null);
-
- 
-  
 
   useEffect(() => {
     
@@ -50,33 +29,12 @@ const ChatList = () => {
     fetchOrgAndUser();
   }, []);
 
-  useSubscription(ACCEPT_FRIEND_SUBSCRIPTION, {
-    variables: { receiverId: userId },
-    onData: async ({ data })  => {
-      if (data) {
-        const { friendRequestAccept } = data.data;
-        if (friendRequestAccept) {
-          const user = friendRequestAccept.sender;
-          const { senderId } = friendRequestAccept;
-          updateUserStatus(senderId, { isRequestSent: false, isFriend: true });
-          const userExist = db.getFirstAsync('SELECT * FROM friends WHERE userId = ?', [user._id]);
-          if(!userExist){
-            await db.runAsync('INSERT INTO friends (userId, name, profilePicture, email, phoneNumber) VALUES (?, ?, ?, ?)',
-              [user._id, user.Name, user.ProfilePicture, user.Email, user.MobileNumber]
-            )
-          }
-        }
-      }
-    },
-  });
-
   const fetchFriendsFromDB = () => {
     const fetchFriends = db.getAllAsync('SELECT * FROM friends');
+    console.log(fetchFriends);
     setFriends(fetchFriends);
     setLoading(false);
   };
-
- 
 
   const renderItem = ({ item }) => (
     <ChatBox

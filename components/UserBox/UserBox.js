@@ -63,7 +63,8 @@ const UserBox = ({ image, name, email, isFriend, isRequestSent, isRequestReceive
           </View>
         </View>
       </TouchableOpacity>
-      <ProfileModal name={name} image={image} email={email} setModalVisible={setModalVisible} modalVisible={modalVisible} isFriend={isFriend}/>
+      <ProfileModal name={name} image={image} email={email} userId={userId} receiverId={receiverId} updateUserStatus={updateUserStatus}
+       setModalVisible={setModalVisible} modalVisible={modalVisible} isFriend={isFriend}/>
       {/* <Modal
         animationType="slide"
         transparent={true}

@@ -7,7 +7,13 @@ const NOTIFICATION_SUBSCRIPTION = gql`
   subscription Notification($receiverId: ID!) {
     notification(receiverId: $receiverId) {
       type
-      sender
+      sender {
+        id
+        Name
+        ProfilePicture
+        Email
+        MobileNumber
+      }
       receiverId
     }
   }
