@@ -66,14 +66,16 @@ const Login = ({ navigation }) => {
         const user = data.login.user;
         navigation.replace('Chats');
         const firstRow = await db.getFirstAsync('SELECT * FROM user');
-        await db.runAsync(
-          `DELETE FROM user WHERE value = $userId`, {userId : firstRow.userId}
-        )
-        await db.runAsync(
+        // await db.runAsync(
+        //   `DELETE FROM user WHERE value = $userId`, {userId : firstRow.userId}
+        // )
+      await db.runAsync(
           `INSERT INTO user (userId, name, profilePicture, email, phoneNumber) VALUES (?, ?, ?, ?, ?)
           ON CONFLICT(userId) DO NOTHING;`,
           [user.id, user.Name, user.ProfilePicture, user.Email, user.MobileNumber]
         )
+    
+        
       } else {
         setErrorMessage(data.login.message);
       }

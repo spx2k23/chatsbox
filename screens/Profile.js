@@ -15,15 +15,19 @@ const Profile = ({ navigation }) => {
     const [name, setName] = useState();
     const [companyName, setCompanyName] = useState("Company Name");
     const [bio, setBio] = useState("This is your bio !");
+    const [email, setemail] = useState("");
     const [profilePic, setProfilePic] = useState(null);
+
 
     useEffect(() => {
         fetchUser();
     }, []);
 
     const fetchUser = async () => {
-        const user = db.getFirstAsync('SELECT * FROM user');
+        const user =await db.getFirstAsync('SELECT * FROM user');
         setName(user.name);
+        setProfilePic(user.profilePicture);
+        setemail(user.email);
     }
 
 
@@ -66,25 +70,26 @@ const Profile = ({ navigation }) => {
             <View style={styles.profileContainer}>
                 <TouchableOpacity onPress={pickImage} style={styles.profilePicWrapper}>
                     {profilePic ? (
-                        <Image source={{ uri: profilePic }} style={styles.profileImg} />
+                        <Image source={{ uri: `data:image/jpeg;base64,${profilePic}` }} style={styles.profileImg} />
                     ) : (
                         <MaterialIcons name="account-circle" size={150} color="#6200EE" style={styles.profileImg} />
                     )}
                 </TouchableOpacity>
                 <Text style={styles.profileText}>Tap to change profile picture</Text>
+                <Text style={styles.email}>{email}</Text>
             </View>
 
             {/* Editable Name */}
             <View style={styles.inputContainer}>
                 {isEditingName ? (
                     <TextInput
-                        style={styles.inputField}
+                        style={[styles.inputField,styles.name]}
                         value={name}
                         onChangeText={setName}
                         placeholder="Your Name"
                     />
                 ) : (
-                    <Text style={styles.textField}>{name}</Text>
+                    <Text style={[styles.textField,styles.name]}>{name}</Text>
                 )}
                 <TouchableOpacity onPress={isEditingName ? handleSaveName : handleEditName} style={styles.editIcon}>
                     <MaterialIcons name={isEditingName ? "save" : "edit"} size={24} color="#6200EE" />
@@ -92,7 +97,7 @@ const Profile = ({ navigation }) => {
             </View>
 
             {/* Email */}
-            <Text style={styles.email}>yourmail@gmail.com</Text>
+           
 
             {/* Editable Company Name */}
             <View style={styles.inputContainer}>
@@ -203,9 +208,9 @@ const styles = StyleSheet.create({
         padding: 5,
     },
     email: {
-        color: '#6200EE',
+        color: '#6B6B6B',
         fontSize: 16,
-        marginBottom: 20,
+        marginTop: 10,
     },
     scrollViewContainer: {
         alignItems: 'center',
@@ -214,7 +219,7 @@ const styles = StyleSheet.create({
         paddingBottom: 50,
     },
     bio:{
-        marginTop:30,
+        marginTop:10,
         fontWeight:'500',
         fontSize:18
     
@@ -252,4 +257,7 @@ const styles = StyleSheet.create({
         textAlign: 'center',
         marginBottom:20
     },
+    name:{
+        marginBottom:0
+    }
 });

@@ -7,12 +7,24 @@ import DrawerHeader from '../../components/ChatList/DrawerHeader'; // Update the
 import { MaterialIcons } from '@expo/vector-icons';
 import { jwtDecode } from 'jwt-decode';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { Platform } from 'react-native';
+import { Platform, View,Image, StyleSheet, TouchableOpacity } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
+import { useSQLiteContext } from 'expo-sqlite';
 
 const Drawer = createDrawerNavigator();
 
 const DrawerList = () => {
+const [currentUser,setCurrentUser]=useState({}); 
+const db=useSQLiteContext();
+  useEffect(() => {
+    fetchUser();
+}, []);
+
+const fetchUser = async () => {
+    const user = await db.getFirstAsync('SELECT * FROM user');
+    setCurrentUser(user);
+    
+}
   const [isSuperAdmin, setIsSuperAdmin] = useState(false);
     useEffect(() => {
     const checkSuperAdminStatus = async () => {
@@ -27,13 +39,16 @@ const DrawerList = () => {
   }, []);
   const navigation=useNavigation();
   const profileIcon = () => (
-    <MaterialIcons
+    <View>
+    {currentUser.profilePicture==null&&<MaterialIcons
       name="account-circle"
       size={30}
       color="#6200EE"
       style={{ marginRight: 15 }}
       onPress={() => navigation.navigate('Profile')} // Navigate to Profile screen
-    />
+    />}
+   {currentUser.profilePicture!=null&&<TouchableOpacity onPress={() => navigation.navigate('Profile')} ><Image source={{ uri: `data:image/jpeg;base64,${currentUser.profilePicture}` }} style={styles.image} /></TouchableOpacity>}
+    </View>
   );
   return (
     <Drawer.Navigator
@@ -53,7 +68,7 @@ const DrawerList = () => {
         },
         headerStatusBarHeight:Platform.OS=='ios'?50:10, // Adjust if needed
         headerTintColor:'#6200EE',
-        headerTitleAlign:'center'
+        headerTitleAlign:'center',
       }}
     >
       <Drawer.Screen 
@@ -65,6 +80,9 @@ const DrawerList = () => {
           ),
           title: 'Chat List',
           headerRight: profileIcon,
+          headerStyle: {
+            height:Platform.OS==='android'?70:110,
+          },
         }}
       />
       <Drawer.Screen 
@@ -76,6 +94,9 @@ const DrawerList = () => {
           ),
           title: 'Users',
           headerRight: profileIcon,
+          headerStyle: {
+            height:Platform.OS==='android'?70:110,
+          },
         }}
       />
       {isSuperAdmin&&<Drawer.Screen 
@@ -91,5 +112,14 @@ const DrawerList = () => {
     </Drawer.Navigator>
   );
 };
+
+const styles=StyleSheet.create({
+  image: {
+    width: 40,
+    height: 40,
+    borderRadius: 25,
+    marginRight:Platform.OS==='ios'?30:20,
+  },
+});
 
 export default DrawerList;

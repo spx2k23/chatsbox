@@ -46,6 +46,8 @@ const FriendRequest = ({ name, email, image, userId, receiverId, isRequestSent, 
     if (data.acceptFriendRequest.success) {
       const user = data.acceptFriendRequest.sender
       updateUserStatus(receiverId, { isRequestReceived: false, isFriend: true });
+      console.log(user.name,'user');
+      
       await db.runAsync(
         `INSERT INTO friends (userId, name, profilePicture, email, phoneNumber) VALUES (?, ?, ?, ?, ?)
           ON CONFLICT(userId) DO NOTHING;`,

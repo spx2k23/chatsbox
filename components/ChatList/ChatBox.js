@@ -1,6 +1,6 @@
 import { useNavigation } from "@react-navigation/native";
 import React from "react";
-import { View, Image, Text, StyleSheet, TouchableOpacity } from "react-native";
+import { View, Image, Text, StyleSheet, TouchableOpacity, Platform } from "react-native";
 
 const ChatBox = ({ image, name, id, lastmessage, lastmessage_time }) => {
     const navigation = useNavigation(); // Moved inside the component
@@ -30,12 +30,15 @@ const ChatBox = ({ image, name, id, lastmessage, lastmessage_time }) => {
 
 const styles = StyleSheet.create({
     container: {
+        margin:5,
         flexDirection: "row", 
         padding: 10,
         alignItems: "center", 
         borderBottomWidth: 1,
         borderBottomColor: "#e0e0e0", 
         backgroundColor: "#fff", 
+        width:Platform.OS==='android'?400:380,
+        marginLeft: Platform.OS === 'ios' ? 25 : 0
     },
     avatar: {
         width: 50,

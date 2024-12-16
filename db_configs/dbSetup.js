@@ -10,7 +10,7 @@ export const initializeDatabase = async (db) => {
         email TEXT NOT NULL,
         phoneNumber TEXT NOT NULL,
         UNIQUE(userId)
-      )
+      );
       CREATE TABLE IF NOT EXISTS friends (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         userId TEXT NOT NULL,
