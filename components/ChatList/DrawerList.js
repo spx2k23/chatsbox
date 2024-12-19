@@ -40,7 +40,7 @@ const fetchUser = async () => {
   const navigation=useNavigation();
   const profileIcon = () => (
     <View>
-    {currentUser.profilePicture==null&&<MaterialIcons
+    {currentUser.profilePicture===null&&<MaterialIcons
       name="account-circle"
       size={30}
       color="#6200EE"

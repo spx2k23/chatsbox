@@ -1,89 +1,104 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, TextInput, StyleSheet, ScrollView, TouchableOpacity, Image } from "react-native";
+import { View, Text, TextInput, StyleSheet, ScrollView, TouchableOpacity, Image, Platform ,Dimensions} from "react-native";
 import { MaterialIcons } from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
 import { useSQLiteContext } from 'expo-sqlite';
+import DateOfBirth from '../components/Profile/DateOfBirth';
+import { Button } from 'react-native-elements';
+
+const { width } = Dimensions.get('window');
+const scale = width / 375; // 375 is the baseline width (iPhone 6)
+
+const scaleFont = (size) => size * scale;
+const scaleSize = (size) => size * scale;
 
 const Profile = ({ navigation }) => {
-
     const db = useSQLiteContext();
 
-    const [isEditingName, setIsEditingName] = useState(false);
-    const [isEditingBio, setIsEditingBio] = useState(false);
-    const [isEditingCompanyName, setIsEditingCompanyName] = useState(false);
-
+    const[isEditing,setIsEditing]=useState(false);
     const [name, setName] = useState();
-    const [companyName, setCompanyName] = useState("Company Name");
+    const [companyName, setCompanyName] = useState("");
     const [bio, setBio] = useState("This is your bio !");
-    const [email, setemail] = useState("");
+    const [role,setRole]=useState('')
+    const [email, setEmail] = useState("");
     const [profilePic, setProfilePic] = useState(null);
-
+    const [selectedDate, setSelectedDate] = useState(new Date(2002, 4, 1));
 
     useEffect(() => {
-        fetchUser();
+        fetchUser ();
     }, []);
 
-    const fetchUser = async () => {
-        const user =await db.getFirstAsync('SELECT * FROM user');
+    const fetchUser  = async () => {
+        const user = await db.getFirstAsync('SELECT * FROM user');
         setName(user.name);
         setProfilePic(user.profilePicture);
-        setemail(user.email);
+        setEmail(user.email);
+        setRole('Junior Developer');
+        setCompanyName('Company Name')
     }
-
 
     const pickImage = async () => {
         let permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
-
         if (permissionResult.granted === false) {
-            alert("Permission to access camera roll is required!");
-            return;
+          alert("Permission to access camera roll is required!");
+          return;
         }
-
+      
         let pickerResult = await ImagePicker.launchImageLibraryAsync({
-            mediaTypes: ImagePicker.MediaTypeOptions.Images,
-            allowsEditing: true,  
-            aspect: [4, 3],
-            quality: 1,           
+          mediaTypes: [ImagePicker.CameraType.front],
+          allowsEditing: true,
+          aspect: [4, 3],
+          quality: 1,
         });
-
-        if (!pickerResult.cancelled) {
-            setProfilePic(pickerResult.uri);
+      
+        if (!pickerResult.cancelled && pickerResult.uri) {
+          setProfilePic(pickerResult.uri);
+          console.log(pickerResult.uri);
         }
-    };
+      };
 
-    const handleEditName = () => setIsEditingName(true);
-    const handleSaveName = () => setIsEditingName(false);
-    const handleEditCompanyName = () => setIsEditingCompanyName(true);
-    const handleSaveCompanyName = () => setIsEditingCompanyName(false);
-    const handleEditBio = () => setIsEditingBio(true);
-    const handleSaveBio = () => {
+    const handleEdit = () => setIsEditing(true);
+    const handleSave = () => {
         if (bio.length > 150) {
             alert("Bio cannot exceed 150 characters.");
         } else {
-            setIsEditingBio(false);
+            setIsEditing(false);
         }
     };
 
     return (
         <View style={styles.container}>
             {/* Profile Picture */}
+            <View style={styles.backdrop}></View>
             <View style={styles.profileContainer}>
-                <TouchableOpacity onPress={pickImage} style={styles.profilePicWrapper}>
+                <TouchableOpacity onPress={isEditing?pickImage:null} style={styles.profilePicWrapper} activeOpacity={isEditing?0.2:1}>
+                { isEditing&&<View style={styles.profileedit}><MaterialIcons name='camera-alt' size={54} color="#fff" /></View>}
                     {profilePic ? (
-                        <Image source={{ uri: `data:image/jpeg;base64,${profilePic}` }} style={styles.profileImg} />
+                        <Image source={{ uri: `data:image/jpeg;base64,${profilePic}`}} style={styles.profileImg} />
                     ) : (
                         <MaterialIcons name="account-circle" size={150} color="#6200EE" style={styles.profileImg} />
                     )}
                 </TouchableOpacity>
-                <Text style={styles.profileText}>Tap to change profile picture</Text>
                 <Text style={styles.email}>{email}</Text>
+                <Text style={styles.company}>{companyName}</Text>
+               
             </View>
+  
+  
+  
+            <TouchableOpacity onPress={handleEdit} style={styles.editIcon}>
+                   {/* <Text style={styles.edit}>{'Edit'}</Text> */}
+                    <MaterialIcons name={"edit"} size={24} color="#6200EE" />
+                    
+                </TouchableOpacity>
 
-            {/* Editable Name */}
+           <Text style={styles.lable}> 
+            Name :</Text>
             <View style={styles.inputContainer}>
-                {isEditingName ? (
+            
+                {isEditing? (
                     <TextInput
-                        style={[styles.inputField,styles.name]}
+                        style={styles.inputField}
                         value={name}
                         onChangeText={setName}
                         placeholder="Your Name"
@@ -91,51 +106,58 @@ const Profile = ({ navigation }) => {
                 ) : (
                     <Text style={[styles.textField,styles.name]}>{name}</Text>
                 )}
-                <TouchableOpacity onPress={isEditingName ? handleSaveName : handleEditName} style={styles.editIcon}>
-                    <MaterialIcons name={isEditingName ? "save" : "edit"} size={24} color="#6200EE" />
-                </TouchableOpacity>
+               
             </View>
-
-            {/* Email */}
-           
-
-            {/* Editable Company Name */}
+            <Text style={styles.lable}> Role :</Text>
             <View style={styles.inputContainer}>
-                {isEditingCompanyName ? (
+            
+                {isEditing? (
                     <TextInput
-                        style={styles.inputField}
-                        value={companyName}
-                        onChangeText={setCompanyName}
-                        placeholder="Company Name"
+                        style={[styles.inputField,{fontSize:16}]}
+                        value={role}
+                        onChangeText={setRole}
+                        placeholder="Your Name"
                     />
                 ) : (
-                    <Text style={styles.textField}>{companyName}</Text>
+                    <Text style={[styles.textField,styles.role]}>{role}</Text>
                 )}
-                <TouchableOpacity onPress={isEditingCompanyName ? handleSaveCompanyName : handleEditCompanyName} style={styles.editIcon}>
-                    <MaterialIcons name={isEditingCompanyName ? "save" : "edit"} size={24} color="#6200EE" />
-                </TouchableOpacity>
+               
             </View>
 
-            {/* Editable Bio */}
-            <ScrollView contentContainerStyle={[styles.scrollViewContainer,styles.bio]}>
-        <View style={styles.inputContainer}>
-        {isEditingBio ? (
-            <TextInput
-                style={styles.textArea}
-                value={bio}
-                onChangeText={setBio}
-                placeholder="Your bio"
-                multiline
-                numberOfLines={4}
-            />
-        ) : (
-            <Text style={[styles.textField,styles.bio]}>{bio}</Text>
-        )}
-            <TouchableOpacity onPress={isEditingBio ? handleSaveBio : handleEditBio} style={styles.editIcon}>
-                <MaterialIcons name={isEditingBio ? "save" : "edit"} size={24} color="#6200EE" />
-            </TouchableOpacity>
-        </View>
-    </ScrollView>
+            <Text style={styles.lable}>Date Of Birth :</Text>
+            <DateOfBirth isEditing={isEditing} setIsEditing={setIsEditing} selectedDate={selectedDate} setSelectedDate={setSelectedDate}/>
+            <Text style={[styles.lable,styles.bio]}>Bio :</Text>
+            <ScrollView contentContainerStyle={styles.scrollViewContainer}>
+                <View style={styles.inputContainer}>
+                    {isEditing ? (
+                        <TextInput
+                            style={styles.textArea}
+                            value={bio}
+                            onChangeText={setBio}
+                            placeholder="Your bio"
+                            multiline
+                            numberOfLines={4}
+                        />
+                    ) : (
+                        <Text style={[styles.textField,styles.bio]}>{bio}</Text>
+                    )}
+                </View>
+            </ScrollView>
+            
+            {isEditing && (
+  <View style={styles.btncontainer}>
+    <Button 
+      onPress={handleSave} 
+      buttonStyle={styles.btnsave} 
+      title="Save" 
+    />
+    <Button 
+      onPress={() => setIsEditing(false)} 
+      buttonStyle={styles.btncancel} 
+      title="Cancel" 
+    />
+  </View>
+)}
 
             {/* Footer */}
             <View style={styles.footerContainer}>
@@ -149,93 +171,99 @@ const Profile = ({ navigation }) => {
 export default Profile;
 
 const styles = StyleSheet.create({
+    backdrop: {
+        backgroundColor: '#6200EE',
+        position: 'absolute',
+        top: 0,
+        zIndex: 1,
+        height: 100,
+        width: '120%',
+    },
     container: {
         flex: 1,
         alignItems: 'center',
         justifyContent: 'flex-start',
-        padding: 20,
+        padding: scaleSize(20), // Scaled padding for consistency
         backgroundColor: '#f4f7fa',
     },
     profileContainer: {
+        position: 'relative',
         alignItems: 'center',
-        marginBottom: 40,
         justifyContent: 'center',
+        zIndex: 2,
     },
     profilePicWrapper: {
-        borderRadius: 75,
-        borderWidth: 3,
-        borderColor: '#6200EE',
+        borderRadius: scaleSize(85), // Scaled profile pic
+        borderWidth: scaleSize(2),
+        borderColor: '#fff',
         overflow: 'hidden',
-        backgroundColor: 'transparent', // Make sure border is visible on Android
+        position: 'relative',  // Ensures that the profile edit icon can be positioned over the profile picture
+        alignItems: 'center',
+        justifyContent: 'center',
+        zIndex: 1,
     },
     profileImg: {
-        width: 150,
-        height: 150,
-        borderRadius: 75,
-    },
-    profileText: {
-        fontSize: 14,
-        color: '#6200EE',
-        textAlign: 'center',
-        marginTop: 10,
+        width: scaleSize(100),
+        height: scaleSize(100),
+        borderRadius: scaleSize(75),
     },
     inputContainer: {
         flexDirection: 'row',
         alignItems: 'center',
-        justifyContent: 'center',
-        marginBottom: 20,
-        width: '100%',
+        justifyContent: 'space-between',
+        marginBottom: scaleSize(20), // Scaled margin
+        width: '70%',
+        marginLeft:50
     },
     inputField: {
-        fontSize: 18,
-        color: '#6200EE',
-        borderBottomWidth: 2,
+        width:200,
+        fontSize: scaleFont(18), // Scaled font size
+        borderBottomWidth: scaleSize(2),
         borderBottomColor: '#6200EE',
         flex: 1,
-        marginRight: 10,
-        paddingHorizontal: 10,
-        paddingVertical: 5,
+        marginRight: scaleSize(10),
+        paddingHorizontal: scaleSize(10),
+        paddingVertical: scaleSize(5),
         textAlign: 'center',
     },
     textField: {
-        fontSize: 20,
-        color: '#6200EE',
-        fontWeight: 'bold',
         textAlign: 'center',
         flex: 1,
+        // borderBottomWidth: scaleSize(2),
+        // borderBottomColor: '#6200EE',
+        marginTop: scaleSize(10),
+        paddingBottom: scaleSize(2),
     },
     editIcon: {
-        padding: 5,
+        padding: scaleSize(5),
+        alignSelf: 'flex-end',
+        marginRight: scaleSize(20),
+        marginTop: scaleSize(10),
+        flexDirection: 'row',
     },
     email: {
         color: '#6B6B6B',
-        fontSize: 16,
-        marginTop: 10,
+        fontSize: scaleFont(16),
+        marginTop: scaleSize(10),
     },
     scrollViewContainer: {
         alignItems: 'center',
         justifyContent: 'center',
         width: '100%',
-        paddingBottom: 50,
-    },
-    bio:{
-        marginTop:10,
-        fontWeight:'500',
-        fontSize:18
-    
     },
     textArea: {
-        fontSize: 16,
+        fontSize: scaleFont(14),
         color: '#333',
-        marginBottom: 10,
+        marginTop: scaleSize(10),
         textAlign: 'center',
         flex: 1,
-        borderWidth: 1,
+        borderWidth: scaleSize(1),
         borderColor: '#6200EE',
-        padding: 10,
-        borderRadius: 10,
-        backgroundColor: '#f9f9f9', 
-        lineHeight: 20, // Adjust lineHeight for better vertical centering
+        padding: scaleSize(10),
+        borderRadius: scaleSize(10),
+        backgroundColor: '#f9f9f9',
+        lineHeight: scaleSize(20),
+        height: scaleSize(90),
     },
     footerContainer: {
         position: 'absolute',
@@ -243,21 +271,68 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'center',
         width: '100%',
-        paddingVertical: 10,
+        paddingVertical: scaleSize(10),
     },
     line: {
-        borderBottomWidth: 1,
+        borderBottomWidth: scaleSize(1),
         borderBottomColor: '#6200EE',
         width: '80%',
-        marginBottom: 10,
+        marginBottom: scaleSize(10),
     },
     footerText: {
-        fontSize: 14,
+        fontSize: scaleFont(14),
         color: '#6200EE',
         textAlign: 'center',
-        marginBottom:20
+        marginBottom: scaleSize(10),
     },
-    name:{
-        marginBottom:0
+    role: {
+        margin: Platform.OS === 'ios' ? scaleSize(4) : 0,
+        fontSize:16
+    },
+    company: {
+        fontWeight: 'bold',
+        color: '#6200EE',
+
+        fontSize: scaleFont(15),
+        margin: Platform.OS === 'ios' ? scaleSize(8) : scaleSize(5),
+    },
+    name: {
+        fontSize: scaleFont(24),
+        fontWeight: '300',
+    },
+    bio: {
+        marginTop: scaleSize(10),
+        paddingBottom:10
+    },
+    lable: {
+        alignSelf: 'flex-start',
+        fontWeight: 'bold',
+        color: '#6200EE',
+        marginTop: scaleSize(5),
+        marginLeft:30
+    },
+    btncontainer: {
+        flexDirection: 'row',
+        height: scaleSize(100), // Scaled height for button container
+        marginLeft:90
+    },
+    btnsave: {
+        width: scaleSize(80),
+        fontSize: scaleFont(16),
+        color: '#fff',
+        backgroundColor: '#6200EE',
+    },
+    btncancel: {
+        backgroundColor: '#B0BEC5',
+        width: scaleSize(80),
+        color: '#fff',
+        fontSize: scaleFont(16),
+        marginLeft: scaleSize(15),
+    },
+    profileedit:{
+        position: 'absolute',
+        top: scaleSize(30),  // Adjust based on your preference (closer to the top)
+        zIndex: 10,  
+       
     }
 });

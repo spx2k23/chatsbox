@@ -3,6 +3,7 @@ import { FlatList, StyleSheet, View ,Text} from "react-native";
 import ChatBox from "../components/ChatList/ChatBox";
 import Loading from "../components/Loading/Loading";
 import { useSQLiteContext } from "expo-sqlite";
+import CustomDataNotFound from "../components/NotFound";
 
 const ChatList = () => {
 
@@ -40,10 +41,8 @@ const ChatList = () => {
   }
 
   if (friends.length === 0) {
-    return (
-      <View style={styles.center}>
-        <Text>No friends found</Text>
-      </View>
+    return ( 
+        <CustomDataNotFound title={'Please add friends to chat'}  />
     );
   }
 

@@ -185,7 +185,8 @@ const Users = ({ navigation }) => {
   }
 
   if (error) {
-    return <CustomError title={'Error occurred'} />;
+    return <CustomNotFound title={'No data available'} />;
+    // return <CustomError title={'Error occurred'} />;
   }
 
   if (!data || !data.getUsersInOrganization) {
