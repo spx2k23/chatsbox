@@ -31,7 +31,7 @@ const DateOfBirth = ({isEditing,selectedDate, setSelectedDate}) => {
 
   return (
     <View style={[styles.container,datestaticstyles.date]}>
-      <Text style={styles.dateText}>{formattedDate}</Text>
+      <Text style={isEditing?styles.textField:styles.iseditTextField}>{formattedDate}</Text>
      {isEditing&&<TouchableOpacity onPress={showDatePicker} style={styles.calender} >
         <MaterialIcons name='calendar-month' size={24} color="#6200EE"/>
       </TouchableOpacity>}
@@ -40,6 +40,7 @@ const DateOfBirth = ({isEditing,selectedDate, setSelectedDate}) => {
         mode="date"
         onConfirm={handleConfirm}
         onCancel={hideDatePicker}
+        date={selectedDate}
       />
     </View>
   );
@@ -53,15 +54,25 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginLeft:50
   },
-  dateText: {
-    fontSize: 16, // You can adjust the font size as needed
-    marginBottom: 10,
-    letterSpacing:Platform.OS==='android'?2:4
+  textField: {
+    textAlign: 'center',
+    flex: 1,
+    marginTop: 10,
+    paddingBottom: 2,
+    letterSpacing:Platform.OS==='android'?2:4,
   },
   calender:{
     marginLeft:20,
     marginBottom:8
   },
+iseditTextField:{
+  textAlign: 'left',
+  flex: 1,
+  marginTop: 5,
+  paddingBottom:2,
+  marginLeft:-5,
+  letterSpacing:Platform.OS==='android'?2:4
+},
 });
 
 export default DateOfBirth;
