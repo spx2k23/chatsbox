@@ -52,7 +52,8 @@ const styles = StyleSheet.create({
     width:'70%',
     justifyContent: 'center',
     alignItems: 'center',
-    marginLeft:50
+    marginLeft:50,
+    marginBottom:20
   },
   textField: {
     textAlign: 'center',
@@ -60,6 +61,7 @@ const styles = StyleSheet.create({
     marginTop: 10,
     paddingBottom: 2,
     letterSpacing:Platform.OS==='android'?2:4,
+    color:'#6200EE',
   },
   calender:{
     marginLeft:20,
@@ -70,8 +72,8 @@ iseditTextField:{
   flex: 1,
   marginTop: 5,
   paddingBottom:2,
-  marginLeft:-5,
-  letterSpacing:Platform.OS==='android'?2:4
+  letterSpacing:Platform.OS==='android'?2:4,
+  color:'#6200EE',
 },
 });
 

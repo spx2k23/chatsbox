@@ -32,7 +32,7 @@ const Profile = () => {
             borderRadius:25,
             borderColor: '#6200EE',
             padding:10,
-            height:Platform.OS==='ios'?'60%':'65%',
+            height:Platform.OS==='ios'?'51%':'56%',
             paddingTop:30
         }
     });
@@ -53,10 +53,11 @@ const Profile = () => {
 
     const handleEdit = () => setIsEditing(true);
     const handleSave = () => {
-        if (bio.length > 150) {
-            alert("Bio cannot exceed 150 characters.");
+        if (bio.length > 32) {
+            alert("Bio cannot exceed 32 characters.");
         } else {
             setIsEditing(false);
+
         }
     };
 
@@ -68,8 +69,8 @@ const Profile = () => {
                     <MaterialIcons name={"edit"} size={24} color="#6200EE" />  
              </TouchableOpacity>}
          <View style={[styles.textbox,!isEditing&&styles.iseditTextBox]}> 
-            {!isEditing&&<Text style={styles.icon}><MaterialIcons name='person' size={34} color="#6200EE"/> </Text>}
-            <View style={styles.textcontainer}>
+            <Text style={styles.icon}><MaterialIcons name='person' size={24} color="#6200EE"/> </Text>
+            <View style={[styles.textcontainer,!isEditing&&styles.isEditingTextContainer]}>
             <Text style={isEditing?styles.lable:styles.iseditlable}>  Name :</Text>
                 <View style={styles.inputContainer}>
                     {isEditing? (
@@ -81,8 +82,8 @@ const Profile = () => {
             </View>
         </View>  
         <View style={[styles.textbox,!isEditing&&styles.iseditTextBox]}>  
-        {!isEditing&&<Text style={styles.icon}><MaterialIcons name='person-pin' size={34} color="#6200EE"/> </Text>}
-        <View style={styles.textcontainer}>                   
+        <Text style={styles.icon}><MaterialIcons name='person-pin' size={24} color="#6200EE"/> </Text>
+        <View style={[styles.textcontainer,!isEditing&&styles.isEditingTextContainer]}>                   
             <Text style={isEditing?styles.lable:styles.iseditlable}> Role :</Text>
             <View style={styles.inputContainer}>
                 {isEditing? (
@@ -94,17 +95,17 @@ const Profile = () => {
         </View>            
 
         <View style={[styles.textbox,!isEditing&&styles.iseditTextBox]}>  
-        {!isEditing&&<Text style={styles.icon}><MaterialIcons name='cake' size={34} color="#6200EE"/> </Text>}
-        <View style={styles.textcontainer}>        
-            <Text style={isEditing?styles.lable:styles.iseditlable}>Date Of Birth :</Text>
+        <Text style={styles.icon}><MaterialIcons name='cake' size={24} color="#6200EE"/> </Text>
+        <View style={[styles.textcontainer,!isEditing&&styles.isEditingTextContainer]}>        
+            <Text style={isEditing?styles.lable:styles.iseditlable}>D.O.B :</Text>
             <DateOfBirth isEditing={isEditing} setIsEditing={setIsEditing} selectedDate={selectedDate} setSelectedDate={setSelectedDate}/>
             </View>
         </View>
 
 
         <View style={[styles.textbox,!isEditing&&styles.iseditTextBox]}>  
-        {!isEditing&&<Text style={styles.icon}><MaterialIcons name='sticky-note-2' size={34} color="#6200EE"/> </Text>}
-        <View style={styles.textcontainer}>
+        <Text style={styles.icon}><MaterialIcons name='sticky-note-2' size={24} color="#6200EE"/> </Text>
+        <View style={[styles.textcontainer,!isEditing&&styles.isEditingTextContainer]}>
             <Text style={[isEditing?styles.lable:styles.iseditlable]}>Bio :</Text>
             <ScrollView contentContainerStyle={styles.scrollViewContainer}>
                 <View style={styles.inputContainer}>
@@ -116,13 +117,12 @@ const Profile = () => {
             </ScrollView>
             </View>
             </View>
-            
-            {isEditing && (
-                    <View style={styles.btncontainer}>
-                        <Button onPress={handleSave} buttonStyle={styles.btnsave}  title="Save" />
-                        <Button  onPress={() => setIsEditing(false)}  buttonStyle={styles.btncancel} title="Cancel" />
-                    </View>)}
     </View>
+    {isEditing && (
+                    <View style={styles.btncontainer}>
+                        <TouchableOpacity onPress={handleSave}  ><Text style={styles.btnsave}>Save</Text></TouchableOpacity>
+                        <TouchableOpacity onPress={() => setIsEditing(false)} ><Text  style={styles.btncancel}>Cancel</Text></TouchableOpacity>
+                    </View>)}
             {/* Footer */}
             <View style={styles.footerContainer}>
                 <View style={styles.line}></View>
@@ -156,15 +156,14 @@ const styles = StyleSheet.create({
         borderBottomWidth: scaleSize(2),
         borderBottomColor: '#6200EE',
         flex: 1,
-        marginRight: scaleSize(10),
-        paddingHorizontal: scaleSize(10),
-        paddingVertical: scaleSize(5),
+        paddingHorizontal: scaleSize(5),
+        paddingBottom:Platform.OS==='android'?scaleSize(0):scaleSize(2),
         textAlign: 'center',
+        color:'#6200EE',
     },
     textbox:{
         flexDirection:'row',
         width:'100%',
-        alignItems: 'center',
     },
     iseditTextBox:{
         marginLeft:30,
@@ -173,17 +172,22 @@ const styles = StyleSheet.create({
     textcontainer:{
         width:'100%',
     },
+    isEditingTextContainer:{
+        flexDirection:'row'
+    },
     textField: {
         textAlign: 'center',
         flex: 1,
-        marginTop: scaleSize(10),
         paddingBottom: scaleSize(2),
+        color: '#6200EE',
     },
     iseditTextField:{
-        textAlign: 'left',
+        color: '#6200EE',
         flex: 1,
         marginTop: scaleSize(5),
         paddingBottom: scaleSize(2),
+        marginLeft:-20,
+       
     },
     editIcon: {
         padding: scaleSize(5),
@@ -211,6 +215,7 @@ const styles = StyleSheet.create({
         backgroundColor: '#f9f9f9',
         lineHeight: scaleSize(20),
         height: scaleSize(90),
+        color:'#6200EE',
     },
     footerContainer: {
         position: 'absolute',
@@ -245,28 +250,38 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         color: '#6200EE',
         marginTop: scaleSize(5),
-        marginLeft:40
+        marginLeft:40,
+        textAlign:'right'
     },
     btncontainer: {
         flexDirection: 'row',
-        height: scaleSize(100), // Scaled height for button container
-        marginLeft:90
+        height: scaleSize(75), // Scaled height for button container
+         marginTop:30
+        
     },
     btnsave: {
+        textAlign:'center',
         width: scaleSize(80),
         fontSize: scaleFont(16),
         color: '#fff',
         backgroundColor: '#6200EE',
+        width:120,
+        borderRadius:5
     },
     btncancel: {
-        backgroundColor: '#B0BEC5',
+        backgroundColor: '#fff',
+        textAlign:'center',
         width: scaleSize(80),
-        color: '#fff',
+        color: '#6200EE',
         fontSize: scaleFont(16),
         marginLeft: scaleSize(15),
+        borderColor:'#6200EE',
+        borderWidth:1,
+        width:120,
+        borderRadius:5
     },
     icon:{
-        marginRight:-30
+        marginRight:-20
     },
     form:{
         borderWidth:2,
@@ -276,7 +291,7 @@ const styles = StyleSheet.create({
         padding:10
     },
     bio:{
-        marginLeft:-30
+        marginLeft:-40
     },
     role:{
         marginLeft:-5
