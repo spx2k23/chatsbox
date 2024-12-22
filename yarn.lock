@@ -2208,7 +2208,7 @@
   resolved "https://registry.npmjs.org/@react-native-firebase/messaging/-/messaging-21.6.0.tgz"
   integrity sha512-kazCxvVY69pLfi5OsSKVClhVPfVg1RajI+R0J6LAfMpRyUgw6+SfGHalvnMPYnw17PYQO5x1xKHT+bdekSNBAw==
 
-"@react-native-picker/picker@react-native-picker/picker":
+"@react-native-picker/picker@^2.4.0", "@react-native-picker/picker@react-native-picker/picker":
   version "2.8.0"
   resolved "git+ssh://git@github.com/react-native-picker/picker.git#95879c2cb88111cf6286d050e0eba96e70856aab"
 
@@ -5031,6 +5031,11 @@ lodash.isequal@^4.5.0:
   resolved "https://registry.npmjs.org/lodash.isequal/-/lodash.isequal-4.5.0.tgz"
   integrity sha512-pDo3lu8Jhfjqls6GkMgpahsF9kCyayhgykjyLMNFTKWrpVdAQtYyB4muAMWozBB4ig/dtWAmsMxLEI8wuz+DYQ==
 
+lodash.isobject@^3.0.2:
+  version "3.0.2"
+  resolved "https://registry.npmjs.org/lodash.isobject/-/lodash.isobject-3.0.2.tgz"
+  integrity sha512-3/Qptq2vr7WeJbB4KHUSKlq8Pl7ASXi3UG6CMbBm8WRtXi8+GHm7mKaU3urfpSEzWe2wCIChs6/sdocUsTKJiA==
+
 lodash.throttle@^4.1.1:
   version "4.1.1"
   resolved "https://registry.npmjs.org/lodash.throttle/-/lodash.throttle-4.1.1.tgz"
@@ -6173,6 +6178,14 @@ react-native-parsed-text@^0.0.22:
   integrity sha512-hfD83RDXZf9Fvth3DowR7j65fMnlqM9PpxZBGWkzVcUTFtqe6/yPcIoIAgrJbKn6YmtzkivmhWE2MCE4JKBXrQ==
   dependencies:
     prop-types "^15.7.x"
+
+react-native-picker-select@^9.3.1:
+  version "9.3.1"
+  resolved "https://registry.npmjs.org/react-native-picker-select/-/react-native-picker-select-9.3.1.tgz"
+  integrity sha512-o621HcsKJfJkpYeP/PZQiZTKbf8W7FT08niLFL0v1pGkIQyak5IfzfinV2t+/l1vktGwAH2Tt29LrP/Hc5fk3A==
+  dependencies:
+    lodash.isequal "^4.5.0"
+    lodash.isobject "^3.0.2"
 
 react-native-picker@^4.3.7:
   version "4.3.7"

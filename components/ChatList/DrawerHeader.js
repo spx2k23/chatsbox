@@ -3,6 +3,7 @@ import { View, Text, StyleSheet, TouchableOpacity,Platform } from 'react-native'
 import { DrawerContentScrollView, DrawerItemList } from '@react-navigation/drawer';
 import { LogoutModal } from '../Logout/LogoutModal';
 import { MaterialIcons } from '@expo/vector-icons';
+import Dropdown from '../NavBar/Dropdown';
 
 function DrawerHeader(props) {
  
@@ -11,7 +12,8 @@ function DrawerHeader(props) {
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <Text style={styles.heading}>Welcome</Text>
+        {/* <Text style={styles.heading}>Welcome</Text> */}
+        <Dropdown/>
       </View>
       <DrawerContentScrollView {...props}>
         <DrawerItemList {...props} />
@@ -38,18 +40,11 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   header: {
-    padding: 20,
     backgroundColor: '#6200EE',
-    height: Platform.OS === 'ios' ? 100 : 80,
-    paddingTop: Platform.OS === 'ios' ? 60 : 0,
-    marginBottom: 10,
+    height: Platform.OS === 'ios' ? 120 : 100,
+    paddingTop: Platform.OS === 'ios' ? 50 : 10,
     justifyContent: 'center',
-  },
-  heading: {
-    color: '#fff',
-    fontSize: 20,
-    fontWeight: 'bold',
-    textAlign: 'center',
+    marginBottom:Platform.OS=='android'?10:-50
   },
   logoutButton: {
     paddingVertical: 15,

@@ -16,7 +16,8 @@ const Profile = () => {
     const db = useSQLiteContext();
 
     const[isEditing,setIsEditing]=useState(false);
-    const [name, setName] = useState();
+    const [firstname, setFirstName] = useState();
+    const [secondname, setSecondName] = useState();
     const [companyName, setCompanyName] = useState("");
     const [bio, setBio] = useState("This is your bio !");
     const [role,setRole]=useState('')
@@ -42,11 +43,12 @@ const Profile = () => {
 
     const fetchUser  = async () => {
         const user = await db.getFirstAsync('SELECT * FROM user');
-        setName(user.name);
+        setFirstName(user.name);
+        setSecondName('drago');
         setProfilePic(user.profilePicture);
         setEmail(user.email);
         setRole('Junior Developer');
-        setCompanyName('Company Name')
+        setCompanyName('Company Name');
     }
 
     
@@ -74,10 +76,12 @@ const Profile = () => {
             <Text style={isEditing?styles.lable:styles.iseditlable}>  Name :</Text>
                 <View style={styles.inputContainer}>
                     {isEditing? (
-                        <TextInput
-                            style={styles.inputField} value={name} onChangeText={setName} placeholder="Your Name"/>
+                        <View style={styles.names}>
+                        <TextInput style={[styles.inputField,styles.namesinput]} value={firstname} onChangeText={setFirstName} placeholder="First Name"/>
+                        <TextInput style={[styles.inputField,styles.namesinput]} value={secondname} onChangeText={setSecondName} placeholder="Second Name"/>
+                        </View>
                         ) : (
-                        <Text style={[isEditing?styles.textField:styles.iseditTextField]}>{name}</Text> )}
+                        <Text style={[isEditing?styles.textField:styles.iseditTextField]}>{firstname}</Text> )}
                 </View>
             </View>
         </View>  
@@ -295,6 +299,13 @@ const styles = StyleSheet.create({
     },
     role:{
         marginLeft:-5
+    },
+    names:{
+        width:225,
+        flexDirection:'row',
+    },
+    namesinput:{
+        marginRight:10
     }
     
 });

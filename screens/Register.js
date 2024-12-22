@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Image, ScrollView } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Image, ScrollView, Platform } from 'react-native';
 import { Input, Button } from 'react-native-elements';
 import { gql, useMutation } from '@apollo/client';
 import * as ImagePicker from 'expo-image-picker';
 import * as FileSystem from 'expo-file-system';
 import Loading from '../components/Loading/Loading';
+import { MaterialIcons } from '@expo/vector-icons';
+import DateTimePickerModal from 'react-native-modal-datetime-picker';
 
 const REGISTER = gql`
   mutation register(
@@ -28,9 +30,11 @@ const REGISTER = gql`
     }
   }
 `;
-
+const primecolor= '#6200EE';
+const placeholdercolor="#B0BEC5";
 const Register = ({ navigation }) => {
   const [Name, setName] = useState('');
+  const[DOB,setDOB]=useState(null);
   const [Email, setEmail] = useState('');
   const [MobileNumber, setMobileNumber] = useState('');
   const [Password, setPassword] = useState('');
@@ -38,6 +42,8 @@ const Register = ({ navigation }) => {
   const [OrganizationCode, setOrganizationCode] = useState(null);
   const [ProfileUri, setProfileUri] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
+  const [isVisible, setIsVisible] = useState(false);
+
 
   const [register, { data, loading, error }] = useMutation(REGISTER);
   const handlePickImage = async () => {
@@ -91,6 +97,12 @@ const Register = ({ navigation }) => {
       setErrorMessage('An error occurred. Please try again.');
     }
   };
+  const formattedDate =DOB?DOB.toLocaleDateString():'Date Of Birth';
+  const handleConfirm = (date) => {
+    setDOB(date);
+    setIsVisible(false);
+  };
+  
 if(loading){
   return <Loading/>   
 }
@@ -111,6 +123,20 @@ if(loading){
           inputStyle={styles.inputText}
           containerStyle={styles.inputField}
         />
+        <View style={styles.dob}>
+          <MaterialIcons name='cake' size={30} color={'#6200EE'}/>
+        <TouchableOpacity onPress={()=>setIsVisible(true)}  style={styles.dobselector}>
+          <Text style={[styles.dobtext,{color:DOB?'#000':"#B0BEC5"}]} >{formattedDate}</Text>
+          <MaterialIcons name='arrow-drop-down' size={24} color="#6200EE"/>
+        </TouchableOpacity>
+        <DateTimePickerModal
+        mode="date"
+        isVisible={isVisible}
+        onConfirm={handleConfirm}
+        onCancel={()=>setIsVisible(false)}
+        date={DOB?DOB:new Date()}
+      />
+        </View>
         <Input
           placeholder="Email"
           placeholderTextColor="#B0BEC5"
@@ -183,6 +209,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     padding: 20,
     backgroundColor: '#F5F5F5',
+    marginTop:Platform.OS=='android'?0:50
   },
   logoContainer: {
     alignItems: 'center',
@@ -195,12 +222,12 @@ const styles = StyleSheet.create({
     marginTop: 10,
   },
   inputContainer: {
-    marginBottom: 20,
+    marginBottom: 10,
     width: '90%',
     alignSelf: 'center',
   },
   inputField: {
-    marginBottom: 15,
+    marginBottom: 10,
   },
   inputText: {
     color: '#37474F',
@@ -247,6 +274,22 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     marginBottom: 20,
   },
+  dob:{
+    flexDirection:'row',
+    borderBottomWidth:.3,
+    borderBottomColor:'#000',
+    paddingBottom:10,
+    marginBottom: 30,
+  },
+  dobtext:{
+    fontSize:16,
+    alignSelf:'center',
+    marginLeft:10,
+    marginRight:190
+  },
+ dobselector:{
+  flexDirection:'row'
+ }
 });
 
 export default Register;
