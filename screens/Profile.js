@@ -78,7 +78,7 @@ const Profile = () => {
                     {isEditing? (
                         <View style={styles.names}>
                         <TextInput style={[styles.inputField,styles.namesinput]} value={firstname} onChangeText={setFirstName} placeholder="First Name"/>
-                        <TextInput style={[styles.inputField,styles.namesinput]} value={secondname} onChangeText={setSecondName} placeholder="Second Name"/>
+                        <TextInput style={[styles.inputField,styles.namesinput]} value={secondname} onChangeText={setSecondName} placeholder="Last Name"/>
                         </View>
                         ) : (
                         <Text style={[isEditing?styles.textField:styles.iseditTextField]}>{firstname}</Text> )}

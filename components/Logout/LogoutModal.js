@@ -45,6 +45,8 @@ export const LogoutModal = ({ isVisible, onClose,navigation}) => {
   );
 };
 
+export default LogoutModal
+
 const styles = StyleSheet.create({
   modalContainer: {
     flex: 1,

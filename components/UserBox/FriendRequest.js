@@ -9,7 +9,7 @@ const ACCEPT_FRIEND_REQUEST = gql`
     acceptFriendRequest(senderId: $senderId, receiverId: $receiverId) {
       success
       message
-      sender {
+      receiver {
         id
         Name
         ProfilePicture
@@ -44,7 +44,7 @@ const FriendRequest = ({ name, email, image, userId, receiverId, isRequestSent, 
       }
     });
     if (data.acceptFriendRequest.success) {
-      const user = data.acceptFriendRequest.sender
+      const user = data.acceptFriendRequest.receiver
       updateUserStatus(receiverId, { isRequestReceived: false, isFriend: true });
       console.log(user.name,'user');
       

@@ -30,15 +30,16 @@ const ChatBox = ({ image, name, id, lastmessage, lastmessage_time }) => {
 
 const styles = StyleSheet.create({
     container: {
-        margin:5,
+        margin:2,
         flexDirection: "row", 
         padding: 10,
         alignItems: "center", 
         borderBottomWidth: 1,
         borderBottomColor: "#e0e0e0", 
         backgroundColor: "#fff", 
-        width:Platform.OS==='android'?400:380,
-        marginLeft: Platform.OS === 'ios' ? 25 : 0
+        width:Platform.OS==='ios'?410:390,
+        alignSelf:'center',
+        borderRadius:10
     },
     avatar: {
         width: 50,

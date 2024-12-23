@@ -4,6 +4,7 @@ import ChatBox from "../components/ChatList/ChatBox";
 import Loading from "../components/Loading/Loading";
 import { useSQLiteContext } from "expo-sqlite";
 import CustomDataNotFound from "../components/NotFound";
+import { useFocusEffect } from "@react-navigation/native";
 
 const ChatList = () => {
 
@@ -12,15 +13,21 @@ const ChatList = () => {
   const [friends, setFriends] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    fetchFriendsFromDB();
-  }, []);
+  // useFocusEffect(() => {
+  //   fetchFriendsFromDB();
+  // }, []);
 
   const fetchFriendsFromDB = async () => {
     const fetchAllFriends = await db.getAllAsync('SELECT * FROM friends');
     setFriends(fetchAllFriends);
     setLoading(false);
   };
+  useFocusEffect(
+    React.useCallback(() => {
+      // When screen is focused, refetch the friends list
+      fetchFriendsFromDB();
+    }, [])  // Empty dependency array to ensure it runs only when the screen is focused
+  );
 
   const renderItem = ({ item }) => (
     <ChatBox
@@ -63,6 +70,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#f5f5f5',
+    marginTop:10
   },
 });
 

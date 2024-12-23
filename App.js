@@ -12,12 +12,11 @@ import Login from './screens/Login';
 import Register from './screens/Register';
 import OrganizationReg from './screens/OrganizationReg';
 import Chat from './screens/Chat';
-import DrawerList from './components/ChatList/DrawerList';
-import ApproveRequest from './screens/ApproveRequest';
 import Profile from './screens/Profile';
 import { initializeDatabase } from './db_configs/dbSetup';
 import NotificationListener from './components/Notification/NotificationListener';
 import NetworkListener from './components/Notification/NetworkListener';
+import TabNav from './components/NavBar/TabNav';
 
 const Stack = createStackNavigator();
 
@@ -84,7 +83,7 @@ const App = () => {
             {/* Chats screen */}
             <Stack.Screen
               name="Chats"
-              component={DrawerList}
+              component={TabNav}
               options={{
                 headerShown: false,  // No header on Chats screen
                 gestureEnabled: false, // Disable swipe gestures on Chats screen
@@ -95,13 +94,6 @@ const App = () => {
             <Stack.Screen
               name="Chat"
               component={Chat}
-              options={{ headerShown: true }}
-            />
-
-            {/* Approve Request screen */}
-            <Stack.Screen
-              name="ApproveRequest"
-              component={ApproveRequest}
               options={{ headerShown: true }}
             />
 
