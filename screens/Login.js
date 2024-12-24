@@ -17,7 +17,11 @@ const LOGIN_QUERY = gql`
       organization
       user {
         id
-        Name
+        FirstName
+        LastName
+        DateOfBirth
+        Role
+        
         ProfilePicture
         Email
         MobileNumber
@@ -61,21 +65,38 @@ const Login = ({ navigation }) => {
   const [login, { loading }] = useLazyQuery(LOGIN_QUERY, {
     onCompleted: async (data) => {
       if (data.login.success) {
-        await AsyncStorage.setItem('token', data.login.token);
-        await AsyncStorage.setItem('organization', data.login.organization);
+        try{
+          await AsyncStorage.setItem('token', data.login.token);
+          await AsyncStorage.setItem('organization', data.login.organization);
+        } catch(e){
+          console.log(e);
+        }
         const user = data.login.user;
-        navigation.replace('Chats');
         const firstRow = await db.getFirstAsync('SELECT * FROM user');
-        // await db.runAsync(
-        //   `DELETE FROM user WHERE value = $userId`, {userId : firstRow.userId}
-        // )
-      await db.runAsync(
-          `INSERT INTO user (userId, name, profilePicture, email, phoneNumber) VALUES (?, ?, ?, ?, ?)
-          ON CONFLICT(userId) DO NOTHING;`,
-          [user.id, user.Name, user.ProfilePicture, user.Email, user.MobileNumber]
-        )
-    
-        
+        if (firstRow === null) {
+          await db.runAsync(
+            `INSERT INTO user (userId, firstName, lastName, role, dateOfBirth, profilePicture, email, phoneNumber) VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+            ON CONFLICT(userId) DO NOTHING;`,
+            [user.id, user.FirstName, user.LastName, user.Role, user.DateOfBirth, user.ProfilePicture, user.Email, user.MobileNumber]
+          )
+          console.log("if");
+          navigation.replace('Chats');
+        } else if (firstRow.userId === user.id){
+          console.log("else if");
+          navigation.replace('Chats');
+        } else {
+          await db.runAsync(
+            `DELETE FROM user WHERE userId = $userId`, { $userId: firstRow.userId }
+          )
+          await db.runAsync(
+            `INSERT INTO user (userId, firstName, lastName, role, dateOfBirth, profilePicture, email, phoneNumber) VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+            ON CONFLICT(userId) DO NOTHING;`,
+            [user.id, user.FirstName, user.LastName, user.Role, user.DateOfBirth, user.ProfilePicture, user.Email, user.MobileNumber]
+          )
+          console.log("else");
+          navigation.replace('Chats');
+        }
+
       } else {
         setErrorMessage(data.login.message);
       }
@@ -101,7 +122,7 @@ const Login = ({ navigation }) => {
 
   return (
     <View style={styles.container}>
-      {loading && 
+      {loading &&
         <Loading />
       }
       <View style={styles.logoContainer}>

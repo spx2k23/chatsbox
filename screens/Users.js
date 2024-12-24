@@ -7,7 +7,6 @@ import Loading from '../components/Loading/Loading';
 import { useSQLiteContext } from 'expo-sqlite';
 import UserBox from '../components/UserBox/UserBox';
 import FriendRequest from '../components/UserBox/FriendRequest';
-import CustomError from '../components/Error';
 import CustomNotFound from '../components/NotFound';
 
 const GET_USERS_IN_ORG = gql`

@@ -10,7 +10,10 @@ import DateTimePickerModal from 'react-native-modal-datetime-picker';
 
 const REGISTER = gql`
   mutation register(
-    $Name: String!,
+    $FirstName: String!,
+    $LastName: String!,
+    $DateOfBirth: String!,
+    $Role: String!,
     $Email: String!,
     $MobileNumber: String!,
     $Password: String!,
@@ -18,7 +21,10 @@ const REGISTER = gql`
     $OrganizationCode: String!
   ) {
     register(
-      Name: $Name,
+      FirstName: $FirstName,
+      LastName: $LastName,
+      DateOfBirth: $DateOfBirth,
+      Role: $Role,
       Email: $Email,
       MobileNumber: $MobileNumber,
       Password: $Password,
@@ -30,11 +36,13 @@ const REGISTER = gql`
     }
   }
 `;
-const primecolor= '#6200EE';
-const placeholdercolor="#B0BEC5";
+const primecolor = '#6200EE';
+const placeholdercolor = "#B0BEC5";
 const Register = ({ navigation }) => {
-  const [Name, setName] = useState('');
-  const[DOB,setDOB]=useState(null);
+  const [FirstName, setFirstName] = useState('');
+  const [LastName, setLastName] = useState('');
+  const [DateOfBirth, setDOB] = useState(null);
+  const [Role, setRole] = useState('');
   const [Email, setEmail] = useState('');
   const [MobileNumber, setMobileNumber] = useState('');
   const [Password, setPassword] = useState('');
@@ -71,14 +79,17 @@ const Register = ({ navigation }) => {
 
   const handleRegister = async () => {
     setErrorMessage('');
-    if (!Name || !Email || !MobileNumber || !Password || !ProfilePicture || !OrganizationCode) {
+    if (!FirstName || !LastName || !DateOfBirth || !Role || !Email || !MobileNumber || !Password || !ProfilePicture || !OrganizationCode) {
       setErrorMessage('Please fill all the fields');
       return;
     }
     try {
       const { data } = await register({
         variables: {
-          Name,
+          FirstName,
+          LastName,
+          DateOfBirth,
+          Role,
           Email,
           MobileNumber,
           Password,
@@ -97,108 +108,126 @@ const Register = ({ navigation }) => {
       setErrorMessage('An error occurred. Please try again.');
     }
   };
-  const formattedDate =DOB?DOB.toLocaleDateString():'Date Of Birth';
+  const formattedDate = DateOfBirth ? DateOfBirth.toLocaleDateString() : 'Date Of Birth';
   const handleConfirm = (date) => {
     setDOB(date);
     setIsVisible(false);
   };
-  
-if(loading){
-  return <Loading/>   
-}
+
+  if (loading) {
+    return <Loading />
+  }
 
   return (
     <ScrollView>
-    <View style={styles.container}>
-      <View style={styles.logoContainer}>
-        <Text style={styles.logoText}>Register</Text>
-      </View>
-      <View style={styles.inputContainer}>
-        <Input
-          placeholder="Name"
-          placeholderTextColor="#B0BEC5"
-          value={Name}
-          onChangeText={(text) => setName(text)}
-          leftIcon={{ type: 'font-awesome', name: 'user', color: '#6200EE' }}
-          inputStyle={styles.inputText}
-          containerStyle={styles.inputField}
-        />
-        <View style={styles.dob}>
-          <MaterialIcons name='cake' size={30} color={'#6200EE'}/>
-        <TouchableOpacity onPress={()=>setIsVisible(true)}  style={styles.dobselector}>
-          <Text style={[styles.dobtext,{color:DOB?'#000':"#B0BEC5"}]} >{formattedDate}</Text>
-          <MaterialIcons name='arrow-drop-down' size={24} color="#6200EE"/>
-        </TouchableOpacity>
-        <DateTimePickerModal
-        mode="date"
-        isVisible={isVisible}
-        onConfirm={handleConfirm}
-        onCancel={()=>setIsVisible(false)}
-        date={DOB?DOB:new Date()}
-      />
+      <View style={styles.container}>
+        <View style={styles.logoContainer}>
+          <Text style={styles.logoText}>Register</Text>
         </View>
-        <Input
-          placeholder="Email"
-          placeholderTextColor="#B0BEC5"
-          value={Email}
-          onChangeText={(text) => setEmail(text)}
-          leftIcon={{ type: 'font-awesome', name: 'envelope', color: '#6200EE' }}
-          inputStyle={styles.inputText}
-          containerStyle={styles.inputField}
-        />
-        <Input
-          placeholder="Mobile Number"
-          placeholderTextColor="#B0BEC5"
-          value={MobileNumber}
-          onChangeText={(text) => setMobileNumber(text)}
-          leftIcon={{ type: 'font-awesome', name: 'phone', color: '#6200EE' }}
-          inputStyle={styles.inputText}
-          containerStyle={styles.inputField}
-        />
-        <Input
-          placeholder="Password"
-          placeholderTextColor="#B0BEC5"
-          value={Password}
-          onChangeText={(text) => setPassword(text)}
-          secureTextEntry
-          leftIcon={{ type: 'font-awesome', name: 'lock', color: '#6200EE' }}
-          inputStyle={styles.inputText}
-          containerStyle={styles.inputField}
-        />
-        <Input
-          placeholder="Organization code"
-          placeholderTextColor="#B0BEC5"
-          value={OrganizationCode}
-          onChangeText={(text) => setOrganizationCode(text)}
-          leftIcon={{ type: 'font-awesome', name: 'building', color: '#6200EE' }}
-          inputStyle={styles.inputText}
-          containerStyle={styles.inputField}
-          maxLength={6}
-        />
-        <TouchableOpacity onPress={handlePickImage} style={styles.imagePicker}>
-          <Text style={styles.imagePickerText}>Pick Profile Picture</Text>
-        </TouchableOpacity>
-        {ProfileUri ? (
-          <Image
-            source={{ uri: ProfileUri }}
-            style={styles.profileImage}
+        <View style={styles.inputContainer}>
+          <Input
+            placeholder="First Name"
+            placeholderTextColor="#B0BEC5"
+            value={FirstName}
+            onChangeText={(text) => setFirstName(text)}
+            leftIcon={{ type: 'font-awesome', name: 'user', color: '#6200EE' }}
+            inputStyle={styles.inputText}
+            containerStyle={styles.inputField}
           />
-        ) : null}
-        {errorMessage ? <Text style={styles.error}>{errorMessage}</Text> : null}
+          <Input
+            placeholder="Last Name"
+            placeholderTextColor="#B0BEC5"
+            value={LastName}
+            onChangeText={(text) => setLastName(text)}
+            leftIcon={{ type: 'font-awesome', name: 'user', color: '#6200EE' }}
+            inputStyle={styles.inputText}
+            containerStyle={styles.inputField}
+          />
+          <View style={styles.dob}>
+            <MaterialIcons name='cake' size={30} color={'#6200EE'} />
+            <TouchableOpacity onPress={() => setIsVisible(true)} style={styles.dobselector}>
+              <Text style={[styles.dobtext, { color: DateOfBirth ? '#000' : "#B0BEC5" }]} >{formattedDate}</Text>
+              <MaterialIcons name='arrow-drop-down' size={24} color="#6200EE" />
+            </TouchableOpacity>
+            <DateTimePickerModal
+              mode="date"
+              isVisible={isVisible}
+              onConfirm={handleConfirm}
+              onCancel={() => setIsVisible(false)}
+              date={DateOfBirth ? DateOfBirth : new Date()}
+            />
+          </View>
+          <Input
+            placeholder="Role"
+            placeholderTextColor="#B0BEC5"
+            value={Role}
+            onChangeText={(text) => setRole(text)}
+            leftIcon={{ type: 'font-awesome', name: 'tag', color: '#6200EE' }}
+            inputStyle={styles.inputText}
+            containerStyle={styles.inputField}
+          />
+          <Input
+            placeholder="Email"
+            placeholderTextColor="#B0BEC5"
+            value={Email}
+            onChangeText={(text) => setEmail(text)}
+            leftIcon={{ type: 'font-awesome', name: 'envelope', color: '#6200EE' }}
+            inputStyle={styles.inputText}
+            containerStyle={styles.inputField}
+          />
+          <Input
+            placeholder="Mobile Number"
+            placeholderTextColor="#B0BEC5"
+            value={MobileNumber}
+            onChangeText={(text) => setMobileNumber(text)}
+            leftIcon={{ type: 'font-awesome', name: 'phone', color: '#6200EE' }}
+            inputStyle={styles.inputText}
+            containerStyle={styles.inputField}
+          />
+          <Input
+            placeholder="Password"
+            placeholderTextColor="#B0BEC5"
+            value={Password}
+            onChangeText={(text) => setPassword(text)}
+            secureTextEntry
+            leftIcon={{ type: 'font-awesome', name: 'lock', color: '#6200EE' }}
+            inputStyle={styles.inputText}
+            containerStyle={styles.inputField}
+          />
+          <Input
+            placeholder="Organization code"
+            placeholderTextColor="#B0BEC5"
+            value={OrganizationCode}
+            onChangeText={(text) => setOrganizationCode(text)}
+            leftIcon={{ type: 'font-awesome', name: 'building', color: '#6200EE' }}
+            inputStyle={styles.inputText}
+            containerStyle={styles.inputField}
+            maxLength={6}
+          />
+          <TouchableOpacity onPress={handlePickImage} style={styles.imagePicker}>
+            <Text style={styles.imagePickerText}>Pick Profile Picture</Text>
+          </TouchableOpacity>
+          {ProfileUri ? (
+            <Image
+              source={{ uri: ProfileUri }}
+              style={styles.profileImage}
+            />
+          ) : null}
+          {errorMessage ? <Text style={styles.error}>{errorMessage}</Text> : null}
+        </View>
+        <Button
+          title="Register"
+          onPress={handleRegister}
+          buttonStyle={styles.registerButton}
+          titleStyle={styles.registerButtonText}
+        />
+        <TouchableOpacity onPress={() => navigation.navigate('Login')}>
+          <Text style={styles.loginText}>Already have an account? Login</Text>
+        </TouchableOpacity>
+        <TouchableOpacity onPress={() => navigation.navigate('OrganizationReg')}>
+          <Text style={styles.loginText}>Register Organization</Text>
+        </TouchableOpacity>
       </View>
-      <Button
-        title="Register"
-        onPress={handleRegister}
-        buttonStyle={styles.registerButton}
-        titleStyle={styles.registerButtonText}
-      />
-      <TouchableOpacity onPress={() => navigation.navigate('Login')}>
-        <Text style={styles.loginText}>Already have an account? Login</Text>
-      </TouchableOpacity>
-      <TouchableOpacity onPress={() => navigation.navigate('OrganizationReg')}>
-        <Text style={styles.loginText}>Register Organization</Text>
-      </TouchableOpacity>
-    </View>
     </ScrollView>
   );
 };
@@ -209,7 +238,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     padding: 20,
     backgroundColor: '#F5F5F5',
-    marginTop:Platform.OS=='android'?0:50
+    marginTop: Platform.OS == 'android' ? 0 : 50
   },
   logoContainer: {
     alignItems: 'center',
@@ -274,22 +303,22 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     marginBottom: 20,
   },
-  dob:{
-    flexDirection:'row',
-    borderBottomWidth:.3,
-    borderBottomColor:'#000',
-    paddingBottom:10,
+  dob: {
+    flexDirection: 'row',
+    borderBottomWidth: .3,
+    borderBottomColor: '#000',
+    paddingBottom: 10,
     marginBottom: 30,
   },
-  dobtext:{
-    fontSize:16,
-    alignSelf:'center',
-    marginLeft:10,
-    marginRight:190
+  dobtext: {
+    fontSize: 16,
+    alignSelf: 'center',
+    marginLeft: 10,
+    marginRight: 190
   },
- dobselector:{
-  flexDirection:'row'
- }
+  dobselector: {
+    flexDirection: 'row'
+  }
 });
 
 export default Register;

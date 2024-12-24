@@ -43,11 +43,11 @@ const Profile = () => {
 
     const fetchUser  = async () => {
         const user = await db.getFirstAsync('SELECT * FROM user');
-        setFirstName(user.name);
-        setSecondName('drago');
+        setFirstName(user.firstName);
+        setSecondName(user.secondName);
         setProfilePic(user.profilePicture);
         setEmail(user.email);
-        setRole('Junior Developer');
+        setRole(user.role);
         setCompanyName('Company Name');
     }
 

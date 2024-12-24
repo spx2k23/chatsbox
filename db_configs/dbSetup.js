@@ -5,7 +5,10 @@ export const initializeDatabase = async (db) => {
       CREATE TABLE IF NOT EXISTS user (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         userId TEXT NOT NULL,
-        name TEXT NOT NULL,
+        firstName TEXT NOT NULL,
+        lastName TEXT NOT NULL,
+        role TEXT NOT NULL,
+        dateOfBirth TEXT NOT NULL,
         profilePicture TEXT NOT NULL,
         email TEXT NOT NULL,
         phoneNumber TEXT NOT NULL,
