@@ -10,9 +10,19 @@ export const initializeDatabase = async (db) => {
         role TEXT NOT NULL,
         dateOfBirth TEXT NOT NULL,
         profilePicture TEXT NOT NULL,
+        bio TEXT NOT NULL,
         email TEXT NOT NULL,
         phoneNumber TEXT NOT NULL,
+        currentOrg TEXT NOT NULL,
         UNIQUE(userId)
+      );
+      CREATE TABLE IF NOT EXISTS organizations (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        organizationId TEXT NOT NULL,
+        organizationName TEXT NOT NULL,
+        OrganizationLogo TEXT NOT NULL,
+        superAdmin TEXT NOT NULL,
+        adminRights TEXT NOT NULL
       );
       CREATE TABLE IF NOT EXISTS friends (
         id INTEGER PRIMARY KEY AUTOINCREMENT,

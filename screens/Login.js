@@ -14,17 +14,25 @@ const LOGIN_QUERY = gql`
       success
       message
       token
-      organization
       user {
         id
         FirstName
         LastName
         DateOfBirth
         Role
-        
+        Bio
         ProfilePicture
         Email
         MobileNumber
+        Organization {
+          OrganizationId{
+            id
+            OrganizationName
+            OrganizationLogo
+          }
+          SuperAdmin
+          isApproved
+        }
       }
     }
   }
@@ -65,34 +73,49 @@ const Login = ({ navigation }) => {
   const [login, { loading }] = useLazyQuery(LOGIN_QUERY, {
     onCompleted: async (data) => {
       if (data.login.success) {
-        try{
-          await AsyncStorage.setItem('token', data.login.token);
-          await AsyncStorage.setItem('organization', data.login.organization);
-        } catch(e){
-          console.log(e);
-        }
+        // await AsyncStorage.setItem('token', data.login.token);
         const user = data.login.user;
+        
         const firstRow = await db.getFirstAsync('SELECT * FROM user');
         if (firstRow === null) {
-          await db.runAsync(
-            `INSERT INTO user (userId, firstName, lastName, role, dateOfBirth, profilePicture, email, phoneNumber) VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-            ON CONFLICT(userId) DO NOTHING;`,
-            [user.id, user.FirstName, user.LastName, user.Role, user.DateOfBirth, user.ProfilePicture, user.Email, user.MobileNumber]
-          )
+          // await db.runAsync(
+          //   `INSERT INTO user (userId, firstName, lastName, role, dateOfBirth, profilePicture, bio, email, phoneNumber, currentOrg) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+          //   ON CONFLICT(userId) DO NOTHING;`,
+          //   [user.id, user.FirstName, user.LastName, user.Role, user.DateOfBirth, user.ProfilePicture, user.Bio, user.Email, user.MobileNumber, user.Organization[0].OrganizationId.id]
+          // )
+          // const organizations = user.Organization;
+          // for (const org of organizations) {
+          //   const { OrganizationId, OrganizationName, OrganizationLogo, SuperAdmin, adminRights } = org;
+            // await db.runAsync(
+            //   `INSERT INTO organization (organizationId, organizationName, OrganizationLogo, superAdmin) VALUES (?, ?, ?, ?)
+            //   ON CONFLICT(organizationId) DO NOTHING;`,
+            //   [OrganizationId.id, OrganizationName, OrganizationLogo, SuperAdmin, adminRights]
+            // )
+          // }
+          console.log(user.Organization);
           console.log("if");
-          navigation.replace('Chats');
+          // navigation.replace('Chats');
         } else if (firstRow.userId === user.id){
           console.log("else if");
-          navigation.replace('Chats');
+          // navigation.replace('Chats');
         } else {
           await db.runAsync(
             `DELETE FROM user WHERE userId = $userId`, { $userId: firstRow.userId }
           )
           await db.runAsync(
-            `INSERT INTO user (userId, firstName, lastName, role, dateOfBirth, profilePicture, email, phoneNumber) VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+            `INSERT INTO user (userId, firstName, lastName, role, dateOfBirth, profilePicture, email, phoneNumber, currentOrg) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
             ON CONFLICT(userId) DO NOTHING;`,
-            [user.id, user.FirstName, user.LastName, user.Role, user.DateOfBirth, user.ProfilePicture, user.Email, user.MobileNumber]
+            [user.id, user.FirstName, user.LastName, user.Role, user.DateOfBirth, user.ProfilePicture, user.Email, user.MobileNumber, user.Organization[0].OrganizationId]
           )
+          const organizations = user.Organization;
+          for (const org of organizations) {
+            const { organizationId, organizationName, OrganizationLogo, SuperAdmin } = org;
+            await db.runAsync(
+              `INSERT INTO organization (organizationId, organizationName, OrganizationLogo, superAdmin, adminRights) VALUES (?, ?, ?, ?, ?)
+               ON CONFLICT(organizationId) DO NOTHING;`,
+              [organizationId, organizationName, OrganizationLogo, SuperAdmin, adminRights]
+            );
+          }
           console.log("else");
           navigation.replace('Chats');
         }
