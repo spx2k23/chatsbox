@@ -13,14 +13,15 @@ const scaleFont = (size) => size * scale;
 const scaleSize = (size) => size * scale;
 
 const Profile = () => {
+    
     const db = useSQLiteContext();
 
     const[isEditing,setIsEditing]=useState(false);
     const [firstname, setFirstName] = useState();
-    const [secondname, setSecondName] = useState();
+    const [lastname, setLastName] = useState();
     const [companyName, setCompanyName] = useState("");
-    const [bio, setBio] = useState("This is your bio !");
-    const [role,setRole]=useState('')
+    const [bio, setBio] = useState("");
+    const [role,setRole]=useState("");
     const [email, setEmail] = useState("");
     const [profilePic, setProfilePic] = useState(null);
     const [selectedDate, setSelectedDate] = useState(new Date(2002, 4, 1));
@@ -44,10 +45,12 @@ const Profile = () => {
     const fetchUser  = async () => {
         const user = await db.getFirstAsync('SELECT * FROM user');
         setFirstName(user.firstName);
-        setSecondName(user.secondName);
+        setLastName(user.lastName);
         setProfilePic(user.profilePicture);
         setEmail(user.email);
         setRole(user.role);
+        setBio(user.bio);
+        // setSelectedDate(user.dateofBirth);
         setCompanyName('Company Name');
     }
 
@@ -59,7 +62,6 @@ const Profile = () => {
             alert("Bio cannot exceed 32 characters.");
         } else {
             setIsEditing(false);
-
         }
     };
 
@@ -78,10 +80,10 @@ const Profile = () => {
                     {isEditing? (
                         <View style={styles.names}>
                         <TextInput style={[styles.inputField,styles.namesinput]} value={firstname} onChangeText={setFirstName} placeholder="First Name"/>
-                        <TextInput style={[styles.inputField,styles.namesinput]} value={secondname} onChangeText={setSecondName} placeholder="Last Name"/>
+                        <TextInput style={[styles.inputField,styles.namesinput]} value={lastname} onChangeText={setLastName} placeholder="Last Name"/>
                         </View>
                         ) : (
-                        <Text style={[isEditing?styles.textField:styles.iseditTextField]}>{firstname}</Text> )}
+                        <Text style={[isEditing?styles.textField:styles.iseditTextField]}>{firstname} {lastname}</Text> )}
                 </View>
             </View>
         </View>  
@@ -116,7 +118,7 @@ const Profile = () => {
                     {isEditing ? (
                         <TextInput style={styles.textArea} value={bio} onChangeText={setBio} placeholder="Your bio" multiline numberOfLines={4} />
                     ) : (
-                        <Text style={[isEditing?styles.textField:styles.iseditTextField,styles.bio]}>{bio}</Text>)}
+                        <Text style={[isEditing?styles.textField:styles.iseditTextField,styles.bio]}>{bio === null ? "u have not set bio mental" : bio}</Text>)}
                 </View>
             </ScrollView>
             </View>

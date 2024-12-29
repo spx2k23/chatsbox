@@ -11,7 +11,8 @@ const ACCEPT_FRIEND_REQUEST = gql`
       message
       receiver {
         id
-        Name
+        FirstName
+        LastName
         ProfilePicture
         Email
         MobileNumber
@@ -29,7 +30,7 @@ const REJECT_FRIEND_REQUEST = gql`
   }
 `;
 
-const FriendRequest = ({ name, email, image, userId, receiverId, isRequestSent, isRequestReceived, updateUserStatus }) => {
+const FriendRequest = ({ firstName, lastName, email, image, userId, receiverId, isRequestSent, isRequestReceived, updateUserStatus }) => {
 
   const db = useSQLiteContext();
 
@@ -46,12 +47,11 @@ const FriendRequest = ({ name, email, image, userId, receiverId, isRequestSent, 
     if (data.acceptFriendRequest.success) {
       const user = data.acceptFriendRequest.receiver
       updateUserStatus(receiverId, { isRequestReceived: false, isFriend: true });
-      console.log(user.name,'user');
       
       await db.runAsync(
-        `INSERT INTO friends (userId, name, profilePicture, email, phoneNumber) VALUES (?, ?, ?, ?, ?)
+        `INSERT INTO friends (userId, firstName, lastName, profilePicture, email, phoneNumber) VALUES (?, ?, ?, ?, ?)
           ON CONFLICT(userId) DO NOTHING;`,
-        [user.id, user.Name, user.ProfilePicture, user.Email, user.MobileNumber]
+        [user.id, user.FirstName, user.LastName, user.ProfilePicture, user.Email, user.MobileNumber]
       )
     }
   };
@@ -72,7 +72,7 @@ const FriendRequest = ({ name, email, image, userId, receiverId, isRequestSent, 
     <View style={styles.card}>
       <Image source={{ uri: `data:image/jpeg;base64,${image}` }} style={styles.image} />
       <View style={styles.infoContainer}>
-        <Text style={styles.name}>{name}</Text>
+        <Text style={styles.name}>{firstName} {lastName}</Text>
         <Text style={styles.email}>{email}</Text>
         <View>
           {

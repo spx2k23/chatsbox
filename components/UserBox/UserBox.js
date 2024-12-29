@@ -12,7 +12,7 @@ const SEND_FRIEND_REQUEST = gql`
   }
 `;
 
-const UserBox = ({ image, name, email, isFriend, isRequestSent, isRequestReceived, userId, receiverId, updateUserStatus }) => {
+const UserBox = ({ image, firstName, lastName, email, role, bio, isFriend, isRequestSent, isRequestReceived, userId, receiverId, updateUserStatus }) => {
   const [modalVisible, setModalVisible] = useState(false);
   const [pressed, setPressed] = useState(false);
 
@@ -57,33 +57,16 @@ const UserBox = ({ image, name, email, isFriend, isRequestSent, isRequestReceive
         <View style={[styles.card, pressed ? styles.pressed : null]}>
           <Image source={{ uri: `data:image/jpeg;base64,${image}` }} style={styles.image} />
           <View style={styles.infoContainer}>
-            <Text style={styles.name}>{name}</Text>
+            <Text style={styles.name}>{firstName} {lastName}</Text>
             <Text style={styles.email}>{email}</Text>
             <Text style={styles.UserLabel}>{buttonLabel}</Text>
           </View>
         </View>
       </TouchableOpacity>
-      <ProfileModal name={name} image={image} email={email} userId={userId} receiverId={receiverId} updateUserStatus={updateUserStatus}
-       setModalVisible={setModalVisible} modalVisible={modalVisible} isFriend={isFriend}/>
-      {/* <Modal
-        animationType="slide"
-        transparent={true}
-        visible={modalVisible}
-        onRequestClose={() => setModalVisible(false)}
-      >
-        <View style={styles.modalContainer}>
-          <View style={styles.modalContent}>
-            <Image source={{ uri: `data:image/jpeg;base64,${image}` }} style={styles.modalImage} />
-            <Text style={styles.modalText}>Send a request to {name}?</Text>
-            <TouchableOpacity style={styles.button} onPress={handleSendRequest}>
-              <Text style={styles.buttonText}>Send Request</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={[styles.button, styles.cancelButton]} onPress={() => setModalVisible(false)}>
-              <Text style={styles.buttonText}>Cancel</Text>
-            </TouchableOpacity>
-          </View>
-        </View>
-      </Modal> */}
+      <ProfileModal firstName={firstName} lastName={lastName} image={image} email={email} role={role} 
+        bio={bio} userId={userId} receiverId={receiverId} updateUserStatus={updateUserStatus}
+        setModalVisible={setModalVisible} modalVisible={modalVisible} isFriend={isFriend}
+      />
     </View>
   );
 };

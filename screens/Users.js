@@ -13,8 +13,11 @@ const GET_USERS_IN_ORG = gql`
   query GetUsersInOrganization($organizationId: ID!) {
     getUsersInOrganization(organizationId: $organizationId) {
       id
-      Name
+      FirstName
+      LastName
       Email
+      Role
+      Bio
       ProfilePicture
       isFriend
       isRequestSent
@@ -39,7 +42,8 @@ const ACCEPT_FRIEND_SUBSCRIPTION = gql`
       receiverId
       sender {
         id
-        Name
+        FirstName
+        LastName
         ProfilePicture
         Email
         MobileNumber
@@ -63,17 +67,17 @@ const Users = ({ navigation }) => {
   const [searchText, setSearchText] = useState('');
   const [currentTabChoice, setCurrentTabChoice] = useState('friends');
   const [users, setUsers] = useState([]);
-  const [requestCount, setRequestCount] = useState(0); // Managing request count
+  const [requestCount, setRequestCount] = useState(0);
 
   const db = useSQLiteContext();
 
   useEffect(() => {
     const fetchOrgAndUser = async () => {
       try {
-        const orgId = await AsyncStorage.getItem('organization');
+        const firstRow = await db.getFirstAsync(`SELECT * FROM user`);
         const token = await AsyncStorage.getItem('token');
         const decodedToken = jwtDecode(token);
-        setOrganizationId(orgId);
+        setOrganizationId(firstRow.currentOrg);
         setUserId(decodedToken.id);
       } catch (error) {
         console.error('Error fetching organization or user:', error);
@@ -114,9 +118,9 @@ const Users = ({ navigation }) => {
           console.log(sender.name,'sender');
           
           await db.runAsync(
-            `INSERT INTO friends (userId, name, profilePicture, email, phoneNumber) VALUES (?, ?, ?, ?, ?)
+            `INSERT INTO friends (userId, firstName, lastName, profilePicture, email, phoneNumber) VALUES (?, ?, ?, ?, ?)
             ON CONFLICT(userId) DO NOTHING;`,
-            [sender.id, sender.Name, sender.ProfilePicture, sender.Email, sender.MobileNumber]
+            [sender.id, sender.FirstName, sender.LastName, sender.ProfilePicture, sender.Email, sender.MobileNumber]
           )
         }
       }
@@ -166,7 +170,7 @@ const Users = ({ navigation }) => {
   // Filtered users based on search and tab choice
   const filteredUsers = users.filter(user => {
     const matchesSearch =
-      user.Name.toLowerCase().includes(searchText.toLowerCase()) ||
+      user.FirstName.toLowerCase().includes(searchText.toLowerCase()) ||
       user.Email.toLowerCase().includes(searchText.toLowerCase());
       
     const isInCurrentTab =
@@ -185,7 +189,6 @@ const Users = ({ navigation }) => {
 
   if (error) {
     return <CustomNotFound title={'No data available'} />;
-    // return <CustomError title={'Error occurred'} />;
   }
 
   if (!data || !data.getUsersInOrganization) {
@@ -240,8 +243,11 @@ const Users = ({ navigation }) => {
           if (currentTabChoice === 'requests') {
             return (
               <FriendRequest
-                name={item.Name}
+                firstName={item.FirstName}
+                lastName={item.LastName}
                 email={item.Email}
+                role={item.Role}
+                bio={item.Bio}
                 image={item.ProfilePicture}
                 userId={userId}
                 receiverId={item.id}
@@ -254,8 +260,11 @@ const Users = ({ navigation }) => {
             return (
               <UserBox
                 image={item.ProfilePicture}
-                name={item.Name}
+                firstName={item.FirstName}
+                lastName={item.LastName}
                 email={item.Email}
+                role={item.Role}
+                bio={item.Bio}
                 isFriend={item.isFriend}
                 isRequestSent={item.isRequestSent}
                 isRequestReceived={item.isRequestReceived}

@@ -11,7 +11,7 @@ const SEND_FRIEND_REQUEST = gql`
   }
 `;
 
-const ProfileModal = ({ setModalVisible, image, name, email, modalVisible, userId, receiverId, updateUserStatus, isFriend }) => {
+const ProfileModal = ({ setModalVisible, image, firstName, lastName, email, role, bio, modalVisible, userId, receiverId, updateUserStatus, isFriend }) => {
   const [sendFriendRequest] = useMutation(SEND_FRIEND_REQUEST);
 
   const handleSendRequest = async () => {
@@ -27,9 +27,6 @@ const ProfileModal = ({ setModalVisible, image, name, email, modalVisible, userI
     }
   };
 
-  const bio = 'It is What it is !'; 
-  const role = 'Senior Developer';  
-
   return (
     <Modal
       animationType="slide"
@@ -42,14 +39,14 @@ const ProfileModal = ({ setModalVisible, image, name, email, modalVisible, userI
           <TouchableWithoutFeedback>
             <View style={styles.modalContent}>
               <Image source={{ uri: `data:image/jpeg;base64,${image}` }} style={styles.modalImage} />
-              <Text style={styles.nameText}>{name}</Text>
+              <Text style={styles.nameText}>{firstName} {lastName}</Text>
               <Text style={styles.emailText}>{email}</Text>
               <Text style={styles.roleText}>{role}</Text>
-              <Text style={styles.bioText}>{bio}</Text>
+              <Text style={styles.bioText}>{bio === null ? "This guy has not set bio hahaa..." : bio}</Text>
 
               { !isFriend && (
                 <View>
-                  <Text style={styles.modalText}>Send a request to {name}?</Text>
+                  <Text style={styles.modalText}>Send a request to {firstName} {lastName}?</Text>
                   {/* Buttons on Same Line */}
                   <View style={styles.buttonContainer}>
                     <TouchableOpacity style={styles.button} onPress={handleSendRequest}>
