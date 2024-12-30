@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { StyleSheet, View, Image, Text, TouchableOpacity, Modal, Platform, TouchableWithoutFeedback } from "react-native";
 import { gql, useMutation } from "@apollo/client";
 
@@ -14,15 +14,17 @@ const SEND_FRIEND_REQUEST = gql`
 const ProfileModal = ({ setModalVisible, image, firstName, lastName, email, role, bio, modalVisible, userId, receiverId, updateUserStatus, isFriend }) => {
   const [sendFriendRequest] = useMutation(SEND_FRIEND_REQUEST);
 
+  const [loading, setLoading] = useState(false);
+
   const handleSendRequest = async () => {
-    console.log(userId,receiverId);
-    
-    setModalVisible(false);
+    setLoading(true);
     const { data } = await sendFriendRequest({
       variables: { senderId: userId, receiverId },
     });
-
+    
     if (data.sendFriendRequest.success) {
+      setModalVisible(false);
+      setLoading(false);
       updateUserStatus(receiverId, { isRequestSent: true });
     }
   };
@@ -48,13 +50,18 @@ const ProfileModal = ({ setModalVisible, image, firstName, lastName, email, role
                 <View>
                   <Text style={styles.modalText}>Send a request to {firstName} {lastName}?</Text>
                   {/* Buttons on Same Line */}
-                  <View style={styles.buttonContainer}>
-                    <TouchableOpacity style={styles.button} onPress={handleSendRequest}>
-                      <Text style={styles.buttonText}>Send Request</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity style={[styles.button, styles.cancelButton]} onPress={() => setModalVisible(false)}>
-                      <Text style={styles.buttonText}>Cancel</Text>
-                    </TouchableOpacity>
+                  <View>
+                    {
+                      loading === true ? <Text style={styles.bioText}>sending...</Text> :
+                      <View style={styles.buttonContainer}>
+                        <TouchableOpacity style={styles.button} onPress={handleSendRequest}>
+                          <Text style={styles.buttonText}>Send Request</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity style={[styles.button, styles.cancelButton]} onPress={() => setModalVisible(false)}>
+                          <Text style={styles.buttonText}>Cancel</Text>
+                        </TouchableOpacity>
+                      </View>
+                    }
                   </View>
                 </View>
               )}

@@ -13,6 +13,9 @@ const ACCEPT_FRIEND_REQUEST = gql`
         id
         FirstName
         LastName
+        Bio
+        Role
+        DateOfBirth
         ProfilePicture
         Email
         MobileNumber
@@ -48,10 +51,10 @@ const FriendRequest = ({ firstName, lastName, email, image, userId, receiverId, 
       const user = data.acceptFriendRequest.receiver
       updateUserStatus(receiverId, { isRequestReceived: false, isFriend: true });
       
-      await db.runAsync(
-        `INSERT INTO friends (userId, firstName, lastName, profilePicture, email, phoneNumber) VALUES (?, ?, ?, ?, ?)
+      const result = await db.runAsync(
+        `INSERT INTO friends (userId, firstName, lastName, role, dateOfBirth, profilePicture, bio, email, phoneNumber) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
           ON CONFLICT(userId) DO NOTHING;`,
-        [user.id, user.FirstName, user.LastName, user.ProfilePicture, user.Email, user.MobileNumber]
+        [user.id, user.FirstName, user.LastName, user.Role, user.DateOfBirth, user.ProfilePicture, user.Bio, user.Email, user.MobileNumber]
       )
     }
   };
