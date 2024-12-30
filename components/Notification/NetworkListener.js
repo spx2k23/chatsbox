@@ -10,7 +10,8 @@ const CHECK_PENDING_NOTIFICATIONS = gql`
         type
         sender {
           id
-          Name
+          FirstName
+          LastName
           ProfilePicture
           Email
           MobileNumber

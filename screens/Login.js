@@ -76,6 +76,7 @@ const Login = ({ navigation }) => {
         await AsyncStorage.setItem('token', data.login.token);
         const user = data.login.user;
         const firstRow = await db.getFirstAsync('SELECT * FROM user');
+        // console.log(firstRow.lastName);
 
         if (firstRow === null) {
           await db.runAsync(
@@ -98,9 +99,8 @@ const Login = ({ navigation }) => {
           console.log("else if");
           navigation.replace('Chats');
         } else {
-          await db.runAsync(
-            `DELETE FROM user WHERE userId = $userId`, { $userId: firstRow.userId }
-          )
+          await db.runAsync(`DELETE FROM user WHERE userId = $userId`, { $userId: firstRow.userId })
+          await db.runAsync('DELETE FROM organizations')
           await db.runAsync(
             `INSERT INTO user (userId, firstName, lastName, role, dateOfBirth, profilePicture, bio, email, phoneNumber, currentOrg) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
               ON CONFLICT(userId) DO NOTHING;`,

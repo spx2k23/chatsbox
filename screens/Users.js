@@ -115,8 +115,6 @@ const Users = ({ navigation }) => {
         if (friendRequestAccept) {
           const { senderId, sender } = friendRequestAccept;
           updateUserStatus(senderId, { isRequestSent: false, isFriend: true });
-          console.log(sender.name,'sender');
-          
           await db.runAsync(
             `INSERT INTO friends (userId, firstName, lastName, profilePicture, email, phoneNumber) VALUES (?, ?, ?, ?, ?)
             ON CONFLICT(userId) DO NOTHING;`,

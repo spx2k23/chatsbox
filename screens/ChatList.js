@@ -13,10 +13,6 @@ const ChatList = () => {
   const [friends, setFriends] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  // useFocusEffect(() => {
-  //   fetchFriendsFromDB();
-  // }, []);
-
   const fetchFriendsFromDB = async () => {
     const fetchAllFriends = await db.getAllAsync('SELECT * FROM friends');
     setFriends(fetchAllFriends);
@@ -24,9 +20,8 @@ const ChatList = () => {
   };
   useFocusEffect(
     React.useCallback(() => {
-      // When screen is focused, refetch the friends list
       fetchFriendsFromDB();
-    }, [])  // Empty dependency array to ensure it runs only when the screen is focused
+    }, [])
   );
 
   const renderItem = ({ item }) => (

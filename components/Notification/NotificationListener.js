@@ -9,7 +9,8 @@ const NOTIFICATION_SUBSCRIPTION = gql`
       type
       sender {
         id
-        Name
+        FirstName
+        LastName
         ProfilePicture
         Email
         MobileNumber
@@ -42,9 +43,9 @@ const NotificationListener = () => {
     const  type  = data?.notification?.type;
     if (type === "FRIEND_REQUEST_ACCEPT") {
       db.runAsync(
-        `INSERT INTO friends (userId, name, profilePicture, email, phoneNumber) VALUES (?, ?, ?, ?, ?)
+        `INSERT INTO friends (userId, firstName, lastName, profilePicture, email, phoneNumber) VALUES (?, ?, ?, ?, ?)
         ON CONFLICT(userId) DO NOTHING;`,
-        [sender.id, sender.Name, sender.ProfilePicture, sender.Email, sender.MobileNumber]
+        [sender.id, sender.FirstName, sender.LastName, sender.ProfilePicture, sender.Email, sender.MobileNumber]
       )
       Notifications.scheduleNotificationAsync({
         content: {
