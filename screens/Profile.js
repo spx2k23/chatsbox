@@ -3,8 +3,8 @@ import { View, Text, TextInput, StyleSheet, ScrollView, TouchableOpacity,Platfor
 import { MaterialIcons } from '@expo/vector-icons';
 import { useSQLiteContext } from 'expo-sqlite';
 import DateOfBirth from '../components/Profile/DateOfBirth';
-import { Button } from 'react-native-elements';
 import ProfilePic from '../components/Profile/ProfilePic';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 
 const { width } = Dimensions.get('window');
 const scale = width / 375; // 375 is the baseline width (iPhone 6)
@@ -66,6 +66,7 @@ const Profile = () => {
     };
 
     return (
+        <KeyboardAwareScrollView>
         <View style={styles.container}>
             <ProfilePic profilePic={profilePic} isEditing={isEditing} email={email} companyName={companyName} setProfilePic={setProfilePic}/>
         <View style={isEditing?staticstyles.isEditingForm:styles.form}>
@@ -135,6 +136,7 @@ const Profile = () => {
                 <Text style={styles.footerText}>Powered by Sprexcel</Text>
             </View>
         </View>
+        </KeyboardAwareScrollView>
     );
 };
 
@@ -222,10 +224,11 @@ const styles = StyleSheet.create({
         lineHeight: scaleSize(20),
         height: scaleSize(90),
         color:'#6200EE',
+        marginBottom:Platform.OS==='android'?0:60
     },
     footerContainer: {
         position: 'absolute',
-        bottom: 0,
+        bottom:-220,
         alignItems: 'center',
         justifyContent: 'center',
         width: '100%',
@@ -249,7 +252,8 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         color: '#6200EE',
         marginTop: scaleSize(5),
-        marginLeft:30
+        marginLeft:30,
+        marginBottom:Platform.OS==='android'?0:7
     },
     iseditlable:{
         fontSize:scaleFont(14),
@@ -312,4 +316,3 @@ const styles = StyleSheet.create({
     
 });
 
-// ,!isEditing&&styles.textboxisedit]

@@ -169,31 +169,35 @@ const Users = ({ navigation }) => {
 
   // Filtered users based on search and tab choice
   const filteredUsers = users.filter(user => {
+    const searchTextLower = searchText.toLowerCase();
     const matchesSearch =
-      user.FirstName.toLowerCase().includes(searchText.toLowerCase()) ||
-      user.Email.toLowerCase().includes(searchText.toLowerCase());
-      
+      ( user.FirstName?.toLowerCase().includes(searchTextLower)) ||
+      (user.SecondName?.toLowerCase().includes(searchTextLower)) ||
+      (user.Email?.toLowerCase().includes(searchTextLower));
+  
     const isInCurrentTab =
       currentTabChoice === 'friends'
         ? user.isFriend
         : currentTabChoice === 'requests'
         ? user.isRequestSent || user.isRequestReceived
         : !user.isFriend && !user.isRequestSent && !user.isRequestReceived;
-
+  
     return matchesSearch && isInCurrentTab;
   });
+  
 
   if (loading) {
     return <Loading />;
   }
 
   if (error) {
-    return <CustomNotFound title={'No data available'} />;
+    return <CustomNotFound title={'Error Occured'} />;
   }
 
   if (!data || !data.getUsersInOrganization) {
     return <CustomNotFound title={'No data available'} />;
   }
+  
 
   return (
     <View style={styles.container}>
@@ -235,11 +239,13 @@ const Users = ({ navigation }) => {
       </View>
 
       {/* Render filtered users based on search and tab */}
+      {filteredUsers.length===0&&searchText!==''&&<Text style={styles.nomatch}>No matching data</Text>}
       <FlatList
         contentContainerStyle={styles.flatListContainer} 
         data={filteredUsers}
         keyExtractor={(item) => item.id}
         renderItem={({ item }) => {
+          
           if (currentTabChoice === 'requests') {
             return (
               <FriendRequest
@@ -256,7 +262,8 @@ const Users = ({ navigation }) => {
                 updateUserStatus={updateUserStatus}
               />
             );
-          } else {
+          }
+           else {
             return (
               <UserBox
                 image={item.ProfilePicture}
@@ -332,6 +339,10 @@ const styles = StyleSheet.create({
   flatListContainer: {
     paddingLeft: Platform.OS === 'ios' ? 15 : 0, // Add left padding for iOS
   },
+  nomatch:{
+     textAlign:'center',
+     marginTop:100
+  }
 });
 
 export default Users;
