@@ -26,7 +26,8 @@ const ChatList = () => {
 
   const renderItem = ({ item }) => (
     <ChatBox
-      name={item.name}
+      firstName={item.firstName}
+      lastName={item.lastName}
       image={item.profilePicture}
       id={item.id}
       lastmessage="it's secret bro!"
