@@ -24,7 +24,7 @@ const Profile = () => {
     const [role,setRole]=useState("");
     const [email, setEmail] = useState("");
     const [profilePic, setProfilePic] = useState(null);
-    const [selectedDate, setSelectedDate] = useState(new Date(2002, 4, 1));
+    const [selectedDate, setSelectedDate] = useState();
 
     const staticstyles=StyleSheet.create({
         isEditingForm:{
@@ -50,8 +50,10 @@ const Profile = () => {
         setEmail(user.email);
         setRole(user.role);
         setBio(user.bio);
-        // setSelectedDate(user.dateofBirth);
+        setSelectedDate(user.dateOfBirth);
         setCompanyName('Company Name');
+        // console.log(user.dateOfBirth);
+        
     }
 
     

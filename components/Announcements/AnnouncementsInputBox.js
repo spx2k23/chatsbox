@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { View, TouchableOpacity, StyleSheet, TextInput, Platform, Dimensions } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
@@ -7,12 +7,22 @@ import * as Audio from 'expo-av';
 
 const { height: screenHeight } = Dimensions.get('window'); // Get the screen height
 
-const AnnouncementsInputBox = () => {
+const AnnouncementsInputBox = ({ scrollViewRef }) => {
   const [recording, setRecording] = useState(null);
   const [message, setMessage] = useState('');
+  const [inputHeight, setInputHeight] = useState(40);
 
   const maxHeight = 6 * 24; // Max height based on 6 lines (24px per line, adjust as needed)
   const lineHeight = 24; // Line height for multiline text (adjust if necessary)
+
+  // Create a ref for the TextInput to handle focus events
+  const textInputRef = useRef(null);
+
+  // Function to handle TextInput focus event
+  const handleFocus = () => {
+    // Check if scrollViewRef is available and scroll to input
+    scrollViewRef.current.scrollToFocusedInput(textInputRef.current);
+  };
 
   // Handle media pick (image/video)
   const handlePickMedia = async () => {
@@ -129,14 +139,18 @@ const AnnouncementsInputBox = () => {
 
       {/* Text input field */}
       <TextInput
+        ref={textInputRef}
         placeholder="Type your announcement here..."
-        style={[styles.input,]} // Dynamically set height
+        style={[styles.input]} // Dynamically set height
         onChangeText={setMessage}
         value={message}
         multiline
         textAlignVertical="top"
         numberOfLines={6}
+        onFocus={handleFocus} // Trigger scroll on focus
         onContentSizeChange={(contentWidth, contentHeight) => {
+          // Adjust input height based on content height (with a maximum height limit)
+          setInputHeight(contentHeight);
         }}
       />
 
@@ -163,8 +177,9 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     flexDirection: 'row', // Align everything horizontally
     alignItems: 'flex-end',
-    borderRadius: 20,
+    borderTopLeftRadius: 20,
     borderTopRightRadius: 20,
+    maxHeight:150
   },
   input: {
     flex: 1, // Allow the input to take up available space
@@ -188,7 +203,7 @@ const styles = StyleSheet.create({
     marginLeft:-15
   },
   iconButton: {
-   marginLeft:8,
+    marginLeft:8,
     borderRadius: 50,
     alignItems: 'center',
     justifyContent: 'center',
