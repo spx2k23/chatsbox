@@ -80,7 +80,6 @@ const TabNav=()=>{
           headerRight:()=><NavProfileIcon currentUser={currentUser} navigation={navigation}/> , 
           
           headerStyle:{
-            backgroundColor:"#6200EE",
             height:Platform.OS==='android'? 60:105,
           }
 
@@ -105,9 +104,8 @@ const styles=StyleSheet.create({
   appName:{
       marginLeft:10,
       letterSpacing:5,
-      fontWeight:Platform.OS==='android'?600:700,
+      fontWeight:600,
       fontSize:24,
-      color:'#fff',
-     
+       color:"#6200EE",
   },
 });

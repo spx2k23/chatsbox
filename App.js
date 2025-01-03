@@ -54,7 +54,6 @@ const App = () => {
         <NavigationContainer>
           <Stack.Navigator
             initialRouteName={isAuthenticated ? "Chats" : "Login"}
-            headerTitle='fhcg'
             screenOptions={{
               gestureEnabled: false, // Disable swipe back gestures globally
             }}
