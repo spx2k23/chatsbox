@@ -5,7 +5,7 @@ import * as DocumentPicker from 'expo-document-picker';
 import * as ImagePicker from 'expo-image-picker';
 import { Audio } from 'expo-av';
 
-const AnnouncementsInputBox = ({ setAnnouncement, announcement, showContainer, setShowContainer, tempData, setTempData }) => {
+const AnnouncementsInputBox = ({setShowContainer, tempData, setTempData }) => {
   const [imagePickerPermission, setImagePickerPermission] = useState(false);
 
   // Request media library permission when component mounts

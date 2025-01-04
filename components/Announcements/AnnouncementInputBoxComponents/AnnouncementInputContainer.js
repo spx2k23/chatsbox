@@ -8,7 +8,7 @@ import Video from 'react-native-video'; // For displaying video previews
 
 const windowWidth = Dimensions.get('window').width;
 
-const AnnouncementInputContainer = ({ setShowContainer, tempData, setTempData }) => {
+const AnnouncementInputContainer = ({ setShowContainer, tempData, setTempData , setAnnouncements, announcements,}) => {
   const [isRecording, setIsRecording] = useState(false);
   const [recording, setRecording] = useState();
 
@@ -111,18 +111,31 @@ const AnnouncementInputContainer = ({ setShowContainer, tempData, setTempData })
 
   // Handle send: Log the data (can be replaced with an API call)
   const handleSend = () => {
-    console.log('Sending Data:', tempData); // Debugging log
-    if (tempData.length === 0) {
+    // Filter out text items with empty content
+    const filteredData = tempData.filter(item => !(item.type === 'text' && item.content === ''));
+  
+    if (filteredData.length === 0) {
       alert('No data to send!');
       return;
     }
-
-    // Your API call or logic to send the data would go here
+  
+    const newGroup = filteredData.map(item => ({
+      ...item, 
+      id: Math.random() * 500 // Or a better way to generate unique IDs
+    }));
+  
+    setAnnouncements(prevAnnouncements => [
+      ...prevAnnouncements,  // Keep previous announcements
+      newGroup  // Add new group of content
+    ]);
+  
+    setTempData([]);
     setShowContainer(false); // Optionally close the container after sending
   };
+  
 
   return (
-    <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
+   
       <KeyboardAvoidingView
         style={styles.container}
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
@@ -156,7 +169,7 @@ const AnnouncementInputContainer = ({ setShowContainer, tempData, setTempData })
                     value={item.content}
                     onChangeText={(text) => handleTextChange(index, text)}
                     multiline
-                    numberOfLines={7}
+                    numberOfLines={6}
                     autoCapitalize="none"
                     autoFocus={index === tempData.length - 1} // Ensures the active field is focused
                   />
@@ -214,7 +227,7 @@ const AnnouncementInputContainer = ({ setShowContainer, tempData, setTempData })
           <IconButton icon="send" size={24} style={styles.send} iconColor="#6200EE" />
         </TouchableOpacity>
       </KeyboardAvoidingView>
-    </TouchableWithoutFeedback>
+    
   );
 };
 
@@ -253,7 +266,6 @@ const styles = StyleSheet.create({
     marginBottom: 8,
     width: '85%',
     alignSelf: 'center',
-    height: 50,
   },
   image: {
     width: '100%',
