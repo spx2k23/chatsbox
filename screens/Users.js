@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { FlatList, View, Text, StyleSheet, TextInput, Pressable, Platform } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { useQuery, gql, useSubscription } from '@apollo/client';
+import { useQuery, gql, useSubscription, useApolloClient } from '@apollo/client';
 import { jwtDecode } from 'jwt-decode';
-import Loading from '../components/Loading/Loading';
 import { useSQLiteContext } from 'expo-sqlite';
+import { useFocusEffect } from '@react-navigation/native';
+import Loading from '../components/Loading/Loading';
 import UserBox from '../components/UserBox/UserBox';
 import FriendRequest from '../components/UserBox/FriendRequest';
 import CustomNotFound from '../components/NotFound';
@@ -27,16 +28,16 @@ const GET_USERS_IN_ORG = gql`
 `;
 
 const FRIEND_REQUEST_SUBSCRIPTION = gql`
-  subscription FriendRequestSent($receiverId: ID!) {
-    friendRequestSent(receiverId: $receiverId) {
+  subscription FriendRequestSent($userId: ID!) {
+    friendRequestSent(userId: $userId) {
       friendRequestSenderId
     }
   }
 `;
 
 const ACCEPT_FRIEND_SUBSCRIPTION = gql`
-  subscription FriendRequestAccept($receiverId: ID!) {
-    friendRequestAccept(receiverId: $receiverId) {
+  subscription FriendRequestAccept($userId: ID!) {
+    friendRequestAccept(userId: $userId) {
       friendRequestAccepterId
       friendRequestAccepter {
         id
@@ -54,14 +55,15 @@ const ACCEPT_FRIEND_SUBSCRIPTION = gql`
 `;
 
 const REJECT_FRIEND_SUBSCRIPTION = gql`
-  subscription FriendRequestReject($receiverId: ID!) {
-    friendRequestReject(receiverId: $receiverId) {
+  subscription FriendRequestReject($userId: ID!) {
+    friendRequestReject(userId: $userId) {
       friendRequestRejecterId
     }
   }
 `;
 
 const Users = ({ navigation }) => {
+  const client = useApolloClient();
   const [organizationId, setOrganizationId] = useState(null);
   const [userId, setUserId] = useState(null);
   const [searchText, setSearchText] = useState('');
@@ -94,49 +96,130 @@ const Users = ({ navigation }) => {
     },
   });
 
-  useSubscription(FRIEND_REQUEST_SUBSCRIPTION, {
-    variables: { userId },
-    onData: ({ data }) => {
-      if (data) {
-        const { friendRequestSent } = data.data;
-        if (friendRequestSent) {
-          const { friendRequestSenderId } = friendRequestSent;
-          updateUserStatus(friendRequestSenderId, { isRequestReceived: true });
-        }
-      }
-    },
-  });
+  useFocusEffect(
+    React.useCallback(() => {
+      const subscriptions = [];
+  
+      if (userId) {
+        const friendRequestObservable = client.subscribe({
+          query: FRIEND_REQUEST_SUBSCRIPTION,
+          variables: { userId },
+        });
+        const friendRequestSubscription = friendRequestObservable.subscribe({
+          next({ data }) {
+            if (data?.friendRequestSent) {
+              const { friendRequestSenderId } = data.friendRequestSent;
+              updateUserStatus(friendRequestSenderId, { isRequestReceived: true });
+              console.log("Friend Request Received:", friendRequestSenderId);
+            }
+          },
+          error(err) {
+            console.error("Friend Request Subscription error:", err);
+          },
+        });
+        subscriptions.push(friendRequestSubscription);
 
-  useSubscription(ACCEPT_FRIEND_SUBSCRIPTION, {
-    variables: { userId },
-    onData: async ({ data }) => {
-      if (data) {
-        const { friendRequestAccept } = data.data;
-        if (friendRequestAccept) {
-          const { friendRequestAccepterId, friendRequestAccepter } = friendRequestAccept;
-          updateUserStatus(friendRequestAccepterId, { isRequestSent: false, isFriend: true });
-          await db.runAsync(
-            `INSERT INTO friends (userId, firstName, lastName, role, dateOfBirth, profilePicture, bio, email, phoneNumber) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
-              ON CONFLICT(userId) DO NOTHING;`,
-            [friendRequestAccepter.id, friendRequestAccepter.FirstName, friendRequestAccepter.LastName, friendRequestAccepter.Role, friendRequestAccepter.DateOfBirth, friendRequestAccepter.ProfilePicture, friendRequestAccepter.Bio, friendRequestAccepter.Email, friendRequestAccepter.MobileNumber]
-          )
-        }
-      }
-    },
-  });
+        const acceptFriendObservable = client.subscribe({
+          query: ACCEPT_FRIEND_SUBSCRIPTION,
+          variables: { userId },
+        });
+        const acceptFriendSubscription = acceptFriendObservable.subscribe({
+          next({ data }) {
+            if (data?.friendRequestAccept) {
+              const { friendRequestAccepterId, friendRequestAccepter } = data.friendRequestAccept;
+              updateUserStatus(friendRequestAccepterId, { isRequestSent: false, isFriend: true });
+              db.runAsync(
+                `INSERT INTO friends (userId, firstName, lastName, role, dateOfBirth, profilePicture, bio, email, phoneNumber) 
+                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?) ON CONFLICT(userId) DO NOTHING;`,
+                [
+                  friendRequestAccepter.id,
+                  friendRequestAccepter.FirstName,
+                  friendRequestAccepter.LastName,
+                  friendRequestAccepter.Role,
+                  friendRequestAccepter.DateOfBirth,
+                  friendRequestAccepter.ProfilePicture,
+                  friendRequestAccepter.Bio,
+                  friendRequestAccepter.Email,
+                  friendRequestAccepter.MobileNumber,
+                ]
+              );
+              console.log("Friend Request Accepted:", friendRequestAccepterId);
+            }
+          },
+          error(err) {
+            console.error("Accept Friend Subscription error:", err);
+          },
+        });
+        subscriptions.push(acceptFriendSubscription);
 
-  useSubscription(REJECT_FRIEND_SUBSCRIPTION, {
-    variables: { userId },
-    onData: ({ data }) => {
-      if (data) {
-        const { friendRequestReject } = data.data;
-        if (friendRequestReject) {
-          const { friendRequestRejecterId } = friendRequestReject;
-          updateUserStatus(friendRequestRejecterId, { isRequestSent: false });
-        }
+        const rejectFriendObservable = client.subscribe({
+          query: REJECT_FRIEND_SUBSCRIPTION,
+          variables: { userId },
+        });
+        const rejectFriendSubscription = rejectFriendObservable.subscribe({
+          next({ data }) {
+            if (data?.friendRequestReject) {
+              const { friendRequestRejecterId } = data.friendRequestReject;
+              updateUserStatus(friendRequestRejecterId, { isRequestSent: false });
+              console.log("Friend Request Rejected:", friendRequestRejecterId);
+            }
+          },
+          error(err) {
+            console.error("Reject Friend Subscription error:", err);
+          },
+        });
+        subscriptions.push(rejectFriendSubscription);
       }
-    },
-  });
+  
+      return () => {
+        subscriptions.forEach((subscription) => subscription.unsubscribe());
+      };
+    }, [userId, client, db])
+  );
+
+  // useSubscription(FRIEND_REQUEST_SUBSCRIPTION, {
+  //   variables: { userId },
+  //   onData: ({ data }) => {
+  //     if (data) {
+  //       const { friendRequestSent } = data.data;
+  //       if (friendRequestSent) {
+  //         const { friendRequestSenderId } = friendRequestSent;
+  //         updateUserStatus(friendRequestSenderId, { isRequestReceived: true });
+  //       }
+  //     }
+  //   },
+  // });
+
+  // useSubscription(ACCEPT_FRIEND_SUBSCRIPTION, {
+  //   variables: { userId },
+  //   onData: async ({ data }) => {
+  //     if (data) {
+  //       const { friendRequestAccept } = data.data;
+  //       if (friendRequestAccept) {
+  //         const { friendRequestAccepterId, friendRequestAccepter } = friendRequestAccept;
+  //         updateUserStatus(friendRequestAccepterId, { isRequestSent: false, isFriend: true });
+  //         await db.runAsync(
+  //           `INSERT INTO friends (userId, firstName, lastName, role, dateOfBirth, profilePicture, bio, email, phoneNumber) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+  //             ON CONFLICT(userId) DO NOTHING;`,
+  //           [friendRequestAccepter.id, friendRequestAccepter.FirstName, friendRequestAccepter.LastName, friendRequestAccepter.Role, friendRequestAccepter.DateOfBirth, friendRequestAccepter.ProfilePicture, friendRequestAccepter.Bio, friendRequestAccepter.Email, friendRequestAccepter.MobileNumber]
+  //         )
+  //       }
+  //     }
+  //   },
+  // });
+
+  // useSubscription(REJECT_FRIEND_SUBSCRIPTION, {
+  //   variables: { userId },
+  //   onData: ({ data }) => {
+  //     if (data) {
+  //       const { friendRequestReject } = data.data;
+  //       if (friendRequestReject) {
+  //         const { friendRequestRejecterId } = friendRequestReject;
+  //         updateUserStatus(friendRequestRejecterId, { isRequestSent: false });
+  //       }
+  //     }
+  //   },
+  // });
 
   useEffect(() => {
     const unsubscribe = navigation.addListener('focus', () => {
