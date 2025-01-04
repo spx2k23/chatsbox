@@ -3,8 +3,8 @@ import { StyleSheet, View, Image, Text, TouchableOpacity, Modal, Platform, Touch
 import { gql, useMutation } from "@apollo/client";
 
 const SEND_FRIEND_REQUEST = gql`
-  mutation SendFriendRequest($senderId: ID!, $receiverId: ID!) {
-    sendFriendRequest(senderId: $senderId, receiverId: $receiverId) {
+  mutation SendFriendRequest($friendRequestSenderId: ID!, $friendRequestReceiverId: ID!) {
+    sendFriendRequest(friendRequestSenderId: $friendRequestSenderId, friendRequestReceiverId: $friendRequestReceiverId) {
       success
       message
     }
@@ -19,7 +19,7 @@ const ProfileModal = ({ setModalVisible, image, firstName, lastName, email, role
   const handleSendRequest = async () => {
     setLoading(true);
     const { data } = await sendFriendRequest({
-      variables: { senderId: userId, receiverId },
+      variables: { friendRequestSenderId: userId, friendRequestReceiverId: receiverId },
     });
     
     if (data.sendFriendRequest.success) {

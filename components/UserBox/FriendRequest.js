@@ -5,8 +5,8 @@ import { gql, useMutation } from "@apollo/client";
 import { useSQLiteContext } from 'expo-sqlite';
 
 const ACCEPT_FRIEND_REQUEST = gql`
-  mutation AcceptFriendRequest($senderId: ID!, $receiverId: ID!) {
-    acceptFriendRequest(senderId: $senderId, receiverId: $receiverId) {
+  mutation AcceptFriendRequest($friendRequestAccepterId: ID!, $friendRequestReceiverId: ID!) {
+    acceptFriendRequest(friendRequestAccepterId: $friendRequestAccepterId, friendRequestReceiverId: $friendRequestReceiverId) {
       success
       message
       receiver {
@@ -25,8 +25,8 @@ const ACCEPT_FRIEND_REQUEST = gql`
 `;
 
 const REJECT_FRIEND_REQUEST = gql`
-  mutation RejectFriendRequest($senderId: ID!, $receiverId: ID!) {
-    rejectFriendRequest(senderId: $senderId, receiverId: $receiverId) {
+  mutation RejectFriendRequest($friendRequestRejecterId: ID!, $friendRequestReceiverId: ID!) {
+    rejectFriendRequest(friendRequestRejecterId: $friendRequestRejecterId, friendRequestReceiverId: $friendRequestReceiverId) {
       success
       message
     }
@@ -43,8 +43,8 @@ const FriendRequest = ({ firstName, lastName, email, image, userId, receiverId, 
   const handleAccept = async (userId) => {
     const { data } = await acceptFriendRequest({
       variables: {
-        senderId: userId,
-        receiverId,
+        friendRequestAccepterId: userId,
+        friendRequestReceiverId: receiverId,
       }
     });
     if (data.acceptFriendRequest.success) {
@@ -62,8 +62,8 @@ const FriendRequest = ({ firstName, lastName, email, image, userId, receiverId, 
   const handleReject = async (userId) => {
     const { data } = await rejectFriendRequest({
       variables: {
-        senderId: userId,
-        receiverId,
+        friendRequestRejecterId: userId,
+        friendRequestReceiverId: receiverId,
       }
     });
     if (data.rejectFriendRequest.success) {

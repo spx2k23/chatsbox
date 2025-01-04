@@ -1,35 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { StyleSheet, View, Image, Text, TouchableOpacity, Modal } from "react-native";
-import { gql, useMutation } from "@apollo/client";
-import ProfileModal from "../ProfileModal";
-
-const SEND_FRIEND_REQUEST = gql`
-  mutation SendFriendRequest($senderId: ID!, $receiverId: ID!) {
-    sendFriendRequest(senderId: $senderId, receiverId: $receiverId) {
-      success
-      message
-    }
-  }
-`;
+import ProfileModal from "./ProfileModal";
 
 const UserBox = ({ image, firstName, lastName, email, role, bio, isFriend, isRequestSent, isRequestReceived, userId, receiverId, updateUserStatus }) => {
   const [modalVisible, setModalVisible] = useState(false);
   const [pressed, setPressed] = useState(false);
-
-  const [sendFriendRequest] = useMutation(SEND_FRIEND_REQUEST);
-
-  const handleSendRequest = async () => {
-    setModalVisible(false);
-    const { data } = await sendFriendRequest({
-      variables: {
-        senderId: userId,
-        receiverId,
-      },
-    });
-    if (data.sendFriendRequest.success) {
-      updateUserStatus(receiverId, { isRequestSent: true });
-    }
-  };
 
   let buttonLabel;
   let buttonDisabled = false;

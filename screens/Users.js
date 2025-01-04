@@ -29,8 +29,7 @@ const GET_USERS_IN_ORG = gql`
 const FRIEND_REQUEST_SUBSCRIPTION = gql`
   subscription FriendRequestSent($receiverId: ID!) {
     friendRequestSent(receiverId: $receiverId) {
-      senderId
-      receiverId
+      friendRequestSenderId
     }
   }
 `;
@@ -38,9 +37,8 @@ const FRIEND_REQUEST_SUBSCRIPTION = gql`
 const ACCEPT_FRIEND_SUBSCRIPTION = gql`
   subscription FriendRequestAccept($receiverId: ID!) {
     friendRequestAccept(receiverId: $receiverId) {
-      senderId
-      receiverId
-      sender {
+      friendRequestAccepterId
+      friendRequestAccepter {
         id
         FirstName
         LastName
@@ -58,8 +56,7 @@ const ACCEPT_FRIEND_SUBSCRIPTION = gql`
 const REJECT_FRIEND_SUBSCRIPTION = gql`
   subscription FriendRequestReject($receiverId: ID!) {
     friendRequestReject(receiverId: $receiverId) {
-      senderId
-      receiverId
+      friendRequestRejecterId
     }
   }
 `;
@@ -98,30 +95,30 @@ const Users = ({ navigation }) => {
   });
 
   useSubscription(FRIEND_REQUEST_SUBSCRIPTION, {
-    variables: { receiverId: userId },
+    variables: { userId },
     onData: ({ data }) => {
       if (data) {
         const { friendRequestSent } = data.data;
         if (friendRequestSent) {
-          const { senderId } = friendRequestSent;
-          updateUserStatus(senderId, { isRequestReceived: true });
+          const { friendRequestSenderId } = friendRequestSent;
+          updateUserStatus(friendRequestSenderId, { isRequestReceived: true });
         }
       }
     },
   });
 
   useSubscription(ACCEPT_FRIEND_SUBSCRIPTION, {
-    variables: { receiverId: userId },
+    variables: { userId },
     onData: async ({ data }) => {
       if (data) {
         const { friendRequestAccept } = data.data;
         if (friendRequestAccept) {
-          const { senderId, sender } = friendRequestAccept;
-          updateUserStatus(senderId, { isRequestSent: false, isFriend: true });
+          const { friendRequestAccepterId, friendRequestAccepter } = friendRequestAccept;
+          updateUserStatus(friendRequestAccepterId, { isRequestSent: false, isFriend: true });
           await db.runAsync(
             `INSERT INTO friends (userId, firstName, lastName, role, dateOfBirth, profilePicture, bio, email, phoneNumber) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
               ON CONFLICT(userId) DO NOTHING;`,
-            [sender.id, sender.FirstName, sender.LastName, sender.Role, sender.DateOfBirth, sender.ProfilePicture, sender.Bio, sender.Email, sender.MobileNumber]
+            [friendRequestAccepter.id, friendRequestAccepter.FirstName, friendRequestAccepter.LastName, friendRequestAccepter.Role, friendRequestAccepter.DateOfBirth, friendRequestAccepter.ProfilePicture, friendRequestAccepter.Bio, friendRequestAccepter.Email, friendRequestAccepter.MobileNumber]
           )
         }
       }
@@ -129,13 +126,13 @@ const Users = ({ navigation }) => {
   });
 
   useSubscription(REJECT_FRIEND_SUBSCRIPTION, {
-    variables: { receiverId: userId },
+    variables: { userId },
     onData: ({ data }) => {
       if (data) {
         const { friendRequestReject } = data.data;
         if (friendRequestReject) {
-          const { senderId } = friendRequestReject;
-          updateUserStatus(senderId, { isRequestSent: false });
+          const { friendRequestRejecterId } = friendRequestReject;
+          updateUserStatus(friendRequestRejecterId, { isRequestSent: false });
         }
       }
     },
