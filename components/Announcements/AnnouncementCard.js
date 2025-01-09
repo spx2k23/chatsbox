@@ -1,6 +1,8 @@
 import { View, StyleSheet,  Text, Image, Dimensions,  TouchableOpacity, } from 'react-native';
 import { Video } from 'expo-av';
 import { MaterialIcons } from '@expo/vector-icons';
+import VideoPlayer from './AnnouncementInputBoxComponents/VideoPlayer';
+import DocViewer from './AnnouncementInputBoxComponents/DocViewer';
 
 
 const AnnouncementCard=({group})=>{
@@ -17,20 +19,28 @@ const AnnouncementCard=({group})=>{
             <Image source={{ uri: item.uri }} style={styles.image} />
           )}
           {item.type === 'video' && item.uri && (
-            <Video source={{ uri: item.uri }} style={styles.video} controls />
+            <VideoPlayer item={item}/>
+          )}
+          {item.type==='document'&& item.uri &&(
+            <DocViewer name={item.name} uri={item.uri}/>
           )}
          </View>
          ))}
 
-      <View style={styles.btnscontainer}>
-        <TouchableOpacity>
-       <MaterialIcons size={22} color={'grey'} name='thumb-up-off-alt'/></TouchableOpacity>
-       <TouchableOpacity>
-       <MaterialIcons size={22} color={'grey'} name='send'/></TouchableOpacity>
-   
-       <TouchableOpacity style={styles.star}>
-       <MaterialIcons size={22} color={'grey'} name='star-border'/></TouchableOpacity>
-      </View>
+<View style={styles.btnscontainer}>
+  <View style={styles.leftIcons}>
+    <TouchableOpacity>
+      <MaterialIcons size={24} color={'grey'} name="thumb-up-off-alt" />
+    </TouchableOpacity>
+    <TouchableOpacity>
+      <MaterialIcons size={24} color={'grey'} name="send" />
+    </TouchableOpacity>
+  </View>
+
+  <TouchableOpacity style={styles.star}>
+    <MaterialIcons size={24} color={'grey'} name="star-border" />
+  </TouchableOpacity>
+</View>
        </>
     );
 }
@@ -41,7 +51,6 @@ const styles = StyleSheet.create({
     itemContainer: {
         marginBottom: 15,
         padding: 10,
-      
       },
       messageText: {
         fontSize: 16,
@@ -52,24 +61,33 @@ const styles = StyleSheet.create({
         height: 50,
         borderRadius: 25,
         marginRight: 10,
+        marginBottom:8,
         borderWidth:.2
       },
       image: {
         width: '100%',
         height: 200,
         resizeMode: 'contain',
+        borderRadius:25
       },
       video: {
         width: '100%',
         height: 200,
       },
-      btnscontainer:{
-        flexDirection:'row',
-        width:'100%',
-        gap:20,
-        marginLeft:10
+      btnscontainer: {
+        flexDirection: 'row', 
+        alignItems: 'center', 
+        width: '100%',
+        paddingLeft:5  
       },
-      star:{
-       marginLeft:'70%'
+      leftIcons: {
+        flexDirection: 'row', 
+        flex: 1, 
+        justifyContent: 'flex-start',
+        gap:20,
+       
+      },
+      star: {
+        marginLeft: 10, 
       }
   });

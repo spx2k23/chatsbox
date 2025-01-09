@@ -21,30 +21,29 @@ const Announcements = () => {
 
   return (
    
-      <View style={styles.container}>
-        {/* Announcement Input Container will only show if 'showContainer' is true */}
-        {showContainer && (
-          <AnnouncementInputContainer 
-            setShowContainer={setShowContainer} 
-            tempData={tempData} 
-            setTempData={setTempData}
-            announcements={announcements}
-            setAnnouncements={setAnnouncements}
-          />
-        )}
+      <View style={styles.containerAnnouncements}>
+       <View style={styles.messageBox}>
+              {showContainer && (
+                <AnnouncementInputContainer 
+                  setShowContainer={setShowContainer} 
+                  tempData={tempData} 
+                  setTempData={setTempData}
+                  announcements={announcements}
+                  setAnnouncements={setAnnouncements}
+                />
+              )}
 
-        {/* FlatList to render announcements */}
-        <FlatList
-          data={announcements}
-          renderItem={renderMessage}
-          keyExtractor={(group, index) => `group-${index}`}
-          inverted
-          style={styles.flatList}
-          contentContainerStyle={styles.contentContainer}
-          scrollEnabled={true} 
-          keyboardShouldPersistTaps="handled" 
-        />
-        
+             {/* FlatList to render announcements */}
+              { announcements.length>0&&<FlatList
+                data={announcements}
+                renderItem={renderMessage}
+                keyExtractor={(group, index) => `group-${index}`}
+                style={styles.flatList}
+                contentContainerStyle={styles.contentContainer}
+                scrollEnabled={true} 
+                keyboardShouldPersistTaps="handled" 
+              />}
+        </View>
         {/* Announcement Input Box */}
         <AnnouncementsInputBox 
           showContainer={showContainer} 
@@ -58,20 +57,26 @@ const Announcements = () => {
 };
 
 const styles = StyleSheet.create({
-  container: {
+  containerAnnouncements: {
     flex: 1, 
     
   },
   flatList: {
     flex: 1, // Ensure the FlatList takes available space
     width: windowWidth,  // Ensure FlatList takes up full width of screen
+    margin:0
+  },
+  messageBox:{
+    flex:1,
+    // paddingBottom: 20,   // Ensure there is padding at the bottom of the content
+    paddingTop: 10,      // Add padding at the top if necessary
+    alignItems: 'center',
     
   },
   contentContainer: {
     paddingBottom: 20,   // Ensure there is padding at the bottom of the content
     paddingTop: 10,      // Add padding at the top if necessary
     alignItems: 'center',
-    zIndex:5 , // Ensure center alignment for better visual consistency
   },
   
   groupContainer: {
@@ -81,7 +86,9 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     width: windowWidth * 0.95, 
     borderWidth:Platform.OS=='android'?.7:.5,
-    borderColor:'grey' 
+    borderColor:'grey',
+   
+    zIndex:-10 ,
   },
   
 });

@@ -3,8 +3,9 @@ import { View, TextInput, TouchableOpacity, StyleSheet, Dimensions, Image, Text,
 import { IconButton } from 'react-native-paper';
 import * as ImagePicker from 'expo-image-picker';
 import * as DocumentPicker from 'expo-document-picker';
-import { Audio } from 'expo-av';
-import Video from 'react-native-video'; // For displaying video previews
+import { Audio,Video } from 'expo-av';
+import VideoPlayer from './VideoPlayer';
+import DocViewer from './DocViewer';
 
 const windowWidth = Dimensions.get('window').width;
 
@@ -47,24 +48,8 @@ const AnnouncementInputContainer = ({ setShowContainer, tempData, setTempData , 
     }
   };
 
-  // Start audio recording
-  const startRecording = async (index) => {
-    try {
-      const { status } = await Audio.requestPermissionsAsync();
-      if (status === 'granted') {
-        const { recording } = await Audio.Recording.createAsync(
-          Audio.RecordingOptionsPresets.HIGH_QUALITY
-        );
-        setRecording(recording);
-        setIsRecording(true);
-        await recording.startAsync();
-      } else {
-        alert('Permission to access audio is required!');
-      }
-    } catch (error) {
-      console.error('Failed to start recording', error);
-    }
-  };
+ 
+  
 
   // Stop audio recording
   const stopRecording = async (index) => {
@@ -80,22 +65,7 @@ const AnnouncementInputContainer = ({ setShowContainer, tempData, setTempData , 
     }
   };
 
-  // Pick document (PDF, DOC, etc.)
-  const handleDocSelect = async (index) => {
-    try {
-      const result = await DocumentPicker.getDocumentAsync({
-        type: '*/*',
-      });
-
-      if (result.type === 'success') {
-        const updatedData = [...tempData];
-        updatedData[index].uri = result.uri;
-        setTempData(updatedData);
-      }
-    } catch (error) {
-      console.error('Error picking document:', error);
-    }
-  };
+  
 
   // Remove item from tempData
   const removeItem = (index) => {
@@ -137,10 +107,11 @@ const AnnouncementInputContainer = ({ setShowContainer, tempData, setTempData , 
   return (
    
       <KeyboardAvoidingView
-        style={styles.container}
+        style={styles.keyboardAvoidingViewStyle}
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         keyboardVerticalOffset={80} // Adjust based on your layout
       >
+        <View  style={styles.container}>
         {/* Close Button */}
         <TouchableOpacity onPress={handleClose} style={styles.close}>
           <IconButton icon="close" size={24}  />
@@ -190,12 +161,7 @@ const AnnouncementInputContainer = ({ setShowContainer, tempData, setTempData , 
                 {item.type === 'video' && (
                   <View style={styles.mediaContainer}>
                     {item.uri ? (
-                      <Video
-                        source={{ uri: item.uri }}
-                        style={styles.video}
-                        controls={true}
-                        resizeMode="contain"
-                      />
+                      <VideoPlayer item={item}/>
                     ) : (
                       <TouchableOpacity onPress={() => handleVideoSelect(index)}>
                         <IconButton icon="video" size={24} />
@@ -216,7 +182,13 @@ const AnnouncementInputContainer = ({ setShowContainer, tempData, setTempData , 
                   </View>
                 )}
 
-                {/* Document Picker Icon */}
+                {item.type === 'document' && (
+                  <View style={styles.mediaContainer}>
+                    {/* {console.log(item)} */}
+                    <DocViewer name={item.name} uri={item.uri} />
+                  </View>
+                )}
+                
               </View>
             );
           })}
@@ -226,22 +198,30 @@ const AnnouncementInputContainer = ({ setShowContainer, tempData, setTempData , 
         <TouchableOpacity onPress={handleSend}>
           <IconButton icon="send" size={24} style={styles.send} iconColor="#6200EE" />
         </TouchableOpacity>
+        </View>
       </KeyboardAvoidingView>
     
   );
 };
 
 const styles = StyleSheet.create({
+  keyboardAvoidingViewStyle:{
+    height:0,
+  },
   container: {
     backgroundColor: '#fff',
-    height: 500, // Fixed height for container
+    height: 500, 
     width: windowWidth * 0.9,
     alignSelf: 'center',
     borderWidth: 1,
     borderColor: '#000',
     borderRadius: 10,
-    bottom: -150,
-    zIndex: 10,
+    position: 'absolute',
+    bottom:Platform.OS==='android'?-620:-680, 
+    left: '50%', // Move it to the center horizontally
+    transform: [{ translateX: -(windowWidth * 0.95) }],
+    zIndex:1,
+   
   },
   close: {
     alignSelf: 'flex-end',
@@ -249,14 +229,11 @@ const styles = StyleSheet.create({
     fontSize: 18,
   },
   inputBlock: {
-    marginBottom: 15,
+    marginBottom: 5,
     position: 'relative',
   },
   removeButton: {
-    position: 'absolute',
-    top: -10,
-    right: -10,
-    zIndex: 1,
+    alignSelf: 'flex-end',
   },
   textInput: {
     borderColor: '#ccc',
@@ -272,11 +249,11 @@ const styles = StyleSheet.create({
     height: 200,
     resizeMode: 'contain',
   },
-  video: {
-    width: '100%',
-    height: 200,
-    marginBottom: 8,
-  },
+  // video: {
+  //   width: 'auto',
+  //   height: 200,
+  //   marginBottom: 8,
+  // },
   mediaContainer: {
     marginBottom: 10,
   },

@@ -3832,9 +3832,9 @@ expo-document-picker@~13.0.1:
   integrity sha512-M3O3SDqubsRbVyY+Xu6V45K0/G1S1IqEdmVAnPkOiUU2eIEFfF5oP4KON4CsvEhO9IIunnpRr/oq9NQxb3SrEA==
 
 expo-file-system@~18.0.4:
-  version "18.0.4"
-  resolved "https://registry.npmjs.org/expo-file-system/-/expo-file-system-18.0.4.tgz"
-  integrity sha512-aAWEDwnu0XHOBYvQ9Q0+QIa+483vYJaC4IDsXyWQ73Rtsg273NZh5kYowY+cAocvoSmA99G6htrLBn11ax2bTQ==
+  version "18.0.6"
+  resolved "https://registry.npmjs.org/expo-file-system/-/expo-file-system-18.0.6.tgz"
+  integrity sha512-gGEwIJCXV3/wpIJ/wRyhmieLOSAY7HeFFjb+wEfHs04aE63JYR+rXXV4b7rBpEh1ZgNV9U91zfet/iQG7J8HBQ==
   dependencies:
     web-streams-polyfill "^3.3.2"
 
@@ -3861,6 +3861,14 @@ expo-keep-awake@~14.0.1:
   version "14.0.1"
   resolved "https://registry.npmjs.org/expo-keep-awake/-/expo-keep-awake-14.0.1.tgz"
   integrity sha512-c5mGCAIk2YM+Vsdy90BlEJ4ZX+KG5Au9EkJUIxXWlpnuKmDAJ3N+5nEZ7EUO1ZTheqoSBeAo4jJ8rTWPU+JXdw==
+
+expo-linking@^7.0.3:
+  version "7.0.3"
+  resolved "https://registry.npmjs.org/expo-linking/-/expo-linking-7.0.3.tgz"
+  integrity sha512-YiDacNzeQZd/bdOwGyi+YlawM4GGbcSRkuFCpDGIK7D1KUGqLinBHwJvxUMb9Zert2Ois5IHtmZaZ1et6g229g==
+  dependencies:
+    expo-constants "~17.0.0"
+    invariant "^2.2.4"
 
 expo-modules-autolinking@2.0.2:
   version "2.0.2"
@@ -3901,6 +3909,11 @@ expo-screen-orientation@~8.0.0:
   resolved "https://registry.npmjs.org/expo-screen-orientation/-/expo-screen-orientation-8.0.0.tgz"
   integrity sha512-1pKmx8pDk8zO8lFJVbVQao1Qj26qG/W93+xZp0Cxvzd3n/v7SGDLDJ1V/zBxlxxu58AczEzsGEI2ScZVon2Xow==
 
+expo-sharing@^13.0.0:
+  version "13.0.0"
+  resolved "https://registry.npmjs.org/expo-sharing/-/expo-sharing-13.0.0.tgz"
+  integrity sha512-b23ymicRmYn/Pjj05sl9tFZHN5cH9I1f0yiqY1Yk8Q3oCx0Aznri82DnTYA4T/J6D9vrkraX0wQ4jWVMOffmlg==
+
 expo-sqlite@^15.0.3:
   version "15.0.3"
   resolved "https://registry.npmjs.org/expo-sqlite/-/expo-sqlite-15.0.3.tgz"
@@ -3915,6 +3928,11 @@ expo-video-thumbnails@~9.0.2:
   version "9.0.2"
   resolved "https://registry.npmjs.org/expo-video-thumbnails/-/expo-video-thumbnails-9.0.2.tgz"
   integrity sha512-2mEggrJS2MgyALzXzVFNinMV5PxjL67q6kVqSAOCnfkaAmLprWqwg1SxE712Co9u7m/RUCkxQoZCgoRS24ohBw==
+
+expo-web-browser@^14.0.1:
+  version "14.0.1"
+  resolved "https://registry.npmjs.org/expo-web-browser/-/expo-web-browser-14.0.1.tgz"
+  integrity sha512-QM9F3ie+UyIOoBvqFmT6CZojb1vMc2H+7ZlMT5dEu1PL2jtYyOeK2hLfbt/EMt7CBm/w+P29H9W9Y9gdebOkuQ==
 
 expo@*, expo@^52.0.11, expo@>=47.0.0, expo@>=50.0.0:
   version "52.0.11"
@@ -4218,6 +4236,11 @@ fs.realpath@^1.0.0:
   version "1.0.0"
   resolved "https://registry.npmjs.org/fs.realpath/-/fs.realpath-1.0.0.tgz"
   integrity sha512-OO0pH2lK6a0hZnAdau5ItzHPI6pUlvI7jMVnxUQRtw4owF2wk8lOSabtGDCTP4Ggrg2MbGnWO9X8K1t4+fGMDw==
+
+fsevents@^2.3.2:
+  version "2.3.3"
+  resolved "https://registry.npmjs.org/fsevents/-/fsevents-2.3.3.tgz"
+  integrity sha512-5xoDfX+fL7faATnagmWPpbFtwh/R77WmMMqqHGS65C3vvB0YHrgF+B1YmZ3441tMj5n63k0212XNoJwzlhffQw==
 
 function-bind@^1.1.2:
   version "1.1.2"
@@ -4556,7 +4579,7 @@ internal-ip@^4.3.0:
     default-gateway "^4.2.0"
     ipaddr.js "^1.9.0"
 
-invariant@^2.2.4:
+invariant@^2.2.4, invariant@2.2.4:
   version "2.2.4"
   resolved "https://registry.npmjs.org/invariant/-/invariant-2.2.4.tgz"
   integrity sha512-phJfQVBuaJM5raOpJjSfkiD6BpbCE4Ns//LaXl6wGYtUBY83nWS6Rf9tXm2e8VaK60JEjYldbPif/A2B1C2gNA==
@@ -4969,10 +4992,10 @@ lighthouse-logger@^1.0.0:
     debug "^2.6.9"
     marky "^1.2.2"
 
-lightningcss-win32-x64-msvc@1.27.0:
+lightningcss-darwin-arm64@1.27.0:
   version "1.27.0"
-  resolved "https://registry.npmjs.org/lightningcss-win32-x64-msvc/-/lightningcss-win32-x64-msvc-1.27.0.tgz"
-  integrity sha512-/OJLj94Zm/waZShL8nB5jsNj3CfNATLCTyFxZyouilfTmSoLDX7VlVAmhPHoZWVFp4vdmoiEbPEYC8HID3m6yw==
+  resolved "https://registry.npmjs.org/lightningcss-darwin-arm64/-/lightningcss-darwin-arm64-1.27.0.tgz"
+  integrity sha512-Gl/lqIXY+d+ySmMbgDf0pgaWSqrWYxVHoc88q+Vhf2YNzZ8DwoRzGt5NZDVqqIW5ScpSnmmjcgXP87Dn2ylSSQ==
 
 lightningcss@~1.27.0:
   version "1.27.0"
@@ -6262,6 +6285,14 @@ react-native-video@^6.8.2:
   version "6.8.2"
   resolved "https://registry.npmjs.org/react-native-video/-/react-native-video-6.8.2.tgz"
   integrity sha512-lAf6pa/eqksaQnZ+rx9XWx9HpfNt0xr/XmSXMASynJJ8EqMJTr8gHJe4Wfkebo5W8qAMKRuHYtZs+4Shzl3IIQ==
+
+react-native-webview@*:
+  version "13.12.5"
+  resolved "https://registry.npmjs.org/react-native-webview/-/react-native-webview-13.12.5.tgz"
+  integrity sha512-INOKPom4dFyzkbxbkuQNfeRG9/iYnyRDzrDkJeyvSWgJAW2IDdJkWFJBS2v0RxIL4gqLgHkiIZDOfiLaNnw83Q==
+  dependencies:
+    escape-string-regexp "^4.0.0"
+    invariant "2.2.4"
 
 react-native@*, "react-native@^0.0.0-0 || >=0.60 <1.0", "react-native@^0.0.0-0 || >=0.65 <1.0", react-native@^0.76.3, react-native@>=0.33, react-native@>=0.42.0, react-native@>=0.48.4, react-native@>=0.56, react-native@>=0.57, react-native@>=0.58.4, react-native@>=0.59, react-native@>=0.61.0, react-native@>=0.65.0:
   version "0.76.3"

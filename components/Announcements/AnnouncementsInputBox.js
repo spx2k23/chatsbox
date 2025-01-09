@@ -53,40 +53,57 @@ const AnnouncementsInputBox = ({setShowContainer, tempData, setTempData }) => {
   const openMediaPicker = async (mediaType) => {
     try {
       const result = await ImagePicker.launchImageLibraryAsync({
-        mediaTypes:( mediaType === 'image' )? ['images']:['videos'],
+        mediaTypes: mediaType === 'image' ? ['images'] : ['videos'],
         quality: 1,
         aspect: [4, 3],
+        allowsEditing: true,
       });
-
-      
+  
       if (!result.canceled && result.assets?.[0]?.uri) {
-        setTempData([...tempData, { type: mediaType, uri: result.assets[0].uri }]);
+        const asset = result.assets[0];
+  
+        // Handling for videos
+        if (asset.type === 'video') {
+          setTempData([...tempData, { type: 'video', uri: asset.uri }]);
+        } else if (asset.type === 'image') {
+          // Handling for images
+          setTempData([...tempData, { type: 'image', uri: asset.uri }]);
+          
+        }
+  
         setShowContainer(true);
       } else {
-        console.log(`${mediaType.charAt(0).toUpperCase() + mediaType.slice(1)} selection was canceled or failed.`);
+        console.log(`Selection was canceled or failed for ${mediaType}`);
       }
     } catch (error) {
-      console.error(`Error opening ${mediaType} picker:`, error);
-      Alert.alert('Error', `There was an issue opening the ${mediaType} picker.`);
+      console.error('Error opening media picker:', error);
+      Alert.alert('Error', 'There was an issue opening the media picker.');
     }
-  }
+  };
+  
+  
 
   // Handle document picker
   const handleDocSelect = async () => {
     try {
       const result = await DocumentPicker.getDocumentAsync({
-        type: '*/*', // Pick any file type
+        type: 'application/*', // Pick any file type
       });
-
-      if (result.type === 'success') {
-        setTempData([...tempData, { type: 'document', uri: result.uri }]);
+        
+      console.log(result);
+      
+      if (!result.canceled &&  result.assets.length > 0) {
+        const doc=result.assets[0];
+        setTempData([...tempData, { type: 'document', uri: doc.uri, name: doc.name}]);
         setShowContainer(true);
+        console.log(tempData);
+        
       }
     } catch (error) {
       console.error('Error picking document:', error);
     }
   };
-
+  
   // Handle audio recording
   const handleAudioSelect = async () => {
     const { status } = await Audio.requestPermissionsAsync();
