@@ -3,6 +3,7 @@ import { Video } from 'expo-av';
 import { MaterialIcons } from '@expo/vector-icons';
 import VideoPlayer from './AnnouncementInputBoxComponents/VideoPlayer';
 import DocViewer from './AnnouncementInputBoxComponents/DocViewer';
+import AudioPlayer from './AnnouncementInputBoxComponents/AudioPlayer';
 
 
 const AnnouncementCard=({group})=>{
@@ -23,6 +24,9 @@ const AnnouncementCard=({group})=>{
           )}
           {item.type==='document'&& item.uri &&(
             <DocViewer name={item.name} uri={item.uri}/>
+          )}
+          {item.type==='audio'&&item.uri&&(
+            <AudioPlayer uri={item.uri}/>
           )}
          </View>
          ))}

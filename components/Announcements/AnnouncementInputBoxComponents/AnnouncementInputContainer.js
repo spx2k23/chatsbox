@@ -6,6 +6,7 @@ import * as DocumentPicker from 'expo-document-picker';
 import { Audio,Video } from 'expo-av';
 import VideoPlayer from './VideoPlayer';
 import DocViewer from './DocViewer';
+import AudioRecorder from './AudioRecorder';
 
 const windowWidth = Dimensions.get('window').width;
 
@@ -81,8 +82,16 @@ const AnnouncementInputContainer = ({ setShowContainer, tempData, setTempData , 
 
   // Handle send: Log the data (can be replaced with an API call)
   const handleSend = () => {
-    // Filter out text items with empty content
-    const filteredData = tempData.filter(item => !(item.type === 'text' && item.content === ''));
+    // Filter out text items with empty content and audio items with null URI
+    const filteredData = tempData.filter(item => {
+      if (item.type === 'text') {
+        return item.content !== ''; // Keep text items with non-empty content
+      }
+      if (item.type === 'audio') {
+        return item.uri !== null; // Keep audio items with a non-null URI
+      }
+      return true; // Keep other item types
+    });
   
     if (filteredData.length === 0) {
       alert('No data to send!');
@@ -102,7 +111,6 @@ const AnnouncementInputContainer = ({ setShowContainer, tempData, setTempData , 
     setTempData([]);
     setShowContainer(false); // Optionally close the container after sending
   };
-  
 
   return (
    
@@ -172,19 +180,12 @@ const AnnouncementInputContainer = ({ setShowContainer, tempData, setTempData , 
 
                 {item.type === 'audio' && (
                   <View style={styles.mediaContainer}>
-                    {item.isRecording ? (
-                      <TouchableOpacity onPress={() => stopRecording(index)}>
-                        <IconButton icon="stop-circle" size={24} />
-                      </TouchableOpacity>
-                    ) : (
-                      <Text>Audio saved</Text>
-                    )}
+                   <AudioRecorder  key={index} type="audio" audioUri={item.uri} setTempData={setTempData}tempData={tempData} index={index} />
                   </View>
                 )}
 
                 {item.type === 'document' && (
                   <View style={styles.mediaContainer}>
-                    {/* {console.log(item)} */}
                     <DocViewer name={item.name} uri={item.uri} />
                   </View>
                 )}

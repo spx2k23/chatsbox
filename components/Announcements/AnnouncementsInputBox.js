@@ -89,14 +89,11 @@ const AnnouncementsInputBox = ({setShowContainer, tempData, setTempData }) => {
       const result = await DocumentPicker.getDocumentAsync({
         type: 'application/*', // Pick any file type
       });
-        
-      console.log(result);
       
       if (!result.canceled &&  result.assets.length > 0) {
         const doc=result.assets[0];
         setTempData([...tempData, { type: 'document', uri: doc.uri, name: doc.name}]);
         setShowContainer(true);
-        console.log(tempData);
         
       }
     } catch (error) {
@@ -106,29 +103,14 @@ const AnnouncementsInputBox = ({setShowContainer, tempData, setTempData }) => {
   
   // Handle audio recording
   const handleAudioSelect = async () => {
-    const { status } = await Audio.requestPermissionsAsync();
-    if (status === 'granted') {
-      const { recording } = await Audio.Recording.createAsync(Audio.RecordingOptionsPresets.HIGH_QUALITY);
-      await recording.startAsync();
-      setTempData([...tempData, { type: 'audio', uri: null, isRecording: true, recording }]);
+      
+      setTempData([...tempData, { type: 'audio', uri: null,  }]);
+      
       setShowContainer(true);
-    } else {
-      alert('Permission to access audio is required!');
-    }
+    
   };
 
-  // Handle stop audio recording
-  const handleStopRecording = async (index) => {
-    const updatedData = [...tempData];
-    const recordingItem = updatedData[index];
-
-    if (recordingItem?.recording) {
-      await recordingItem.recording.stopAndUnloadAsync();
-      const uri = recordingItem.recording.getURI();
-      updatedData[index] = { ...recordingItem, uri, isRecording: false };
-      setTempData(updatedData);
-    }
-  };
+  
 
   // Handle text input
   const handleAddText = () => {

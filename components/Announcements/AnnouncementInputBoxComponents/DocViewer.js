@@ -80,7 +80,6 @@ const DocViewer = ({ name, uri }) => {
 const styles = StyleSheet.create({
   container: {
     flexDirection: 'row',
-    alignItems: 'center',
     padding: 10,
     marginBottom: 10,
     borderRadius: 5,
@@ -96,6 +95,7 @@ const styles = StyleSheet.create({
   fileName: {
     fontSize: 16,
     color: '#333',
+   textAlign:'center'
   },
 });
 
