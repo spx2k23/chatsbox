@@ -157,7 +157,7 @@ const VideoMessage = ({ currentMessage }) => {
           </TouchableOpacity>
 
           <View style={styles.sliderContainer}>
-            <Slider
+            {/* <Slider
               style={styles.slider}
               minimumValue={0}
               maximumValue={duration}
@@ -165,7 +165,7 @@ const VideoMessage = ({ currentMessage }) => {
               onValueChange={handleSliderChange}
               minimumTrackTintColor="#FFFFFF"
               maximumTrackTintColor="#000000"
-            />
+            /> */}
             <View style={styles.timeContainer}>
               <Text style={styles.timeText}>{formatTime(timeline)}</Text>
               <Text style={styles.timeText}>{formatTime(duration)}</Text>

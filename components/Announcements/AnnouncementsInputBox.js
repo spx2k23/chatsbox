@@ -93,6 +93,7 @@ const AnnouncementsInputBox = ({setShowContainer, tempData, setTempData }) => {
       if (!result.canceled &&  result.assets.length > 0) {
         const doc=result.assets[0];
         setTempData([...tempData, { type: 'document', uri: doc.uri, name: doc.name}]);
+        // console.log(tempData);
         setShowContainer(true);
         
       }
