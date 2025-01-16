@@ -7,10 +7,25 @@ import AudioPlayer from './AnnouncementInputBoxComponents/AudioPlayer';
 
 
 const AnnouncementCard=({group})=>{
+
+  const date=new Date(group[0].date);
+  let hours = date.getHours();
+  const minutes = date.getMinutes();
+  const ampm = hours >= 12 ? 'PM' : 'AM';
+// Convert to 12-hour format
+hours = hours % 12;
+hours = hours ? hours : 12; // The hour '0' should be '12'
+// Format the time components to ensure leading zeros
+const formattedMinutes = minutes < 10 ? '0' + minutes : minutes;
+  
     return(
        <>
-       <Image source={{ uri:'https://i.etsystatic.com/40954129/r/il/3283f5/5550043462/il_570xN.5550043462_quo7.jpg' }} style={styles.profilePic} />
-
+       <View style={styles.profileAndtime}>
+            <Image source={{ uri:'https://i.etsystatic.com/40954129/r/il/3283f5/5550043462/il_570xN.5550043462_quo7.jpg' }} style={styles.profilePic} />
+            <TouchableOpacity style={styles.star}>
+                <MaterialIcons size={24} color={'grey'} name="star-border" />
+             </TouchableOpacity>
+      </View>
         {group.map((item) => (
          <View key={item.id} style={styles.itemContainer}>
           {item.type === 'text' &&(
@@ -33,17 +48,14 @@ const AnnouncementCard=({group})=>{
 
 <View style={styles.btnscontainer}>
   <View style={styles.leftIcons}>
-    <TouchableOpacity>
-      <MaterialIcons size={24} color={'grey'} name="thumb-up-off-alt" />
-    </TouchableOpacity>
-    <TouchableOpacity>
-      <MaterialIcons size={24} color={'grey'} name="send" />
-    </TouchableOpacity>
+        <TouchableOpacity>
+            <MaterialIcons size={24} color={'grey'} name="thumb-up-off-alt" />
+          </TouchableOpacity>
+          <TouchableOpacity>
+            <MaterialIcons size={24} color={'grey'} name="send" />
+          </TouchableOpacity>
   </View>
-
-  <TouchableOpacity style={styles.star}>
-    <MaterialIcons size={24} color={'grey'} name="star-border" />
-  </TouchableOpacity>
+  <Text style={styles.time}>{`${hours} : ${formattedMinutes} ${ampm}`}</Text>
 </View>
        </>
     );
@@ -55,6 +67,8 @@ const styles = StyleSheet.create({
     itemContainer: {
         marginBottom: 15,
         padding: 10,
+        marginLeft: 15, 
+        paddingBottom:5
       },
       messageText: {
         fontSize: 16,
@@ -66,7 +80,7 @@ const styles = StyleSheet.create({
         borderRadius: 25,
         marginRight: 10,
         marginBottom:8,
-        borderWidth:.2
+        borderWidth:.2,
       },
       image: {
         width: '100%',
@@ -92,6 +106,15 @@ const styles = StyleSheet.create({
        
       },
       star: {
-        marginLeft: 10, 
+        // marginLeft: 10, 
+      },
+      time:{
+        color: 'grey',
+        
+      },
+      profileAndtime:{
+        flexDirection: 'row', // Align children horizontally (left to right)
+    justifyContent: 'space-between', // Add space between the image and the text
+    // paddingHorizontal:5,
       }
   });

@@ -52,19 +52,6 @@ const AnnouncementInputContainer = ({ setShowContainer, tempData, setTempData , 
  
   
 
-  // Stop audio recording
-  const stopRecording = async (index) => {
-    if (recording) {
-      await recording.stopAndUnloadAsync();
-      const uri = recording.getURI();
-      const updatedData = [...tempData];
-      updatedData[index].uri = uri;
-      updatedData[index].isRecording = false;
-      setTempData(updatedData);
-      setRecording(null);
-      setIsRecording(false);
-    }
-  };
 
   
 
@@ -100,13 +87,16 @@ const AnnouncementInputContainer = ({ setShowContainer, tempData, setTempData , 
   
     const newGroup = filteredData.map(item => ({
       ...item, 
-      id: Math.random() * 500 // Or a better way to generate unique IDs
+      id: Math.random() * 500 ,
+      date:new Date()
+
     }));
   
     setAnnouncements(prevAnnouncements => [
       ...prevAnnouncements,  // Keep previous announcements
       newGroup  // Add new group of content
     ]);
+
   
     setTempData([]);
     setShowContainer(false); // Optionally close the container after sending
