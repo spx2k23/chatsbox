@@ -88,7 +88,8 @@ const AnnouncementInputContainer = ({ setShowContainer, tempData, setTempData , 
     const newGroup = filteredData.map(item => ({
       ...item, 
       id: Math.random() * 500 ,
-      date:new Date()
+      date:new Date(),
+      name:'Drago Malphoy'
 
     }));
   

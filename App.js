@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { ApolloProvider } from '@apollo/client';
-import { StatusBar, StyleSheet, TouchableOpacity, BackHandler } from 'react-native';
+import { StatusBar, StyleSheet, TouchableOpacity, BackHandler, Text } from 'react-native';
 import { SQLiteProvider } from 'expo-sqlite';
 import { MaterialIcons } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -17,6 +17,8 @@ import { initializeDatabase } from './db_configs/dbSetup';
 import NotificationListener from './components/Notification/NotificationListener';
 import NetworkListener from './components/Notification/NetworkListener';
 import TabNav from './components/NavBar/TabNav';
+import SettingsOrgCode from './screens/SettingsOrgCode';
+import { View } from 'react-native';
 
 const Stack = createStackNavigator();
 
@@ -110,6 +112,22 @@ const App = () => {
                 headerShown: true,
               })}
             />
+            <Stack.Screen
+              name="OrganizationCode"
+              component={SettingsOrgCode}
+              options={({ navigation }) => ({
+                headerLeft: () => (
+                  <View style={styles.titleContainer}>
+                  <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backIconContainer}>
+                    <MaterialIcons name="arrow-back" size={24} />
+                  </TouchableOpacity>
+                  <Text style={styles.title}> Organization Code</Text>
+                  </View>
+                ),
+                headerShown: true,
+                headerTitle:'',
+              })}
+            />
           </Stack.Navigator>
         </NavigationContainer>
         {isAuthenticated && (
@@ -127,6 +145,15 @@ const styles = StyleSheet.create({
   backIconContainer: {
     paddingLeft: 10,
   },
+  titleContainer:{
+    flexDirection:'row',
+  },
+  title:{
+    fontSize:24,
+    fontWeight:500,
+    width:'100%',
+    marginLeft:10
+  }
 });
 
 export default App;

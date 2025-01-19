@@ -43,16 +43,7 @@ const Announcements = () => {
     viewAreaCoveragePercentThreshold: 50, // Viewable if 50% of the item is visible
   });
 
-  const renderMessage = ({ item: group, index }) => (
-    <View
-      style={[
-        styles.groupContainer,
-        highlightedIndex === index && styles.highlightedContainer, // Apply highlight if it's the matched item
-      ]}
-    >
-      <AnnouncementCard group={group} />
-    </View>
-  );
+  
 
   const handleScroll = (event) => {
     const contentOffsetY = event.nativeEvent.contentOffset.y;
@@ -151,6 +142,17 @@ const Announcements = () => {
     }
   }, [announcements]);
 
+  const renderMessage = ({ item: group, index }) => (
+    <View
+      style={[
+        styles.groupContainer,
+        highlightedIndex === index && styles.highlightedContainer, // Apply highlight if it's the matched item
+      ]}
+    >
+      <AnnouncementCard group={group} />
+    </View>
+  );
+
   return (
     <View style={styles.containerAnnouncements}>
       <View style={styles.messageBox}>
@@ -239,8 +241,8 @@ const styles = StyleSheet.create({
     marginBottom: 20,
     padding: 10,
     backgroundColor: '#fff',
-    borderRadius: 5,
-    width: windowWidth * 0.95,
+    borderRadius:12,
+    width: windowWidth * 0.90,
     borderWidth: Platform.OS === 'android' ? 0.7 : 0.5,
     borderColor: 'grey',
     zIndex: -10,

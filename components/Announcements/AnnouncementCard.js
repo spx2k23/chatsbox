@@ -17,14 +17,13 @@ hours = hours % 12;
 hours = hours ? hours : 12; // The hour '0' should be '12'
 // Format the time components to ensure leading zeros
 const formattedMinutes = minutes < 10 ? '0' + minutes : minutes;
+
   
     return(
        <>
        <View style={styles.profileAndtime}>
             <Image source={{ uri:'https://i.etsystatic.com/40954129/r/il/3283f5/5550043462/il_570xN.5550043462_quo7.jpg' }} style={styles.profilePic} />
-            <TouchableOpacity style={styles.star}>
-                <MaterialIcons size={24} color={'grey'} name="star-border" />
-             </TouchableOpacity>
+            <Text style={styles.name}>{group[0].name}</Text>
       </View>
         {group.map((item) => (
          <View key={item.id} style={styles.itemContainer}>
@@ -54,6 +53,9 @@ const formattedMinutes = minutes < 10 ? '0' + minutes : minutes;
           <TouchableOpacity>
             <MaterialIcons size={24} color={'grey'} name="send" />
           </TouchableOpacity>
+          <TouchableOpacity style={styles.star}>
+                <MaterialIcons size={24} color={'grey'} name="bookmark-border" />
+             </TouchableOpacity>
   </View>
   <Text style={styles.time}>{`${hours} : ${formattedMinutes} ${ampm}`}</Text>
 </View>
@@ -75,18 +77,22 @@ const styles = StyleSheet.create({
         color: '#333',
       },
       profilePic: {
-        width: 50,
-        height: 50,
+        width: 40,
+        height: 40,
         borderRadius: 25,
         marginRight: 10,
         marginBottom:8,
         borderWidth:.2,
       },
+      name:{
+       fontSize:18,
+       fontWeight:'500'
+      },
       image: {
         width: '100%',
         height: 200,
-        resizeMode: 'contain',
-        borderRadius:25
+        resizeMode: 'stretch',
+        borderRadius:10
       },
       video: {
         width: '100%',
@@ -114,7 +120,7 @@ const styles = StyleSheet.create({
       },
       profileAndtime:{
         flexDirection: 'row', // Align children horizontally (left to right)
-    justifyContent: 'space-between', // Add space between the image and the text
-    // paddingHorizontal:5,
+        justifyContent: 'flex-start', // Add space between the image and the text
+        alignItems:'center'
       }
   });

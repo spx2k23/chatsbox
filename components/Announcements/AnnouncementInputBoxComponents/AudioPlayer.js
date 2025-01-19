@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { TouchableOpacity, View, Text, StyleSheet, Modal } from 'react-native';
 import { Audio } from 'expo-av';
-import { MaterialIcons } from '@expo/vector-icons';
+import { MaterialCommunityIcons, MaterialIcons } from '@expo/vector-icons';
 import Slider from '@react-native-community/slider';
 
 const formatTime = (milliseconds) => {
@@ -15,7 +15,7 @@ const formatTime = (milliseconds) => {
 const AudioPlayer = ({ uri }) => {
   const [sound, setSound] = useState(null);
   const [isPlaying, setIsPlaying] = useState(false);
-  const [iconName, setIconName] = useState('play-arrow');
+  const [iconName, setIconName] = useState('play-outline');
   const [currentPosition, setCurrentPosition] = useState(0);
   const [duration, setDuration] = useState(null);
   const [showAlert, setShowAlert] = useState(false); // New state to handle the alert
@@ -35,11 +35,11 @@ const AudioPlayer = ({ uri }) => {
               setIconName('pause');
             } else if (!status.isPlaying && isPlaying) {
               setIsPlaying(false);
-              setIconName('play-arrow');
+              setIconName('play-outline');
             }
             if (status.didJustFinish) {
               setIsPlaying(false);
-              setIconName('play-arrow');
+              setIconName('play-outline');
             }
             setCurrentPosition(status.positionMillis);
           } else if (status.error) {
@@ -84,7 +84,7 @@ const AudioPlayer = ({ uri }) => {
       if (status.isPlaying) {
         await sound.pauseAsync();
         setIsPlaying(false);
-        setIconName('play-arrow');
+        setIconName('play-outline');
       } else {
         if (status.didJustFinish || status.positionMillis === status.durationMillis) {
           await sound.setPositionAsync(0);
@@ -114,13 +114,12 @@ const AudioPlayer = ({ uri }) => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.audiotimer}>
-        {formatTime(currentPosition)} / {formatTime(duration)}
-      </Text>
-      <View style={styles.controlsContainer}>
+      <View style={styles.playbox}>
         <TouchableOpacity onPress={playPauseAudio} style={styles.playButton}>
-          <MaterialIcons name={iconName} size={28} color="#6200EE" />
+          <MaterialCommunityIcons name={iconName} size={28} color="#fff" />
         </TouchableOpacity>
+        <Text style={styles.audiotimer}>{isPlaying?formatTime(currentPosition):formatTime(duration)}</Text>
+        </View>
         <Slider
           style={styles.slider}
           minimumValue={0}
@@ -128,11 +127,10 @@ const AudioPlayer = ({ uri }) => {
           value={currentPosition}
           onValueChange={onSliderValueChange}
           onSlidingComplete={onSlidingComplete}
-          minimumTrackTintColor="#6200EE"
+          minimumTrackTintColor="#fff"
           maximumTrackTintColor="#d3d3d3"
-          thumbTintColor="#6200EE"
+          thumbTintColor="#fff"
         />
-      </View>
 
       {/* Alert Overlay */}
       <Modal
@@ -159,27 +157,20 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    padding: 10,
+    padding:5,
     borderRadius: 8,
-    borderColor: '#6200EE',
-    borderWidth: 1,
+    backgroundColor: '#6200EE',
+    flexDirection:'row'
   },
   audiotimer: {
-    color: "#6200EE",
-  },
-  controlsContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    width: '100%',
+    color: "#fff",
   },
   slider: {
     flex: 1,
-    height: 30,
-    marginRight: 10,
   },
   playButton: {
     alignItems: 'center',
-    justifyContent: 'center',
+    
   },
   alertOverlay: {
     flex: 1,
@@ -209,6 +200,9 @@ const styles = StyleSheet.create({
     color: 'white',
     fontSize: 14,
   },
+  playbox:{
+    marginLeft:5
+  }
 });
 
 export default AudioPlayer;

@@ -72,11 +72,6 @@ const TabNav=()=>{
             paddingBottom: 8,  // Add padding to the bottom of the tab bar
             height:Platform.OS==='android'?60:70,  // Optional: Adjust the height of the tab bar
                     },
-           headerLeft: () => (
-                      <View style={styles.headertitlecontainer}>
-                        <Text style={styles.appName}>SPREXCEL</Text>
-                      </View>
-                    ),
           headerRight:()=><NavProfileIcon currentUser={currentUser} navigation={navigation}/> , 
           
           headerStyle:{
@@ -85,10 +80,42 @@ const TabNav=()=>{
 
         })}
       >
-        <Tab.Screen name="Home" component={ChatList} />
-        <Tab.Screen name="Users" component={Users} />
-        <Tab.Screen name="Announcements" component={Announcements} />
-        <Tab.Screen name="Settings" component={Settings} />
+        <Tab.Screen name="Home" component={ChatList}
+        options={()=>({
+          headerLeft: () => (
+            <View style={styles.headertitlecontainer}>
+              <Text style={styles.appName}>SPREXCEL</Text>
+            </View>
+          ),
+        })}
+         />
+        <Tab.Screen name="Users" component={Users} 
+         options={()=>({
+          headerLeft: () => (
+            <View style={styles.headertitlecontainer}>
+              <Text style={styles.navHeader}>Users</Text>
+            </View>
+          ),
+        })}
+        />
+        <Tab.Screen name="Announcements" component={Announcements}
+         options={()=>({
+          headerLeft: () => (
+            <View style={styles.headertitlecontainer}>
+              <Text style={styles.navHeader}>Announcements</Text>
+            </View>
+          ),
+        })}
+         />
+        <Tab.Screen name="Settings" component={Settings} 
+         options={()=>({
+          headerLeft: () => (
+            <View style={styles.headertitlecontainer}>
+              <Text style={styles.navHeader}>Settings</Text>
+            </View>
+          ),
+        })}
+        />
       </Tab.Navigator>
  
     );
@@ -107,5 +134,14 @@ const styles=StyleSheet.create({
       fontWeight:600,
       fontSize:24,
        color:"#6200EE",
+       width:'100%'
   },
+  navHeader:{
+    marginLeft:10,
+      letterSpacing:2,
+      fontWeight:500,
+      fontSize:22,
+       color:"#6200EE",
+       width:'100%'
+  }
 });

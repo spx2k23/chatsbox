@@ -4,20 +4,20 @@ import { View } from "react-native";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import LogoutModal from "../components/Logout/LogoutModal";
 import { useState } from "react";
+import SettingsButton from "../components/Settings/SettingsButton";
 
 const Settings=()=>{
     const navigation=useNavigation();
     const [modalVisible, setModalVisible] = useState(false);
     return(
         <View style={styles.container}>
-            <TouchableOpacity   onPress={() => setModalVisible(true)}>
+            <SettingsButton title={'Organization Code'} discription={'Organizations Code'} iconName={'office-building-cog-outline'} onPress={()=>navigation.navigate('OrganizationCode')}/>
+            <SettingsButton title={'Approve Requests'} discription={'Approve Members'} iconName={'send-check-outline'} onPress={()=>console.log('pressed !')}/>
+            <SettingsButton title={'Help'} discription={'Report Problem, Help Desk'} iconName={'help-circle-outline'} onPress={()=>console.log('pressed !')}/>        
+            {/* <TouchableOpacity   onPress={() => setModalVisible(true)}>
                <Text>Log out</Text>
-            </TouchableOpacity>
-            <LogoutModal
-                isVisible={modalVisible}
-                onClose={() => setModalVisible(false)}
-                navigation={navigation}
-      />
+            </TouchableOpacity> */}
+            <LogoutModal isVisible={modalVisible} onClose={() => setModalVisible(false)} navigation={navigation}/>
         </View>
     );
 }
@@ -26,6 +26,8 @@ export default Settings;
 
 const styles=StyleSheet.create({
     container:{
-        marginTop:Platform.OS==='android'?20:100,
-    }
+       padding:20,
+       flex:1,
+       backgroundColor:'#fff'
+    },
 });
