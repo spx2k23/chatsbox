@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { FlatList, View, Text, StyleSheet, TextInput, Pressable, Platform } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { useQuery, gql, useSubscription, useApolloClient } from '@apollo/client';
+import { useQuery, gql, useApolloClient } from '@apollo/client';
 import { jwtDecode } from 'jwt-decode';
 import { useSQLiteContext } from 'expo-sqlite';
 import { useFocusEffect } from '@react-navigation/native';
@@ -74,7 +74,7 @@ const Users = ({ navigation }) => {
   const db = useSQLiteContext();
 
   useEffect(() => {
-    const fetchOrgAndUser = async () => {
+    const fetchOrgAndUser  = async () => {
       try {
         const firstRow = await db.getFirstAsync(`SELECT * FROM user`);
         const token = await AsyncStorage.getItem('token');
@@ -85,7 +85,7 @@ const Users = ({ navigation }) => {
         console.error('Error fetching organization or user:', error);
       }
     };
-    fetchOrgAndUser();
+    fetchOrgAndUser ();
   }, []);
 
   const { loading, error, data, refetch } = useQuery(GET_USERS_IN_ORG, {
@@ -96,39 +96,38 @@ const Users = ({ navigation }) => {
     },
   });
 
-  useFocusEffect(
-    React.useCallback(() => {
-      const subscriptions = [];
-  
-      if (userId) {
-        const friendRequestObservable = client.subscribe({
+  const useFriendRequestSubscriptions = (userId) => {
+    useFocusEffect(
+      useCallback(() => {
+        if (!userId) return;
+
+        console.log('Setting up subscriptions for userId:', userId);
+
+        const friendRequestSubscription = client.subscribe({
           query: FRIEND_REQUEST_SUBSCRIPTION,
           variables: { userId },
-        });
-        const friendRequestSubscription = friendRequestObservable.subscribe({
+        }).subscribe({
           next({ data }) {
             if (data?.friendRequestSent) {
               const { friendRequestSenderId } = data.friendRequestSent;
               updateUserStatus(friendRequestSenderId, { isRequestReceived: true });
-              console.log("Friend Request Received:", friendRequestSenderId);
+              console.log('Friend Request Sent:', friendRequestSenderId);
             }
           },
           error(err) {
-            console.error("Friend Request Subscription error:", err);
+            console.error('Friend Request Subscription error:', err);
           },
         });
-        subscriptions.push(friendRequestSubscription);
 
-        const acceptFriendObservable = client.subscribe({
+        const acceptFriendSubscription = client.subscribe({
           query: ACCEPT_FRIEND_SUBSCRIPTION,
           variables: { userId },
-        });
-        const acceptFriendSubscription = acceptFriendObservable.subscribe({
-          next: async ({ data }) => {
+        }).subscribe({
+          next({ data }) {
             if (data?.friendRequestAccept) {
               const { friendRequestAccepterId, friendRequestAccepter } = data.friendRequestAccept;
               updateUserStatus(friendRequestAccepterId, { isRequestSent: false, isFriend: true });
-              await db.runAsync(
+              db.runAsync(
                 `INSERT INTO friends (userId, firstName, lastName, role, dateOfBirth, profilePicture, bio, email, phoneNumber) 
                  VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?) ON CONFLICT(userId) DO NOTHING;`,
                 [
@@ -143,85 +142,56 @@ const Users = ({ navigation }) => {
                   friendRequestAccepter.MobileNumber
                 ]
               );
+              console.log('Friend Request Accepted:', friendRequestAccepterId);
             }
           },
           error(err) {
-            console.error("Accept Friend Subscription error:", err);
+            console.error('Accept Friend Subscription error:', err);
           },
         });
-        subscriptions.push(acceptFriendSubscription);
 
-        const rejectFriendObservable = client.subscribe({
+        const rejectFriendSubscription = client.subscribe({
           query: REJECT_FRIEND_SUBSCRIPTION,
           variables: { userId },
-        });
-        const rejectFriendSubscription = rejectFriendObservable.subscribe({
+        }).subscribe({
           next({ data }) {
             if (data?.friendRequestReject) {
               const { friendRequestRejecterId } = data.friendRequestReject;
               updateUserStatus(friendRequestRejecterId, { isRequestSent: false });
-              console.log("Friend Request Rejected:", friendRequestRejecterId);
+              console.log('Friend Request Rejected:', friendRequestRejecterId);
             }
           },
           error(err) {
-            console.error("Reject Friend Subscription error:", err);
+            console.error('Reject Friend Subscription error:', err);
           },
         });
-        subscriptions.push(rejectFriendSubscription);
-      }
 
-      return () => {
-        subscriptions.forEach((subscription) => subscription.unsubscribe());
-      };
-    }, [userId, client, db])
-  );
+        // Cleanup subscriptions when the screen loses focus or userId changes
+        return () => {
+          console.log('Unsubscribing from all subscriptions...');
+          console.log(friendRequestSubscription);
+          console.log(acceptFriendSubscription);
+          console.log(rejectFriendSubscription);
+          console.log('--------------------------------------------------------------');
+          
+          friendRequestSubscription.unsubscribe();
+          acceptFriendSubscription.unsubscribe();
+          rejectFriendSubscription.unsubscribe();
+          console.log(friendRequestSubscription);
+          console.log(acceptFriendSubscription);
+          console.log(rejectFriendSubscription);
+          
+        };
+      }, [userId, client]) // Dependencies: will trigger cleanup if userId or client changes
+    );
+  };
 
-  // useSubscription(FRIEND_REQUEST_SUBSCRIPTION, {
-  //   variables: { userId },
-  //   onData: ({ data }) => {
-  //     if (data) {
-  //       const { friendRequestSent } = data.data;
-  //       if (friendRequestSent) {
-  //         const { friendRequestSenderId } = friendRequestSent;
-  //         updateUserStatus(friendRequestSenderId, { isRequestReceived: true });
-  //       }
-  //     }
-  //   },
-  // });
+  // Subscribe to friend request updates
+  useFriendRequestSubscriptions(userId);
 
-  // useSubscription(ACCEPT_FRIEND_SUBSCRIPTION, {
-  //   variables: { userId },
-  //   onData: async ({ data }) => {
-  //     if (data) {
-  //       const { friendRequestAccept } = data.data;
-  //       if (friendRequestAccept) {
-  //         const { friendRequestAccepterId, friendRequestAccepter } = friendRequestAccept;
-  //         updateUserStatus(friendRequestAccepterId, { isRequestSent: false, isFriend: true });
-  //         await db.runAsync(
-  //           `INSERT INTO friends (userId, firstName, lastName, role, dateOfBirth, profilePicture, bio, email, phoneNumber) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
-  //             ON CONFLICT(userId) DO NOTHING;`,
-  //           [friendRequestAccepter.id, friendRequestAccepter.FirstName, friendRequestAccepter.LastName, friendRequestAccepter.Role, friendRequestAccepter.DateOfBirth, friendRequestAccepter.ProfilePicture, friendRequestAccepter.Bio, friendRequestAccepter.Email, friendRequestAccepter.MobileNumber]
-  //         )
-  //       }
-  //     }
-  //   },
-  // });
-
-  // useSubscription(REJECT_FRIEND_SUBSCRIPTION, {
-  //   variables: { userId },
-  //   onData: ({ data }) => {
-  //     if (data) {
-  //       const { friendRequestReject } = data.data;
-  //       if (friendRequestReject) {
-  //         const { friendRequestRejecterId } = friendRequestReject;
-  //         updateUserStatus(friendRequestRejecterId, { isRequestSent: false });
-  //       }
-  //     }
-  //   },
-  // });
-
-  useEffect(() => {
-    const unsubscribe = navigation.addListener('focus', () => {
+  // Refetch users on focus
+  useFocusEffect(
+    useCallback(() => {
       if (organizationId) {
         refetch().then(refetchData => {
           if (refetchData.data) {
@@ -229,10 +199,8 @@ const Users = ({ navigation }) => {
           }
         });
       }
-    });
-
-    return unsubscribe;
-  }, [navigation, organizationId]);
+    }, [refetch, organizationId])
+  );
 
   const updateUserStatus = (userIdToUpdate, updatedFields) => {
     setUsers((prevUsers) => {
@@ -251,20 +219,19 @@ const Users = ({ navigation }) => {
   const filteredUsers = users.filter(user => {
     const searchTextLower = searchText.toLowerCase();
     const matchesSearch =
-      ( user.FirstName?.toLowerCase().includes(searchTextLower)) ||
+      (user.FirstName?.toLowerCase().includes(searchTextLower)) ||
       (user.SecondName?.toLowerCase().includes(searchTextLower)) ||
       (user.Email?.toLowerCase().includes(searchTextLower));
-  
+
     const isInCurrentTab =
       currentTabChoice === 'friends'
         ? user.isFriend
         : currentTabChoice === 'requests'
         ? user.isRequestSent || user.isRequestReceived
         : !user.isFriend && !user.isRequestSent && !user.isRequestReceived;
-  
+
     return matchesSearch && isInCurrentTab;
   });
-  
 
   if (loading) {
     return <Loading />;
@@ -277,7 +244,6 @@ const Users = ({ navigation }) => {
   if (!data || !data.getUsersInOrganization) {
     return <CustomNotFound title={'No data available'} />;
   }
-  
 
   return (
     <View style={styles.container}>
@@ -319,13 +285,14 @@ const Users = ({ navigation }) => {
       </View>
 
       {/* Render filtered users based on search and tab */}
-      {filteredUsers.length===0&&searchText!==''&&<Text style={styles.nomatch}>No matching data</Text>}
+      {filteredUsers.length === 0 && searchText !== '' && (
+        <Text style={styles.nomatch}>No matching data</Text>
+      )}
       <FlatList
-        contentContainerStyle={styles.flatListContainer} 
+        contentContainerStyle={styles.flatListContainer}
         data={filteredUsers}
         keyExtractor={(item) => item.id}
         renderItem={({ item }) => {
-          
           if (currentTabChoice === 'requests') {
             return (
               <FriendRequest
@@ -342,8 +309,7 @@ const Users = ({ navigation }) => {
                 updateUserStatus={updateUserStatus}
               />
             );
-          }
-           else {
+          } else {
             return (
               <UserBox
                 image={item.ProfilePicture}
@@ -357,7 +323,7 @@ const Users = ({ navigation }) => {
                 isRequestReceived={item.isRequestReceived}
                 userId={userId}
                 receiverId={item.id}
-                updateUserStatus={updateUserStatus}
+                updateUser Status={updateUserStatus}
               />
             );
           }
@@ -419,10 +385,10 @@ const styles = StyleSheet.create({
   flatListContainer: {
     paddingLeft: Platform.OS === 'ios' ? 15 : 0, // Add left padding for iOS
   },
-  nomatch:{
-     textAlign:'center',
-     marginTop:100
-  }
+  nomatch: {
+    textAlign: 'center',
+    marginTop: 100,
+  },
 });
 
 export default Users;

@@ -24,7 +24,6 @@ const Stack = createStackNavigator();
 
 const App = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(null); // Track auth status
-
   // Check for token validity on app startup
   useEffect(() => {
     const checkToken = async () => {

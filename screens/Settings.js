@@ -14,9 +14,9 @@ const Settings=()=>{
             <SettingsButton title={'Organization Code'} discription={'Organizations Code'} iconName={'office-building-cog-outline'} onPress={()=>navigation.navigate('OrganizationCode')}/>
             <SettingsButton title={'Approve Requests'} discription={'Approve Members'} iconName={'send-check-outline'} onPress={()=>console.log('pressed !')}/>
             <SettingsButton title={'Help'} discription={'Report Problem, Help Desk'} iconName={'help-circle-outline'} onPress={()=>console.log('pressed !')}/>        
-            {/* <TouchableOpacity   onPress={() => setModalVisible(true)}>
+            <TouchableOpacity   onPress={() => setModalVisible(true)}>
                <Text>Log out</Text>
-            </TouchableOpacity> */}
+            </TouchableOpacity>
             <LogoutModal isVisible={modalVisible} onClose={() => setModalVisible(false)} navigation={navigation}/>
         </View>
     );
