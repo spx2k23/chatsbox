@@ -133,7 +133,7 @@ const App = () => {
         {isAuthenticated && (
           <>
             <NotificationListener />
-            <NetworkListener />
+            {/* <NetworkListener /> */}
           </>
         )}
       </ApolloProvider>

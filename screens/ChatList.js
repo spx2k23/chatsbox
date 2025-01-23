@@ -49,7 +49,6 @@ const ChatList = () => {
     );
   }
 
-
   return (
     <View style={styles.container}>
       <FlatList

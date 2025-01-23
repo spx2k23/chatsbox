@@ -124,11 +124,11 @@ const Users = ({ navigation }) => {
           variables: { userId },
         });
         const acceptFriendSubscription = acceptFriendObservable.subscribe({
-          next({ data }) {
+          next: async ({ data }) => {
             if (data?.friendRequestAccept) {
               const { friendRequestAccepterId, friendRequestAccepter } = data.friendRequestAccept;
               updateUserStatus(friendRequestAccepterId, { isRequestSent: false, isFriend: true });
-              db.runAsync(
+              await db.runAsync(
                 `INSERT INTO friends (userId, firstName, lastName, role, dateOfBirth, profilePicture, bio, email, phoneNumber) 
                  VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?) ON CONFLICT(userId) DO NOTHING;`,
                 [
@@ -140,10 +140,9 @@ const Users = ({ navigation }) => {
                   friendRequestAccepter.ProfilePicture,
                   friendRequestAccepter.Bio,
                   friendRequestAccepter.Email,
-                  friendRequestAccepter.MobileNumber,
+                  friendRequestAccepter.MobileNumber
                 ]
               );
-              console.log("Friend Request Accepted:", friendRequestAccepterId);
             }
           },
           error(err) {
@@ -170,7 +169,7 @@ const Users = ({ navigation }) => {
         });
         subscriptions.push(rejectFriendSubscription);
       }
-  
+
       return () => {
         subscriptions.forEach((subscription) => subscription.unsubscribe());
       };
