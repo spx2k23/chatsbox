@@ -7,6 +7,7 @@ import { Audio,Video } from 'expo-av';
 import VideoPlayer from './VideoPlayer';
 import DocViewer from './DocViewer';
 import AudioRecorder from './AudioRecorder';
+import VoteInputEditor from './Vote/VoteInputEditor';
 
 const windowWidth = Dimensions.get('window').width;
 
@@ -180,7 +181,11 @@ const AnnouncementInputContainer = ({ setShowContainer, tempData, setTempData , 
                     <DocViewer name={item.name} uri={item.uri} />
                   </View>
                 )}
-                
+                {
+                  item.type ==='vote'&&(
+                    <VoteInputEditor tempData={tempData} setTempData={setTempData} key={index} index={index}/>
+                  )}
+                  
               </View>
             );
           })}

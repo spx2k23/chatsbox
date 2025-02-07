@@ -121,6 +121,11 @@ const AnnouncementsInputBox = ({setShowContainer, tempData, setTempData }) => {
     
   };
 
+  const handleVoteSelect=()=>{
+    setTempData([...tempData, { type: 'vote', vote:0 ,option:[{name:'Option - 1',votes:10},{name:'Option - 2',votes:20}],topic:'',voted:false}]);
+    setShowContainer(true);
+  }
+
   return (
     <View style={styles.inputContainer}>
       {/* Image Icon */}
@@ -147,15 +152,9 @@ const AnnouncementsInputBox = ({setShowContainer, tempData, setTempData }) => {
       <TouchableOpacity onPress={handleDocSelect}>
         <IconButton icon="file-document" size={24} />
       </TouchableOpacity>
-
-      {/* Handle stop recording for audio if recording */}
-      {tempData.map((item, index) => {
-        return item.type === 'audio' && item.isRecording ? (
-          <TouchableOpacity key={index} onPress={() => handleStopRecording(index)}>
-            <IconButton icon="stop-circle" size={24} />
-          </TouchableOpacity>
-        ) : null;
-      })}
+      <TouchableOpacity onPress={handleVoteSelect}>
+        <IconButton icon="view-headline" size={24} />
+      </TouchableOpacity>
     </View>
   );
 };

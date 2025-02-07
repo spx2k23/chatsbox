@@ -4,6 +4,7 @@ import { MaterialIcons } from '@expo/vector-icons';
 import VideoPlayer from './AnnouncementInputBoxComponents/VideoPlayer';
 import DocViewer from './AnnouncementInputBoxComponents/DocViewer';
 import AudioPlayer from './AnnouncementInputBoxComponents/AudioPlayer';
+import Vote from './AnnouncementInputBoxComponents/Vote/Vote';
 
 
 const AnnouncementCard=({group})=>{
@@ -42,6 +43,10 @@ const formattedMinutes = minutes < 10 ? '0' + minutes : minutes;
           {item.type==='audio'&&item.uri&&(
             <AudioPlayer uri={item.uri}/>
           )}
+          {
+            item.type==='vote'&&(
+              <Vote item={item}/>
+            )}
          </View>
          ))}
 
