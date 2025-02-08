@@ -26,20 +26,13 @@ const GET_USERS_IN_ORG = gql`
     }
   }
 `;
-
-const FRIEND_REQUEST_SUBSCRIPTION = gql`
-  subscription FriendRequestSent($userId: ID!) {
-    friendRequestSent(userId: $userId) {
-      friendRequestSenderId
-    }
-  }
-`;
-
-const ACCEPT_FRIEND_SUBSCRIPTION = gql`
-  subscription FriendRequestAccept($userId: ID!) {
-    friendRequestAccept(userId: $userId) {
-      friendRequestAccepterId
-      friendRequestAccepter {
+    
+const FRIENDS_UPDATE = gql`
+  subscription FriendsUpdate($userId: ID!) {
+    friendsUpdate(userId: $userId) {
+      Type
+      FriendsUpdateReceiverId
+      Friend {
         id
         FirstName
         LastName
@@ -50,14 +43,6 @@ const ACCEPT_FRIEND_SUBSCRIPTION = gql`
         Email
         MobileNumber
       }
-    }
-  }
-`;
-
-const REJECT_FRIEND_SUBSCRIPTION = gql`
-  subscription FriendRequestReject($userId: ID!) {
-    friendRequestReject(userId: $userId) {
-      friendRequestRejecterId
     }
   }
 `;
@@ -100,96 +85,53 @@ const Users = ({ navigation }) => {
     useFocusEffect(
       useCallback(() => {
         if (!userId) return;
-
-        console.log('Setting up subscriptions for userId:', userId);
-
-        const friendRequestSubscription = client.subscribe({
-          query: FRIEND_REQUEST_SUBSCRIPTION,
+        const friendsUpdate = client.subscribe({
+          query: FRIENDS_UPDATE,
           variables: { userId },
         }).subscribe({
-          next({ data }) {
-            if (data?.friendRequestSent) {
-              const { friendRequestSenderId } = data.friendRequestSent;
-              updateUserStatus(friendRequestSenderId, { isRequestReceived: true });
-              console.log('Friend Request Sent:', friendRequestSenderId);
+          next({data}) {
+            if(data?.friendsUpdate) {
+              const { Type } = data.friendsUpdate;
+              const { FriendsUpdateReceiverId } = data.friendsUpdate;
+              if(Type === "SEND_FRIEND_REQUEST"){
+                console.log("send");
+                updateUserStatus(FriendsUpdateReceiverId, { isRequestReceived: true });
+              } else if(Type === "ACCEPT_FRIEND_REQUEST"){
+                const { Friend } = data.friendsUpdate;
+                console.log("accept");
+                updateUserStatus(FriendsUpdateReceiverId, { isRequestSent: false, isFriend: true });
+                db.runAsync(
+                  `INSERT INTO friends (userId, firstName, lastName, role, dateOfBirth, profilePicture, bio, email, phoneNumber) 
+                  VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?) ON CONFLICT(userId) DO NOTHING;`,
+                  [
+                    Friend.id,
+                    Friend.FirstName,
+                    Friend.LastName,
+                    Friend.Role,
+                    Friend.DateOfBirth,
+                    Friend.ProfilePicture,
+                    Friend.Bio,
+                    Friend.Email,
+                    Friend.MobileNumber
+                  ]
+                );
+              } else {
+                console.log("reject");
+                updateUserStatus(FriendsUpdateReceiverId, { isRequestSent: false });
+              }
             }
-          },
-          error(err) {
-            console.error('Friend Request Subscription error:', err);
-          },
+          }
         });
-
-        const acceptFriendSubscription = client.subscribe({
-          query: ACCEPT_FRIEND_SUBSCRIPTION,
-          variables: { userId },
-        }).subscribe({
-          next({ data }) {
-            if (data?.friendRequestAccept) {
-              const { friendRequestAccepterId, friendRequestAccepter } = data.friendRequestAccept;
-              updateUserStatus(friendRequestAccepterId, { isRequestSent: false, isFriend: true });
-              db.runAsync(
-                `INSERT INTO friends (userId, firstName, lastName, role, dateOfBirth, profilePicture, bio, email, phoneNumber) 
-                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?) ON CONFLICT(userId) DO NOTHING;`,
-                [
-                  friendRequestAccepter.id,
-                  friendRequestAccepter.FirstName,
-                  friendRequestAccepter.LastName,
-                  friendRequestAccepter.Role,
-                  friendRequestAccepter.DateOfBirth,
-                  friendRequestAccepter.ProfilePicture,
-                  friendRequestAccepter.Bio,
-                  friendRequestAccepter.Email,
-                  friendRequestAccepter.MobileNumber
-                ]
-              );
-              console.log('Friend Request Accepted:', friendRequestAccepterId);
-            }
-          },
-          error(err) {
-            console.error('Accept Friend Subscription error:', err);
-          },
-        });
-
-        const rejectFriendSubscription = client.subscribe({
-          query: REJECT_FRIEND_SUBSCRIPTION,
-          variables: { userId },
-        }).subscribe({
-          next({ data }) {
-            if (data?.friendRequestReject) {
-              const { friendRequestRejecterId } = data.friendRequestReject;
-              updateUserStatus(friendRequestRejecterId, { isRequestSent: false });
-              console.log('Friend Request Rejected:', friendRequestRejecterId);
-            }
-          },
-          error(err) {
-            console.error('Reject Friend Subscription error:', err);
-          },
-        });
-
-        // Cleanup subscriptions when the screen loses focus or userId changes
+        
         return () => {
-          console.log('Unsubscribing from all subscriptions...');
-          console.log(friendRequestSubscription);
-          console.log(acceptFriendSubscription);
-          console.log(rejectFriendSubscription);
-          console.log('--------------------------------------------------------------');
-          
-          friendRequestSubscription.unsubscribe();
-          acceptFriendSubscription.unsubscribe();
-          rejectFriendSubscription.unsubscribe();
-          console.log(friendRequestSubscription);
-          console.log(acceptFriendSubscription);
-          console.log(rejectFriendSubscription);
-          
+          friendsUpdate.unsubscribe();
         };
-      }, [userId, client]) // Dependencies: will trigger cleanup if userId or client changes
+      }, [userId, client])
     );
   };
 
-  // Subscribe to friend request updates
   useFriendRequestSubscriptions(userId);
 
-  // Refetch users on focus
   useFocusEffect(
     useCallback(() => {
       if (organizationId) {
