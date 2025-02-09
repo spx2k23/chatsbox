@@ -9,7 +9,7 @@ const ACCEPT_FRIEND_REQUEST = gql`
     acceptFriendRequest(friendRequestAccepterId: $friendRequestAccepterId, friendRequestReceiverId: $friendRequestReceiverId) {
       success
       message
-      receiver {
+      user {
         id
         FirstName
         LastName
@@ -41,17 +41,22 @@ const FriendRequest = ({ firstName, lastName, email, image, userId, receiverId, 
   const [rejectFriendRequest] = useMutation(REJECT_FRIEND_REQUEST);
 
   const handleAccept = async (userId) => {
+    console.log('Hi');
+    
     const { data } = await acceptFriendRequest({
       variables: {
         friendRequestAccepterId: userId,
         friendRequestReceiverId: receiverId,
       }
     });
+    console.log(data.acceptFriendRequest.success);
     if (data.acceptFriendRequest.success) {
-      const user = data.acceptFriendRequest.receiver
+      
+      
+      const {user}= data.acceptFriendRequest;
       updateUserStatus(receiverId, { isRequestReceived: false, isFriend: true });
       
-      const result = await db.runAsync(
+       await db.runAsync(
         `INSERT INTO friends (userId, firstName, lastName, role, dateOfBirth, profilePicture, bio, email, phoneNumber) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
           ON CONFLICT(userId) DO NOTHING;`,
         [user.id, user.FirstName, user.LastName, user.Role, user.DateOfBirth, user.ProfilePicture, user.Bio, user.Email, user.MobileNumber]

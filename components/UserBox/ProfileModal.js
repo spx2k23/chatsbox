@@ -44,7 +44,7 @@ const ProfileModal = ({ setModalVisible, image, firstName, lastName, email, role
               <Text style={styles.nameText}>{firstName} {lastName}</Text>
               <Text style={styles.emailText}>{email}</Text>
               <Text style={styles.roleText}>{role}</Text>
-              <Text style={styles.bioText}>{bio === null ? "This guy has not set bio hahaa..." : bio}</Text>
+              <Text style={styles.bioText}>{bio === null ? "This person has not set bio" : bio}</Text>
 
               { !isFriend && (
                 <View>

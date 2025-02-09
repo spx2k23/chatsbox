@@ -96,7 +96,7 @@ const Profile = () => {
             <Text style={isEditing?styles.lable:styles.iseditlable}> Role :</Text>
             <View style={styles.inputContainer}>
                 {isEditing? (
-                    <TextInput style={[styles.inputField,{fontSize:16}]} value={role} onChangeText={setRole} placeholder="Your Name"/>
+                    <TextInput style={[styles.inputField,{fontSize:16}]} value={role} onChangeText={setRole} placeholder="Your Role"/>
                 ) : (
                     <Text style={[isEditing?styles.textField:styles.iseditTextField,styles.role]}>{role}</Text>)} 
             </View>
@@ -121,7 +121,7 @@ const Profile = () => {
                     {isEditing ? (
                         <TextInput style={styles.textArea} value={bio} onChangeText={setBio} placeholder="Your bio" multiline numberOfLines={4} />
                     ) : (
-                        <Text style={[isEditing?styles.textField:styles.iseditTextField,styles.bio]}>{bio === null ? "u have not set bio mental" : bio}</Text>)}
+                        <Text style={[isEditing?styles.textField:styles.iseditTextField,styles.bio]}>{bio === null ? "You have not set bio" : bio}</Text>)}
                 </View>
             </ScrollView>
             </View>

@@ -1,5 +1,7 @@
 import { StyleSheet, View,Dimensions,TouchableOpacity,Text,Image,Platform } from "react-native";
 import { MaterialIcons } from '@expo/vector-icons';
+import * as ImagePicker from 'expo-image-picker';
+import { useState,useEffect } from "react";
 
 
 const { width } = Dimensions.get('window');
@@ -8,25 +10,36 @@ const scaleSize = (size) => size * scale;
 const scaleFont = (size) => size * scale;
 
 
-const ProfilePic=({profilePic,isEditing ,email,companyName})=>{
+const ProfilePic=({profilePic,isEditing ,email,companyName,setProfilePic})=>{
+    const [imagePickerPermission, setImagePickerPermission] = useState(false);
+
+    // Request media library permission when component mounts
+    useEffect(() => {
+      const checkPermissions = async () => {
+        const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+        setImagePickerPermission(status === 'granted');
+      };
+  
+      checkPermissions();
+    }, []);
 
     const pickImage = async () => {
-        let permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
-        if (permissionResult.granted === false) {
+           
+        if (!imagePickerPermission) {
           alert("Permission to access camera roll is required!");
           return;
         }
       
         let pickerResult = await ImagePicker.launchImageLibraryAsync({
-          mediaTypes: [ImagePicker.CameraType.front],
+          mediaTypes: ['images'],
           allowsEditing: true,
-          aspect: [4, 3],
+          aspect: [3, 3],
           quality: 1,
+          base64:true
         });
-      
-        if (!pickerResult.cancelled && pickerResult.uri) {
-          setProfilePic(pickerResult.uri);
-          console.log(pickerResult.uri);
+      const newProfileURI=pickerResult.assets[0].base64;
+        if ((!pickerResult.canceled )&& newProfileURI) {
+          setProfilePic(newProfileURI);
         }
       };
 

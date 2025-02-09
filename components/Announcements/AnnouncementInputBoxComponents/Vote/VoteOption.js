@@ -6,7 +6,7 @@ const VoteOption=({data,totalVotes})=>{
     const precentage=((data.votes/totalVotes)*100).toFixed(1);
     return(
         <TouchableOpacity style={styles.optBox}>
-            <View >
+            <View  style={styles.optdata}>
             <View style={styles.opt}>
                 <View style={styles.circle}> </View>
                 <Text>{data.name}</Text>
@@ -22,8 +22,6 @@ export default VoteOption;
 const styles=StyleSheet.create({
     optBox:{
         marginTop:20,
-        width:'70%',
-        maxWidth:'100%',
         flexDirection:'row'
     },
     circle:{
@@ -35,11 +33,10 @@ const styles=StyleSheet.create({
     },
     opt:{
         flexDirection:'row',
-        alignItems:'center'
     },
     precentage:{
-
-   
+        position:'absolute',
+        right:5
     },
     optBar:{
         backgroundColor:'#6200EE',
@@ -47,5 +44,8 @@ const styles=StyleSheet.create({
         marginTop:5,
         borderRadius:5,
         
+    },
+    optdata:{
+        width:'70%'
     }
 })

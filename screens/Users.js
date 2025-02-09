@@ -265,7 +265,7 @@ const Users = ({ navigation }) => {
                 isRequestReceived={item.isRequestReceived}
                 userId={userId}
                 receiverId={item.id}
-                updateUser Status={updateUserStatus}
+                updateUserStatus={updateUserStatus}
               />
             );
           }
