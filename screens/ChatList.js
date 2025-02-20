@@ -32,6 +32,7 @@ const ChatList = () => {
       id={item.id}
       lastmessage="it's secret bro!"
       lastmessage_time="just now"
+      datas={item}
     />
   );
 

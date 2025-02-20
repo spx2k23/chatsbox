@@ -26,18 +26,15 @@ export const LogoutModal = ({ isVisible, onClose,navigation}) => {
     >
       <View style={styles.modalContainer}>
         <View style={styles.modalContent}>
-          <Text style={styles.modalText}>Are you sure you want to logout?</Text>
+          <Text style={[styles.modalText,styles.logoutText]}>Logout</Text>
+          <Text style={styles.modalText}>Are you sure?</Text>
           <View style={styles.buttonContainer}>
-            <Button 
-              title="Cancel" 
-              buttonStyle={styles.cancelButton} 
-              onPress={onClose} 
-            />
-            <Button 
-              title="Logout" 
-              buttonStyle={styles.logoutButton} 
-              onPress={handleLogout} 
-            />
+            <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
+              <Text>Yes</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.cancelButton} onPress={onClose}>
+              <Text style={{  color:'#fff'}}>No</Text>
+            </TouchableOpacity> 
           </View>
         </View>
       </View>
@@ -52,12 +49,14 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     backgroundColor: 'rgba(0,0,0,0.5)',
+    alignItems:'center'
   },
   modalContent: {
     backgroundColor: 'white',
     padding: 20,
-    marginHorizontal: 30,
+    width:'62%',
     borderRadius: 10,
+    paddingBottom:30
   },
   modalText: {
     fontSize: 18,
@@ -66,12 +65,22 @@ const styles = StyleSheet.create({
   },
   buttonContainer: {
     flexDirection: 'row',
-    justifyContent: 'space-around',
-  },
-  cancelButton: {
-    backgroundColor: '#B0BEC5',
+    justifyContent: 'center',
   },
   logoutButton: {
-    backgroundColor: '#6200EE',
+    borderRadius:8,
+    borderWidth:1,
+    paddingHorizontal:25,
+    marginRight:10
   },
+  cancelButton: {
+    backgroundColor: '#6200EE',
+    paddingHorizontal:25,
+    borderRadius:8,
+  
+  },
+  logoutText:{
+    color:'red',
+    fontWeight:'600',
+  }
 });

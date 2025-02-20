@@ -1,258 +1,83 @@
-import React, { useState, useCallback, useEffect, useLayoutEffect } from 'react';
-import { View, TouchableOpacity, StyleSheet, Text, Image, ActivityIndicator } from 'react-native';
-import { GiftedChat, InputToolbar, MessageImage } from 'react-native-gifted-chat';
-import * as ImagePicker from 'expo-image-picker';
-import * as DocumentPicker from 'expo-document-picker';
-import { Audio } from 'expo-av';
-import DocMessage from '../components/Chat/DocMessage';
-import TextMessage from '../components/Chat/TextMessage';
-import AudioMessage from '../components/Chat/AudioMessage';
-import VideoMessage from '../components/Chat/VideoMessage';
-import { MaterialIcons } from '@expo/vector-icons';
-import CustomBubble from '../components/Chat/CustomBubble';
-import CustomSend from '../components/Chat/CustomSend';
-import { useNavigation, useRoute } from '@react-navigation/native';
+import { MaterialIcons } from "@expo/vector-icons";
+import { useNavigation } from "@react-navigation/native";
+import { useState } from "react";
+import { Platform, TextInput } from "react-native";
+import { Text, View, StyleSheet, TouchableOpacity ,Image} from "react-native";
+import ProfileModal from "../components/UserBox/ProfileModal";
 
-const Chat = () => {
+
+const isIosPlatfom=Platform.OS==='ios';
+const Chat = ({ route }) => {
   const navigation = useNavigation();
-  const route = useRoute();
-  const { name, image } = route.params;
-
-  const user_id = 'Current_UserId';
-  const [messages, setMessages] = useState([]);
-  const [recording, setRecording] = useState(null);
-  const [soundUri, setSoundUri] = useState(null);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    
-    const loadResources = async () => {
-      
-      setTimeout(() => setLoading(false), 1000); 
-    };
-
-    loadResources();
-  }, []);
-
-  useLayoutEffect(() => {
-    if (!loading) {
-      navigation.setOptions({
-        headerTitle: () => (
-          <View style={styles.headerContainer}>
-            <Image source={{ uri: image }} style={styles.headerImage} />
-            <Text style={styles.headerTitle}>{name}</Text>
-          </View>
-        ),
-      });
-    }
-  }, [navigation, name, image, loading]);
-
-  const onSend = useCallback((messages = []) => {
-    setMessages((previousMessages) =>
-      GiftedChat.append(previousMessages, ...messages)
-    );
-  }, []);
-
-  const handlePickMedia = async () => {
-    const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
-    if (status !== 'granted') {
-      alert('Permission to access media library is required!');
-      return;
-    }
-
-    const result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.All,
-      allowsEditing: true,
-      quality: 1,
-    });
-
-    if (!result.canceled) {
-      const asset = result.assets[0];
-      const mediaType = asset.type;
-      const uri = asset.uri;
-
-      let newMessage = {
-        _id: Math.random().toString(),
-        createdAt: new Date(),
-        user: { _id: user_id, name: name },
-      };
-
-      if (mediaType === 'video') {
-        newMessage.video = uri;
-      } else if (mediaType === 'image') {
-        newMessage.image = uri;
-      }
-
-      onSend([newMessage]);
-    }
-  };
-
-  const handlePickDocument = async () => {
-    try {
-      const result = await DocumentPicker.getDocumentAsync({ type: '*/*' });
-      const resultData = result.assets[0];
-      const text = resultData.name;
-      const document = resultData.uri;
-
-      if (!resultData.canceled) {
-        const newMessage = {
-          _id: Math.random().toString(),
-          createdAt: new Date(),
-          user: { _id: user_id, name: name },
-          text: text,
-          document: document,
-        };
-        onSend([newMessage]);
-      }
-    } catch (error) {
-      console.error('Error picking document:', error);
-    }
-  };
-
-  const startRecording = async () => {
-    try {
-      const { status } = await Audio.requestPermissionsAsync();
-      if (status === 'granted') {
-        const { recording } = await Audio.Recording.createAsync(
-          Audio.RecordingOptionsPresets.HIGH_QUALITY
-        );
-        setRecording(recording);
-      } else {
-        alert('Permission to access microphone is required!');
-      }
-    } catch (err) {
-      console.error('Failed to start recording', err);
-    }
-  };
-
-  const stopRecording = async () => {
-    if (recording) {
-      try {
-        await recording.stopAndUnloadAsync();
-        const uri = recording.getURI();
-        setSoundUri(uri);
-
-        const newMessage = {
-          _id: Math.random().toString(),
-          createdAt: new Date(),
-          user: { _id: user_id, name: name },
-          audio: uri,
-        };
-        onSend([newMessage]);
-
-        setRecording(null);
-      } catch (err) {
-        console.error('Failed to stop recording', err);
-      }
-    }
-  };
-
-  const renderTime = (props) => {
-    return (
-      <Text
-        style={{
-          color: props.currentMessage.user._id === user_id ? '#000' : '#007aff',
-          fontSize: 12,
-          marginLeft: 5,
-        }}
-      >
-        {props.currentMessage.createdAt.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-      </Text>
-    );
-  };
-
-  const renderMessageImage = (props) => <MessageImage {...props} />;
-  const renderMessageVideo = (props) => {
-    const { currentMessage } = props;
-    return (<VideoMessage currentMessage={currentMessage} />);
-  };
-  const renderMessageText = (props) => {
-    const { currentMessage } = props;
-    if (currentMessage.document) {
-      return (<DocMessage currentMessage={currentMessage} />);
-    }
-    return <TextMessage currentMessage={currentMessage} />;
-  };
-
-  const renderMessageAudio = (props) => {
-    return (
-      <View style={{ padding: 10 }} key={Math.random().toString()}>
-        <AudioMessage uri={props.currentMessage.audio} />
-      </View>
-    );
-  };
-
-  if (loading) {
-    return (
-      <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color="#6200EE" />
-      </View>
-    );
-  }
-
+  const data = route.params;
+  const [profilemodel,setprofilemodel]=useState(false);
+  
   return (
-    <View style={{ flex: 1 }}>
-      <GiftedChat
-        messages={messages}
-        onSend={onSend}
-        user={{ _id: user_id }}
-        showAvatar={false}
-        renderMessageImage={renderMessageImage}
-        renderMessageAudio={renderMessageAudio}
-        renderMessageText={renderMessageText}
-        renderMessageVideo={renderMessageVideo}
-        renderBubble={(props) => <CustomBubble {...props} />}
-        renderSend={(props) => <CustomSend {...props} />}
-        renderTime={renderTime}
-        renderInputToolbar={(props) => (
-          <InputToolbar
-            {...props}
-            containerStyle={{ borderTopColor: '#eee', borderTopWidth: 1 }}
-            renderActions={() => (
-              <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                <TouchableOpacity onPress={handlePickMedia} style={styles.cambtn}>
-                  <MaterialIcons name="camera-alt" size={24} color="#6200EE" />
-                </TouchableOpacity>
-                <TouchableOpacity onPress={handlePickDocument}>
-                  <MaterialIcons name="insert-drive-file" size={24} color="#6200EE" />
-                </TouchableOpacity>
-                <TouchableOpacity onPress={recording ? stopRecording : startRecording}>
-                  <MaterialIcons name={recording ? "stop" : "mic"} size={24} color="#6200EE" />
-                </TouchableOpacity>
-              </View>
-            )}
-          />
-        )}
-      />
+    <View style={styles.container}>
+      <View style={styles.header}>
+        <TouchableOpacity onPress={() => navigation.goBack()}>
+          <MaterialIcons name="arrow-back" size={24}/>
+        </TouchableOpacity>
+        <TouchableOpacity onPress={()=>setprofilemodel(true)} >
+        <Image source={{ uri: `data:image/jpeg;base64,${data.image}`}} style={styles.profileImg} />
+        </TouchableOpacity>
+        <Text style={styles.nameText}>{data.name}</Text>
+      </View>
+      {profilemodel&&<ProfileModal setModalVisible={setprofilemodel} modalVisible={profilemodel} isFriend={true} image={data.image} firstName={data.name} email={data.datas.email} role={data.datas.role} bio={data.datas.bio}/>}
+
+      <View style={styles.inputContainer}>
+        <View style={styles.inputBox}>
+          <TextInput placeholder="Message"/>
+        </View>
+      </View>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
-  cambtn: {
-    marginVertical: 10,
-    marginHorizontal: 10
+  container: {
+    flex: 1,
+    padding: 20,
   },
-  headerContainer: {
+  header: {
     flexDirection: 'row',
     alignItems: 'center',
+    marginBottom: 20,
+    paddingTop:isIosPlatfom?60:30,
+    paddingBottom:10,
+    position:'absolute',
+    zIndex:1,
+    top:0,
+    left:0,
+    width:'112%'
   },
-  headerImage: {
+ 
+  nameText: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    color:'#6200EE'
+  },
+  profileImg:{
     width: 40,
     height: 40,
-    borderRadius: 20,
-    marginRight: 20,
+    borderRadius: 20, 
+    marginHorizontal:20,
   },
-  headerTitle: {
-    fontSize: 18,
-    fontWeight: 'bold',
-   
+  inputContainer:{
+    position:'absolute',
+    zIndex:1,
+    bottom:0,
+    width:'100%',
+    paddingBottom:isIosPlatfom?30:10,
+    paddingLeft:isIosPlatfom?5:0,
   },
-  loadingContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
+  inputBox:{
+    borderWidth:1,
+    borderRadius:20,
+    margin:10,
+    height:isIosPlatfom?'100%':'70%',
+    width:isIosPlatfom?'105%':'105%',
+  }
 });
 
 export default Chat;

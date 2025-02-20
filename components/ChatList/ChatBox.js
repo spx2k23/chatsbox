@@ -2,14 +2,17 @@ import { useNavigation } from "@react-navigation/native";
 import React from "react";
 import { View, Image, Text, StyleSheet, TouchableOpacity, Platform } from "react-native";
 
-const ChatBox = ({ image, firstName, lastName, id, lastmessage, lastmessage_time }) => {
+const ChatBox = ({ image, firstName, lastName, id, lastmessage, lastmessage_time ,datas}) => {
     const navigation = useNavigation(); // Moved inside the component
 
     const handleChatNavigation = () => {
+        
         navigation.navigate('Chat', {
             name: firstName+lastName,
-            image:image
+            image:image,
+            datas:datas
         });
+    
     };
 
     return (

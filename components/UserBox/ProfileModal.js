@@ -43,7 +43,7 @@ const ProfileModal = ({ setModalVisible, image, firstName, lastName, email, role
               <Image source={{ uri: `data:image/jpeg;base64,${image}` }} style={styles.modalImage} />
               <Text style={styles.nameText}>{firstName} {lastName}</Text>
               <Text style={styles.emailText}>{email}</Text>
-              <Text style={styles.roleText}>{role}</Text>
+              <Text style={styles.roleText}>{role===null?'Role Not Found':role}</Text>
               <Text style={styles.bioText}>{bio === null ? "This person has not set bio" : bio}</Text>
 
               { !isFriend && (

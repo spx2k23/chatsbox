@@ -7,7 +7,7 @@ import { createClient } from 'graphql-ws';
 
 const httpLink = createHttpLink({
   // uri: 'http://192.168.134.253:4000/graphql',
-  uri: 'http://192.168.20.97:4000/graphql',
+  uri: 'http://192.168.186.97:4000/graphql',
 });
 
 const authLink = setContext(async (_, { headers }) => {
@@ -25,7 +25,7 @@ const link = authLink.concat(httpLink);
 const wsLink = new GraphQLWsLink(
   createClient({
     // url: 'ws://192.168.134.253:4000/graphql',
-    url: 'ws://192.168.20.97:4000/graphql',
+    url: 'ws://192.168.186.97:4000/graphql',
     connectionParams: async () => {
       const token = await AsyncStorage.getItem('token');
       return {
