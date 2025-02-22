@@ -1,6 +1,6 @@
-import { Modal, StyleSheet, Text, TouchableWithoutFeedback, View,Platform ,TextInput} from "react-native";
+import { Modal, StyleSheet, Text, TouchableWithoutFeedback, View,Platform ,TextInput,TouchableOpacity} from "react-native";
 import { useState ,useRef} from "react";
-import { TouchableOpacity } from "react-native";
+
 
 const AddOrgModal=({addmodal,setaddmodal})=>{
 

@@ -3857,6 +3857,11 @@ expo-image-picker@~16.0.3:
   dependencies:
     expo-image-loader "~5.0.0"
 
+expo-image@^2.0.6:
+  version "2.0.6"
+  resolved "https://registry.npmjs.org/expo-image/-/expo-image-2.0.6.tgz"
+  integrity sha512-NHpIZmGnrPbyDadil6eK+sUgyFMQfapEVb7YaGgxSFWBUQ1rSpjqdIQrCD24IZTO9uSH8V+hMh2ROxrAjAixzQ==
+
 expo-keep-awake@~14.0.1:
   version "14.0.1"
   resolved "https://registry.npmjs.org/expo-keep-awake/-/expo-keep-awake-14.0.1.tgz"

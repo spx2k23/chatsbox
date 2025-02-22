@@ -14,7 +14,7 @@ const VideoPlayer = ({ item, index }) => {
   const closeFullScreen = () => {
     setShowModal(false); // Close full-screen modal
   };
-
+  
 
   return (
     <View style={styles.mediaContainer}>

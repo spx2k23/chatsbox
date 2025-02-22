@@ -1,0 +1,48 @@
+const chat data struct =[
+    {
+        _id: _MessageId,
+        type:'text'
+        text:'Hi, This is the data structure for chat',
+        createdAt:new Date(),
+        user:{
+            _id: _UserId,
+            name:'Blessed Jeberson',
+            avatar:'profileImageUrl'
+        }
+    },
+
+        {
+        _id: _MessageId,
+        type:'image'
+        imageUrl:'imageUrl',
+        createdAt:new Date(),
+        user:{
+            _id: _UserId,
+            name:'Blessed Jeberson',
+            avatar:'profileImageUrl'
+        }
+    },
+     {
+        _id: _MessageId,
+        type:'audio'
+        imageUrl:'audioUrl',
+        createdAt:new Date(),
+        user:{
+            _id: _UserId,
+            name:'Blessed Jeberson',
+            avatar:'profileImageUrl'
+        }
+    },
+    {
+        _id: _MessageId,
+        type:'announcement'
+        data:[.....],
+        createdAt:new Date(),
+        user:{
+            _id: _UserId,
+            name:'Blessed Jeberson',
+            avatar:'profileImageUrl'
+        }
+    }
+    
+]
