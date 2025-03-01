@@ -203,7 +203,9 @@ const AnnouncementInputContainer = ({ setShowContainer, tempData, setTempData , 
 
 const styles = StyleSheet.create({
   keyboardAvoidingViewStyle:{
-    height:0,
+    position: 'absolute',
+    zIndex:1,
+    bottom:10
   },
   container: {
     backgroundColor: '#fff',
@@ -213,11 +215,6 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: '#000',
     borderRadius: 10,
-    position: 'absolute',
-    bottom:Platform.OS==='android'?-620:-680, 
-    left: '50%', // Move it to the center horizontally
-    transform: [{ translateX: -(windowWidth * 0.95) }],
-    zIndex:1,
    
   },
   close: {

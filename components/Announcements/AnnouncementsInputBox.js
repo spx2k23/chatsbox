@@ -169,7 +169,8 @@ const styles = StyleSheet.create({
     paddingVertical: 5,
     borderTopWidth: 1,
     borderTopColor: '#ccc',
-    margin:0
+    margin:0,
+    flex:1
   },
 });
 
