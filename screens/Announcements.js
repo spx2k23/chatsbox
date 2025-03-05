@@ -228,7 +228,7 @@ const styles = StyleSheet.create({
     margin: 0,
   },
   messageBox: {
-    flex: 1,
+    flex:15,
     paddingTop: 10,
     alignItems: 'center',
   },
