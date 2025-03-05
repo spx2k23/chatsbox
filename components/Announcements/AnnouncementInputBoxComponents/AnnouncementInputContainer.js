@@ -1,19 +1,48 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, TextInput, TouchableOpacity, StyleSheet, Dimensions, Image, Text, ScrollView, TouchableWithoutFeedback, Keyboard, KeyboardAvoidingView, Platform } from 'react-native';
 import { IconButton } from 'react-native-paper';
 import * as ImagePicker from 'expo-image-picker';
 import * as DocumentPicker from 'expo-document-picker';
-import { Audio,Video } from 'expo-av';
+import { Audio, Video } from 'expo-av';
 import VideoPlayer from './VideoPlayer';
 import DocViewer from './DocViewer';
 import AudioRecorder from './AudioRecorder';
 import VoteInputEditor from './Vote/VoteInputEditor';
+import { gql, useMutation } from '@apollo/client';
+import { useSQLiteContext } from 'expo-sqlite';
+
+const CREATE_ANNOUNCEMENT_MUTATION = gql`
+  mutation CreateAnnouncement($createdBy: ID!, $messages: [MessageInput!]!) {
+    createAnnouncement(createdBy: $createdBy, messages: $messages) {
+      success
+      message
+    }
+  }
+`;
 
 const windowWidth = Dimensions.get('window').width;
 
-const AnnouncementInputContainer = ({ setShowContainer, tempData, setTempData , setAnnouncements, announcements,}) => {
+const AnnouncementInputContainer = ({ setShowContainer, tempData, setTempData, setAnnouncements, announcements, }) => {
+
+  const [createAnnouncement] = useMutation(CREATE_ANNOUNCEMENT_MUTATION);
+
   const [isRecording, setIsRecording] = useState(false);
   const [recording, setRecording] = useState();
+  const [userId, setUserId] = useState(null);
+
+  const db = useSQLiteContext();
+
+  useEffect(() => {
+    const fetchOrgAndUser = async () => {
+      try {
+        const firstRow = await db.getFirstAsync(`SELECT * FROM user`);
+        setUserId(firstRow.userId);
+      } catch (error) {
+        console.error('Error fetching organization or user:', error);
+      }
+    };
+    fetchOrgAndUser();
+  }, []);
 
   // Handle text change
   const handleTextChange = (index, text) => {
@@ -50,12 +79,6 @@ const AnnouncementInputContainer = ({ setShowContainer, tempData, setTempData , 
     }
   };
 
- 
-  
-
-
-  
-
   // Remove item from tempData
   const removeItem = (index) => {
     const updatedData = tempData.filter((item, i) => i !== index); // This will properly update the state
@@ -69,52 +92,115 @@ const AnnouncementInputContainer = ({ setShowContainer, tempData, setTempData , 
   };
 
   // Handle send: Log the data (can be replaced with an API call)
-  const handleSend = () => {
-    // Filter out text items with empty content and audio items with null URI
-    const filteredData = tempData.filter(item => {
-      if (item.type === 'text') {
-        return item.content !== ''; // Keep text items with non-empty content
-      }
-      if (item.type === 'audio') {
-        return item.uri !== null; // Keep audio items with a non-null URI
-      }
-      return true; // Keep other item types
-    });
+  // const handleSend = () => {
+  //   // Filter out text items with empty content and audio items with null URI
+  //   const filteredData = tempData.filter(item => {
+  //     if (item.type === 'text') {
+  //       return item.content !== ''; // Keep text items with non-empty content
+  //     }
+  //     if (item.type === 'audio') {
+  //       return item.uri !== null; // Keep audio items with a non-null URI
+  //     }
+  //     return true; // Keep other item types
+  //   });
+
+  //   if (filteredData.length === 0) {
+  //     alert('No data to send!');
+  //     return;
+  //   }
+
+  //   const newGroup = filteredData.map(item => ({
+  //     ...item, 
+  //     id: Math.random() * 500 ,
+  //     date:new Date(),
+  //     name:'Drago Malphoy'
+
+  //   }));
+
+  //   setAnnouncements(prevAnnouncements => [
+  //     ...prevAnnouncements,  // Keep previous announcements
+  //     newGroup  // Add new group of content
+  //   ]);
+
+
+  //   setTempData([]);
+  //   setShowContainer(false); // Optionally close the container after sending
+  // };
+
+  const handleSend = async () => {
+    try {
+      // Filter out empty text items
+      const filteredData = tempData.filter(item => {
+        if (item.type === 'text') return item.content.trim() !== '';
+        return true;
+      });
   
-    if (filteredData.length === 0) {
-      alert('No data to send!');
-      return;
+      if (filteredData.length === 0) {
+        alert('No data to send!');
+        return;
+      }
+  
+      // Prepare messages for the mutation
+      const messages = await Promise.all(
+        filteredData.map(async (item, index) => {
+          if (item.uri && ['image', 'video', 'document', 'audio'].includes(item.type)) {
+            // Convert local URI to file object
+            const fileInfo = await fetch(item.uri);
+            const blob = await fileInfo.blob();
+            
+            return {
+              type: item.type,
+              file: new File([blob], item.name || `file-${index}`, { type: blob.type }),
+              order: index + 1,
+            };
+          }
+  
+          return {
+            type: item.type,
+            content: item.content || '',
+            order: index + 1,
+          };
+        })
+      );
+  
+      console.log('Prepared messages:', messages);
+  
+      // Create the announcement
+      const { data } = await createAnnouncement({
+        variables: {
+          createdBy: userId, // Replace with actual user ID
+          messages,
+        },
+      });
+  
+      console.log('Announcement created:', data.createAnnouncement);
+  
+      if (data.createAnnouncement.success) {
+        alert(data.createAnnouncement.message); // Success message
+      } else {
+        alert(`Error: ${data.createAnnouncement.message}`); // Error message
+      }
+  
+      // Clear state and close the container
+      setTempData([]);
+      setShowContainer(false);
+    } catch (error) {
+      console.error('Error sending announcement:', error);
+      alert('Failed to send announcement. Please try again.');
     }
-  
-    const newGroup = filteredData.map(item => ({
-      ...item, 
-      id: Math.random() * 500 ,
-      date:new Date(),
-      name:'Drago Malphoy'
-
-    }));
-  
-    setAnnouncements(prevAnnouncements => [
-      ...prevAnnouncements,  // Keep previous announcements
-      newGroup  // Add new group of content
-    ]);
-
-  
-    setTempData([]);
-    setShowContainer(false); // Optionally close the container after sending
   };
 
   return (
-   
-      <KeyboardAvoidingView
-        style={styles.keyboardAvoidingViewStyle}
-        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-        keyboardVerticalOffset={80} // Adjust based on your layout
-      >
-        <View  style={styles.container}>
+
+    <KeyboardAvoidingView
+      style={styles.keyboardAvoidingViewStyle}
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      keyboardVerticalOffset={80} // Adjust based on your layout
+    >
+      <View style={styles.container}>
         {/* Close Button */}
         <TouchableOpacity onPress={handleClose} style={styles.close}>
-          <IconButton icon="close" size={24}  />
+          <IconButton icon="close" size={24} />
         </TouchableOpacity>
 
         {/* ScrollView to make content scrollable */}
@@ -161,7 +247,7 @@ const AnnouncementInputContainer = ({ setShowContainer, tempData, setTempData , 
                 {item.type === 'video' && (
                   <View style={styles.mediaContainer}>
                     {item.uri ? (
-                      <VideoPlayer item={item}/>
+                      <VideoPlayer item={item} />
                     ) : (
                       <TouchableOpacity onPress={() => handleVideoSelect(index)}>
                         <IconButton icon="video" size={24} />
@@ -172,7 +258,7 @@ const AnnouncementInputContainer = ({ setShowContainer, tempData, setTempData , 
 
                 {item.type === 'audio' && (
                   <View style={styles.mediaContainer}>
-                   <AudioRecorder  key={index} type="audio" audioUri={item.uri} setTempData={setTempData}tempData={tempData} index={index} />
+                    <AudioRecorder key={index} type="audio" audioUri={item.uri} setTempData={setTempData} tempData={tempData} index={index} />
                   </View>
                 )}
 
@@ -182,10 +268,10 @@ const AnnouncementInputContainer = ({ setShowContainer, tempData, setTempData , 
                   </View>
                 )}
                 {
-                  item.type ==='vote'&&(
-                    <VoteInputEditor tempData={tempData} setTempData={setTempData} key={index} index={index}/>
+                  item.type === 'vote' && (
+                    <VoteInputEditor tempData={tempData} setTempData={setTempData} key={index} index={index} />
                   )}
-                  
+
               </View>
             );
           })}
@@ -195,30 +281,30 @@ const AnnouncementInputContainer = ({ setShowContainer, tempData, setTempData , 
         <TouchableOpacity onPress={handleSend}>
           <IconButton icon="send" size={24} style={styles.send} iconColor="#6200EE" />
         </TouchableOpacity>
-        </View>
-      </KeyboardAvoidingView>
-    
+      </View>
+    </KeyboardAvoidingView>
+
   );
 };
 
 const styles = StyleSheet.create({
-  keyboardAvoidingViewStyle:{
-    height:0,
+  keyboardAvoidingViewStyle: {
+    height: 0,
   },
   container: {
     backgroundColor: '#fff',
-    height: 500, 
+    height: 500,
     width: windowWidth * 0.9,
     alignSelf: 'center',
     borderWidth: 1,
     borderColor: '#000',
     borderRadius: 10,
     position: 'absolute',
-    bottom:Platform.OS==='android'?-620:-680, 
+    bottom: Platform.OS === 'android' ? -620 : -680,
     left: '50%', // Move it to the center horizontally
     transform: [{ translateX: -(windowWidth * 0.95) }],
-    zIndex:1,
-   
+    zIndex: 1,
+
   },
   close: {
     alignSelf: 'flex-end',

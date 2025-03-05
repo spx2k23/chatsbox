@@ -1,8 +1,6 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { FlatList, View, Text, StyleSheet, TextInput, Pressable, Platform } from 'react-native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useQuery, gql, useApolloClient } from '@apollo/client';
-import { jwtDecode } from 'jwt-decode';
 import { useSQLiteContext } from 'expo-sqlite';
 import { useFocusEffect } from '@react-navigation/native';
 import Loading from '../components/Loading/Loading';
@@ -62,10 +60,8 @@ const Users = ({ navigation }) => {
     const fetchOrgAndUser  = async () => {
       try {
         const firstRow = await db.getFirstAsync(`SELECT * FROM user`);
-        const token = await AsyncStorage.getItem('token');
-        const decodedToken = jwtDecode(token);
         setOrganizationId(firstRow.currentOrg);
-        setUserId(decodedToken.id);
+        setUserId(firstRow.userId);
       } catch (error) {
         console.error('Error fetching organization or user:', error);
       }

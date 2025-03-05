@@ -4,10 +4,11 @@ import { getMainDefinition } from '@apollo/client/utilities';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { GraphQLWsLink } from '@apollo/client/link/subscriptions';
 import { createClient } from 'graphql-ws';
+import createUploadLink from 'apollo-upload-client/createUploadLink.mjs';
 
-const httpLink = createHttpLink({
-  // uri: 'http://192.168.134.253:4000/graphql',
-  uri: 'http://192.168.186.97:4000/graphql',
+const httpLink = createUploadLink({
+  uri: 'http://192.168.134.253:4000/graphql',
+  // uri: 'http://192.168.152.97:4000/graphql',
 });
 
 const authLink = setContext(async (_, { headers }) => {
