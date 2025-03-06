@@ -131,7 +131,7 @@ const AnnouncementInputContainer = ({ setShowContainer, tempData, setTempData, s
   const handleSend = async () => {
     try {
       // Filter out empty text items
-      const filteredData = tempData.filter(item => {
+      const filteredData = tempData.filter(item => { 
         if (item.type === 'text') return item.content.trim() !== '';
         return true;
       });
@@ -142,32 +142,31 @@ const AnnouncementInputContainer = ({ setShowContainer, tempData, setTempData, s
       }
   
       // Prepare messages for the mutation
-      const messages = await Promise.all(
-        filteredData.map(async (item, index) => {
-          if (item.uri && ['image', 'video', 'document', 'audio'].includes(item.type)) {
-            // Convert local URI to file object
-            const fileInfo = await fetch(item.uri);
-            const blob = await fileInfo.blob();
-            
-            return {
-              type: item.type,
-              file: new File([blob], item.name || `file-${index}`, { type: blob.type }),
-              order: index + 1,
-            };
-          }
-  
+      const messages = filteredData.map((item, index) => {
+        if (item.uri && ['image', 'video', 'document', 'audio'].includes(item.type)) {
+          // Pass the file object directly
           return {
             type: item.type,
-            content: item.content || '',
+            file: {
+              uri: item.uri, // Local file path
+              name: item.name || `file-${index}`, // File name
+              type: item.type === 'image' ? 'image/jpeg' : item.type === 'video' ? 'video/mp4' : 'application/octet-stream', // MIME type
+            },
             order: index + 1,
           };
-        })
-      );
+        }
+  
+        return {
+          type: item.type,
+          content: item.content || '',
+          order: index + 1,
+        };
+      });
   
       console.log('Prepared messages:', messages);
   
       // Create the announcement
-      const { data } = await createAnnouncement({
+      const { data } = await createAnnouncement({ 
         variables: {
           createdBy: userId, // Replace with actual user ID
           messages,
