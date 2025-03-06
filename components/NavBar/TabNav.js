@@ -13,6 +13,7 @@ import { jwtDecode } from 'jwt-decode';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useSQLiteContext } from 'expo-sqlite';
 import { useNavigation } from '@react-navigation/native';
+import theme from '../../config/theme';
 
 
 
@@ -62,7 +63,7 @@ const TabNav=()=>{
             else iconName='settings'
             return <MaterialIcons  name={iconName} size={size} color={color} />;
           },
-          tabBarActiveTintColor: "#6200EE",
+          tabBarActiveTintColor: theme.colors.basicColor,
           tabBarInactiveTintColor: 'gray',
           headerTitle:'',
           tabBarLabelStyle: {
@@ -133,7 +134,7 @@ const styles=StyleSheet.create({
       letterSpacing:5,
       fontWeight:600,
       fontSize:24,
-       color:"#6200EE",
+       color:theme.colors.basicColor,
        width:'100%'
   },
   navHeader:{
@@ -141,7 +142,7 @@ const styles=StyleSheet.create({
       letterSpacing:2,
       fontWeight:500,
       fontSize:22,
-       color:"#6200EE",
+       color:theme.colors.basicColor,
        width:'100%'
   }
 });

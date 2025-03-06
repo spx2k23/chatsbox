@@ -1,5 +1,6 @@
 import { Modal, StyleSheet, Text, TouchableWithoutFeedback, View,Platform ,TextInput,TouchableOpacity} from "react-native";
 import { useState ,useRef} from "react";
+import theme from "../../config/theme";
 
 
 const AddOrgModal=({addmodal,setaddmodal})=>{
@@ -97,7 +98,7 @@ const styles =StyleSheet.create({
     marginBottom:20
   },
   btn:{
-    backgroundColor:'#6200EE',
+    backgroundColor:theme.colors.basicColor,
     color:'#fff',
     paddingHorizontal:25,
     borderRadius:8,

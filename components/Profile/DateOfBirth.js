@@ -2,6 +2,7 @@ import { MaterialIcons } from '@expo/vector-icons';
 import React, { useState, useEffect } from 'react';
 import { Platform, TouchableOpacity, StyleSheet, Text, View } from 'react-native';
 import DateTimePickerModal from 'react-native-modal-datetime-picker';
+import theme from '../../config/theme';
 
 const DateOfBirth = ({ isEditing, selectedDate, setSelectedDate }) => {
   const [isVisible, setIsVisible] = useState(false);
@@ -31,7 +32,7 @@ const DateOfBirth = ({ isEditing, selectedDate, setSelectedDate }) => {
       </Text>
       {isEditing && (
         <TouchableOpacity onPress={showDatePicker} style={styles.calendar}>
-          <MaterialIcons name="calendar-month" size={24} color="#6200EE" />
+          <MaterialIcons name="calendar-month" size={24} color={theme.colors.basicColor} />
         </TouchableOpacity>
       )}
       <DateTimePickerModal
@@ -56,7 +57,7 @@ const styles = StyleSheet.create({
   },
   date: {
     borderBottomWidth: 2,
-    borderBottomColor: '#6200EE',
+    borderBottomColor: theme.colors.basicColor,
   },
   textField: {
     textAlign: 'center',
@@ -64,7 +65,7 @@ const styles = StyleSheet.create({
     marginTop: 10,
     paddingBottom: 2,
     letterSpacing: Platform.OS === 'android' ? 2 : 4,
-    color: '#6200EE',
+    color:theme.colors.basicColor,
   },
   isEditTextField: {
     textAlign: 'left',
@@ -72,7 +73,7 @@ const styles = StyleSheet.create({
     marginTop: 5,
     paddingBottom: 2,
     letterSpacing: Platform.OS === 'android' ? 2 : 4,
-    color: '#6200EE',
+    color: theme.colors.basicColor,
   },
   calendar: {
     marginLeft: 20,

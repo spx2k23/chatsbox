@@ -3,6 +3,7 @@ import React from 'react';
 import { View, Text, StyleSheet, Modal, TouchableOpacity } from 'react-native';
 import { Button } from 'react-native-elements';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import theme from '../../config/theme';
 
 export const LogoutModal = ({ isVisible, onClose,navigation}) => {
 
@@ -74,7 +75,7 @@ const styles = StyleSheet.create({
     marginRight:10
   },
   cancelButton: {
-    backgroundColor: '#6200EE',
+    backgroundColor: theme.colors.basicColor,
     paddingHorizontal:25,
     borderRadius:8,
   

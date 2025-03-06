@@ -7,6 +7,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { jwtDecode } from 'jwt-decode';
 import Loading from '../components/Loading/Loading';
 import { useSQLiteContext } from 'expo-sqlite';
+import theme from '../config/theme';
 
 const LOGIN_QUERY = gql`
   query Login($Email: String!, $Password: String!) {
@@ -148,7 +149,7 @@ const Login = ({ navigation }) => {
         <Loading />
       }
       <View style={styles.logoContainer}>
-        <Icon name="chat" size={80} color="#6200EE" />
+        <Icon name="chat" size={80} color={theme.colors.basicColor} />
         <Text style={styles.logoText}>Bush</Text>
       </View>
       <View style={styles.inputContainer}>
@@ -158,7 +159,7 @@ const Login = ({ navigation }) => {
           keyboardType='email-address'
           value={email}
           onChangeText={(text) => setEmail(text.toLowerCase())}
-          leftIcon={{ type: 'font-awesome', name: 'envelope', color: '#6200EE' }}
+          leftIcon={{ type: 'font-awesome', name: 'envelope', color: theme.colors.basicColor }}
           inputStyle={styles.inputText}
           containerStyle={styles.inputField}
         />
@@ -168,7 +169,7 @@ const Login = ({ navigation }) => {
           value={password}
           onChangeText={(text) => setPassword(text)}
           secureTextEntry
-          leftIcon={{ type: 'font-awesome', name: 'lock', color: '#6200EE' }}
+          leftIcon={{ type: 'font-awesome', name: 'lock', color: theme.colors.basicColor}}
           inputStyle={styles.inputText}
           containerStyle={styles.inputField}
         />
@@ -201,7 +202,7 @@ const styles = StyleSheet.create({
   logoText: {
     fontSize: 28,
     fontWeight: 'bold',
-    color: '#6200EE',
+    color: theme.colors.basicColor,
     marginTop: 10,
   },
   inputContainer: {
@@ -217,7 +218,7 @@ const styles = StyleSheet.create({
     padding: 10
   },
   loginButton: {
-    backgroundColor: '#6200EE',
+    backgroundColor: theme.colors.basicColor,
     borderRadius: 25,
     paddingVertical: 15,
     marginBottom: 20,
@@ -230,7 +231,7 @@ const styles = StyleSheet.create({
   },
   registerText: {
     textAlign: 'center',
-    color: '#6200EE',
+    color: theme.colors.basicColor,
     fontSize: 16,
   },
   error: {

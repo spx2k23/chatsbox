@@ -2,6 +2,7 @@ import React from 'react';
 import { Linking, View, TouchableOpacity, Text, Platform, Alert, ActivityIndicator } from 'react-native';
 import * as FileSystem from 'expo-file-system';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
+import theme from '../../../config/theme';
 
 const DocViewer = ({ uri, name }) => {
   const [isLoading, setIsLoading] = React.useState(false); // State to track loading
@@ -55,7 +56,7 @@ const DocViewer = ({ uri, name }) => {
 
         {/* Loading Indicator or Action Icon */}
         {isLoading ? (
-          <ActivityIndicator size="small" color="#6200EE" />
+          <ActivityIndicator size="small" color={theme.colors.basicColor}/>
         ) : (
           <MaterialCommunityIcons name="download" size={24} color="grey" />
         )}

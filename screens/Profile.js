@@ -5,6 +5,7 @@ import { useSQLiteContext } from 'expo-sqlite';
 import DateOfBirth from '../components/Profile/DateOfBirth';
 import ProfilePic from '../components/Profile/ProfilePic';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
+import theme from '../config/theme';
 
 const { width } = Dimensions.get('window');
 const scale = width / 375; // 375 is the baseline width (iPhone 6)
@@ -32,7 +33,7 @@ const Profile = () => {
             borderWidth:2,
             width:'90%',
             borderRadius:25,
-            borderColor: '#6200EE',
+            borderColor: theme.colors.basicColor,
             padding:10,
             height:Platform.OS==='ios'?'51%':'56%',
             paddingTop:30
@@ -73,10 +74,10 @@ const Profile = () => {
             <ProfilePic profilePic={profilePic} isEditing={isEditing} email={email} companyName={companyName} setProfilePic={setProfilePic}/>
         <View style={isEditing?staticstyles.isEditingForm:styles.form}>
            {!isEditing&& <TouchableOpacity onPress={handleEdit} style={styles.editIcon}>
-                    <MaterialIcons name={"edit"} size={24} color="#6200EE" />  
+                    <MaterialIcons name={"edit"} size={24} color={theme.colors.basicColor} />  
              </TouchableOpacity>}
          <View style={[styles.textbox,!isEditing&&styles.iseditTextBox]}> 
-            <Text style={styles.icon}><MaterialIcons name='person' size={24} color="#6200EE"/> </Text>
+            <Text style={styles.icon}><MaterialIcons name='person' size={24} color={theme.colors.basicColor}/> </Text>
             <View style={[styles.textcontainer,!isEditing&&styles.isEditingTextContainer]}>
             <Text style={isEditing?styles.lable:styles.iseditlable}>  Name :</Text>
                 <View style={styles.inputContainer}>
@@ -91,7 +92,7 @@ const Profile = () => {
             </View>
         </View>  
         <View style={[styles.textbox,!isEditing&&styles.iseditTextBox]}>  
-        <Text style={styles.icon}><MaterialIcons name='person-pin' size={24} color="#6200EE"/> </Text>
+        <Text style={styles.icon}><MaterialIcons name='person-pin' size={24} color={theme.colors.basicColor}/> </Text>
         <View style={[styles.textcontainer,!isEditing&&styles.isEditingTextContainer]}>                   
             <Text style={isEditing?styles.lable:styles.iseditlable}> Role :</Text>
             <View style={styles.inputContainer}>
@@ -104,7 +105,7 @@ const Profile = () => {
         </View>            
 
         <View style={[styles.textbox,!isEditing&&styles.iseditTextBox]}>  
-        <Text style={styles.icon}><MaterialIcons name='cake' size={24} color="#6200EE"/> </Text>
+        <Text style={styles.icon}><MaterialIcons name='cake' size={24} color={theme.colors.basicColor}/> </Text>
         <View style={[styles.textcontainer,!isEditing&&styles.isEditingTextContainer]}>        
             <Text style={isEditing?styles.lable:styles.iseditlable}>D.O.B :</Text>
             <DateOfBirth isEditing={isEditing} setIsEditing={setIsEditing} selectedDate={selectedDate} setSelectedDate={setSelectedDate}/>
@@ -113,7 +114,7 @@ const Profile = () => {
 
 
         <View style={[styles.textbox,!isEditing&&styles.iseditTextBox]}>  
-        <Text style={styles.icon}><MaterialIcons name='sticky-note-2' size={24} color="#6200EE"/> </Text>
+        <Text style={styles.icon}><MaterialIcons name='sticky-note-2' size={24} color={theme.colors.basicColor}/> </Text>
         <View style={[styles.textcontainer,!isEditing&&styles.isEditingTextContainer]}>
             <Text style={[isEditing?styles.lable:styles.iseditlable]}>Bio :</Text>
             <ScrollView contentContainerStyle={styles.scrollViewContainer}>
@@ -164,12 +165,12 @@ const styles = StyleSheet.create({
         width:200,
         fontSize: scaleFont(18), // Scaled font size
         borderBottomWidth: scaleSize(2),
-        borderBottomColor: '#6200EE',
+        borderBottomColor: theme.colors.basicColor,
         flex: 1,
         paddingHorizontal: scaleSize(5),
         paddingBottom:Platform.OS==='android'?scaleSize(0):scaleSize(2),
         textAlign: 'center',
-        color:'#6200EE',
+        color:theme.colors.basicColor,
     },
     textbox:{
         flexDirection:'row',
@@ -189,10 +190,10 @@ const styles = StyleSheet.create({
         textAlign: 'center',
         flex: 1,
         paddingBottom: scaleSize(2),
-        color: '#6200EE',
+        color: theme.colors.basicColor,
     },
     iseditTextField:{
-        color: '#6200EE',
+        color: theme.colors.basicColor,
         flex: 1,
         marginTop: scaleSize(5),
         paddingBottom: scaleSize(2),
@@ -219,13 +220,13 @@ const styles = StyleSheet.create({
         textAlign: 'center',
         flex: 1,
         borderWidth: scaleSize(1),
-        borderColor: '#6200EE',
+        borderColor: theme.colors.basicColor,
         padding: scaleSize(10),
         borderRadius: scaleSize(10),
         backgroundColor: '#f9f9f9',
         lineHeight: scaleSize(20),
         height: scaleSize(90),
-        color:'#6200EE',
+        color:theme.colors.basicColor,
         marginBottom:Platform.OS==='android'?0:60
     },
     footerContainer: {
@@ -238,13 +239,13 @@ const styles = StyleSheet.create({
     },
     line: {
         borderBottomWidth: scaleSize(1),
-        borderBottomColor: '#6200EE',
+        borderBottomColor: theme.colors.basicColor,
         width: '80%',
         marginBottom: scaleSize(10),
     },
     footerText: {
         fontSize: scaleFont(14),
-        color: '#6200EE',
+        color: theme.colors.basicColor,
         textAlign: 'center',
         marginBottom: scaleSize(10),
     },
@@ -252,7 +253,7 @@ const styles = StyleSheet.create({
     lable: {
         alignSelf: 'flex-start',
         fontWeight: 'bold',
-        color: '#6200EE',
+        color: theme.colors.basicColor,
         marginTop: scaleSize(5),
         marginLeft:30,
         marginBottom:Platform.OS==='android'?0:7
@@ -260,7 +261,7 @@ const styles = StyleSheet.create({
     iseditlable:{
         fontSize:scaleFont(14),
         fontWeight: 'bold',
-        color: '#6200EE',
+        color: theme.colors.basicColor,
         marginTop: scaleSize(5),
         marginLeft:40,
         textAlign:'right'
@@ -276,7 +277,7 @@ const styles = StyleSheet.create({
         width: scaleSize(80),
         fontSize: scaleFont(16),
         color: '#fff',
-        backgroundColor: '#6200EE',
+        backgroundColor: theme.colors.basicColor,
         width:120,
         borderRadius:5
     },
@@ -284,10 +285,10 @@ const styles = StyleSheet.create({
         backgroundColor: '#fff',
         textAlign:'center',
         width: scaleSize(80),
-        color: '#6200EE',
+        color: theme.colors.basicColor,
         fontSize: scaleFont(16),
         marginLeft: scaleSize(15),
-        borderColor:'#6200EE',
+        borderColor:theme.colors.basicColor,
         borderWidth:1,
         width:120,
         borderRadius:5
@@ -299,7 +300,7 @@ const styles = StyleSheet.create({
         borderWidth:2,
         width:'90%',
         borderRadius:25,
-        borderColor: '#6200EE',
+        borderColor:theme.colors.basicColor,
         padding:10
     },
     bio:{

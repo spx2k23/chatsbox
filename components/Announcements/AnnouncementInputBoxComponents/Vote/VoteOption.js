@@ -1,4 +1,5 @@
 import { View ,Text, StyleSheet, TouchableOpacity} from "react-native"
+import theme from "../../../../config/theme";
 
 
 const VoteOption=({data,totalVotes})=>{
@@ -39,7 +40,7 @@ const styles=StyleSheet.create({
         right:5
     },
     optBar:{
-        backgroundColor:'#6200EE',
+        backgroundColor:theme.colors.basicColor,
         height:5,
         marginTop:5,
         borderRadius:5,

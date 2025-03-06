@@ -7,6 +7,7 @@ import Loading from '../components/Loading/Loading';
 import UserBox from '../components/UserBox/UserBox';
 import FriendRequest from '../components/UserBox/FriendRequest';
 import CustomNotFound from '../components/NotFound';
+import theme from '../config/theme';
 
 const GET_USERS_IN_ORG = gql`
   query GetUsersInOrganization($organizationId: ID!) {
@@ -300,16 +301,16 @@ const styles = StyleSheet.create({
     paddingBottom: Platform.OS === 'ios' ? 8 : 10, // Adjust padding for iOS
   },
   activeText: {
-    color: '#6200EE',
+    color: theme.colors.basicColor,
     fontSize: 16,
     fontWeight: 'bold',
     borderBottomWidth: 2,
-    borderBottomColor: '#6200EE',
+    borderBottomColor:theme.colors.basicColor,
     paddingBottom: Platform.OS === 'ios' ? 4 : 2, // Adjust padding for iOS
   },
   requestNumber: {
     color: '#fff',
-    backgroundColor: '#6200EE',
+    backgroundColor: theme.colors.basicColor,
     paddingHorizontal: 8,
     paddingVertical: 4,
     borderRadius: 50,

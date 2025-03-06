@@ -20,6 +20,7 @@ import { Image } from 'expo-image';
 import ImagePreviewerModal from './ImagePreviewerModal';
 import AudioPlayer from '../Announcements/AnnouncementInputBoxComponents/AudioPlayer';
 import VideoPlayer from '../Announcements/AnnouncementInputBoxComponents/VideoPlayer';
+import theme from '../../config/theme';
 
 
 const isIosPlatform = Platform.OS === 'ios';
@@ -226,10 +227,10 @@ const ChatContentBox = ({ messages, currentUserID }) => {
                     {highlightedIndices.length > 0 && (
                         <View style={styles.navigationButtons}>
                             <TouchableOpacity onPress={navigateNext}>
-                                <MaterialIcons name="keyboard-arrow-up" size={24} color="#6200EE" />
+                                <MaterialIcons name="keyboard-arrow-up" size={24} color={theme.colors.basicColor} />
                             </TouchableOpacity>
                             <TouchableOpacity onPress={navigatePrevious}>
-                                <MaterialIcons name="keyboard-arrow-down" size={24} color="#6200EE" />
+                                <MaterialIcons name="keyboard-arrow-down" size={24} color={theme.colors.basicColor} />
                             </TouchableOpacity>
                         </View>
                     )}
@@ -305,7 +306,7 @@ const styles = StyleSheet.create({
     },
     rightAligned: {
         alignSelf: 'flex-end',
-        backgroundColor: '#6200EE',
+        backgroundColor: theme.colors.basicColor,
     },
     highlightedContainer: {
         backgroundColor: 'red',
@@ -352,7 +353,7 @@ const styles = StyleSheet.create({
     },
     overlayText: {
         fontSize: 14,
-        color: '#6200EE',
+        color: theme.colors.basicColor,
     },
     image: {
         minWidth:200,

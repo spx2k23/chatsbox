@@ -1,6 +1,7 @@
 import { MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";
 import { useRef, useState } from "react";
 import { Text, View,StyleSheet,TextInput, TouchableOpacity, Platform } from "react-native";
+import theme from "../config/theme";
 
 const SettingsOrgCode =()=>{
     const inputs = useRef([]);
@@ -87,7 +88,7 @@ const styles=StyleSheet.create({
         color:'grey'
     },
     note:{
-        color:'#6200EE',
+        color:theme.colors.basicColor,
     },
     inputs:{
          flexDirection: 'row',
@@ -109,7 +110,7 @@ const styles=StyleSheet.create({
         marginRight: 10, // Add space after the 3rd input
       },
       change:{
-        color:'#6200EE',
+        color:theme.colors.basicColor,
         fontWeight:'500',
         marginLeft:20
       },

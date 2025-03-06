@@ -3,6 +3,7 @@ import { TouchableOpacity, View, Text, StyleSheet, Modal } from 'react-native';
 import { Audio } from 'expo-av';
 import { MaterialCommunityIcons, MaterialIcons } from '@expo/vector-icons';
 import Slider from '@react-native-community/slider';
+import theme from '../../../config/theme';
 
 const formatTime = (milliseconds) => {
   if (milliseconds === null || milliseconds === undefined) return '0:00';
@@ -159,7 +160,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     padding:5,
     borderRadius: 8,
-    backgroundColor: '#6200EE',
+    backgroundColor: theme.colors.basicColor,
     flexDirection:'row'
   },
   audiotimer: {

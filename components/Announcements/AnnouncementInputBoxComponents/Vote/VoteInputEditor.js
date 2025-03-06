@@ -3,6 +3,7 @@ import { Text, TextInput, TouchableOpacity, View } from 'react-native';
 import VoteOptionEditor from './VoteOptionEditor';
 import { IconButton } from 'react-native-paper';
 import { StyleSheet } from 'react-native';
+import theme from '../../../../config/theme';
 
 const VoteInputEditor = ({ tempData, setTempData, index }) => {
     const [topic, setTopic] = useState(tempData[index].topic || '');
@@ -43,7 +44,7 @@ const VoteInputEditor = ({ tempData, setTempData, index }) => {
                 />
             ))}
             <TouchableOpacity style={styles.addmore} onPress={addNewOption}>
-                <IconButton icon="plus-circle-outline" iconColor="#6200EE" size={20} />
+                <IconButton icon="plus-circle-outline" iconColor={theme.colors.basicColor} size={20} />
                 <Text style={styles.addMoreText}>Add New Option</Text>
             </TouchableOpacity>
         </View>
@@ -79,6 +80,6 @@ const styles = StyleSheet.create({
     },
     addMoreText: {
         marginLeft: 5,
-        color: '#6200EE',
+        color: theme.colors.basicColor,
     },
 });

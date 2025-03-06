@@ -5,6 +5,7 @@ import AnnouncementCard from '../components/Announcements/AnnouncementCard';
 import AnnouncementInputContainer from '../components/Announcements/AnnouncementInputBoxComponents/AnnouncementInputContainer';
 import { MaterialIcons } from '@expo/vector-icons';
 import { Easing } from 'react-native';
+import theme from '../config/theme';
 
 const windowWidth = Dimensions.get('window').width;
 const windowHeight=Dimensions.get('window').height;
@@ -250,7 +251,7 @@ const styles = StyleSheet.create({
   },
   highlightedContainer: {
     backgroundColor: '#F9F7FD', // Light highlight color for matched items
-    borderColor: '#6200EE', // Highlight border color
+    borderColor: theme.colors.basicColor, // Highlight border color
   },
   searchBoxContainer: {
     position: 'absolute',
@@ -292,7 +293,7 @@ const styles = StyleSheet.create({
   },
   overlayText: {
     fontSize: 14,
-    color: '#6200EE',
+    color: theme.colors.basicColor,
   },
 });
 

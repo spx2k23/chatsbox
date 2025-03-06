@@ -19,6 +19,7 @@ import NetworkListener from './components/Notification/NetworkListener';
 import TabNav from './components/NavBar/TabNav';
 import SettingsOrgCode from './screens/SettingsOrgCode';
 import { View } from 'react-native';
+import theme from './config/theme';
 
 const Stack = createStackNavigator();
 
@@ -104,7 +105,7 @@ const App = () => {
               options={({ navigation }) => ({
                 headerLeft: () => (
                   <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backIconContainer}>
-                    <MaterialIcons name="arrow-back" size={24} color="#6200EE" />
+                    <MaterialIcons name="arrow-back" size={24} color={theme.colors.basicColor} />
                   </TouchableOpacity>
                 ),
                 headerTitle: '',  // Hide the title

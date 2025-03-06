@@ -1,4 +1,5 @@
 import { View,TouchableOpacity,Image, StyleSheet ,Platform} from "react-native";
+import theme from "../../config/theme";
 
 
 const NavProfileIcon = ({currentUser,navigation}) => (
@@ -6,7 +7,7 @@ const NavProfileIcon = ({currentUser,navigation}) => (
     {currentUser?.profilePicture===null&&<MaterialIcons
       name="account-circle"
       size={30}
-      color="#6200EE"
+      color={theme.colors.basicColor}
       style={{ marginRight: 15 }}
       onPress={() => navigation.navigate('Profile')} // Navigate to Profile screen
     />}

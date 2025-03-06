@@ -4,6 +4,7 @@ import { Modal, TouchableWithoutFeedback, View,Text, StyleSheet, TouchableOpacit
 import { FontAwesome6} from "@expo/vector-icons";
 import { useState } from "react";
 import AddOrgModal from "./AddOrgModal";
+import theme from "../../config/theme";
 
 const SwitchOrganizationModel=({switchOrgModel,setSwitchOrgModel,addmodal,setaddmodal})=>{
         const enrolledOrgs=[
@@ -90,7 +91,7 @@ const styles=StyleSheet.create({
 addOrgboxText:{
     fontSize:24,
     fontWeight:'500',
-    color:'#6200EE'
+    color:theme.colors.basicColor
 },
 addBtn:{
     alignSelf:'center',

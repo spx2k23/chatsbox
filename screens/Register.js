@@ -7,6 +7,7 @@ import * as FileSystem from 'expo-file-system';
 import Loading from '../components/Loading/Loading';
 import { MaterialIcons } from '@expo/vector-icons';
 import DateTimePickerModal from 'react-native-modal-datetime-picker';
+import theme from '../config/theme';
 
 const REGISTER = gql`
   mutation register(
@@ -36,8 +37,7 @@ const REGISTER = gql`
     }
   }
 `;
-const primecolor = '#6200EE';
-const placeholdercolor = "#B0BEC5";
+
 const Register = ({ navigation }) => {
   const [FirstName, setFirstName] = useState('');
   const [LastName, setLastName] = useState('');
@@ -130,7 +130,7 @@ const Register = ({ navigation }) => {
             placeholderTextColor="#B0BEC5"
             value={FirstName}
             onChangeText={(text) => setFirstName(text)}
-            leftIcon={{ type: 'font-awesome', name: 'user', color: '#6200EE' }}
+            leftIcon={{ type: 'font-awesome', name: 'user', color: theme.colors.basicColor }}
             inputStyle={styles.inputText}
             containerStyle={styles.inputField}
           />
@@ -139,15 +139,15 @@ const Register = ({ navigation }) => {
             placeholderTextColor="#B0BEC5"
             value={LastName}
             onChangeText={(text) => setLastName(text)}
-            leftIcon={{ type: 'font-awesome', name: 'user', color: '#6200EE' }}
+            leftIcon={{ type: 'font-awesome', name: 'user', color: theme.colors.basicColor }}
             inputStyle={styles.inputText}
             containerStyle={styles.inputField}
           />
           <View style={styles.dob}>
-            <MaterialIcons name='cake' size={30} color={'#6200EE'} />
+            <MaterialIcons name='cake' size={30} color={theme.colors.basicColor} />
             <TouchableOpacity onPress={() => setIsVisible(true)} style={styles.dobselector}>
               <Text style={[styles.dobtext, { color: DateOfBirth ? '#000' : "#B0BEC5" }]} >{formattedDate}</Text>
-              <MaterialIcons name='arrow-drop-down' size={24} color="#6200EE" />
+              <MaterialIcons name='arrow-drop-down' size={24} color={theme.colors.basicColor} />
             </TouchableOpacity>
             <DateTimePickerModal
               mode="date"
@@ -162,7 +162,7 @@ const Register = ({ navigation }) => {
             placeholderTextColor="#B0BEC5"
             value={Role}
             onChangeText={(text) => setRole(text)}
-            leftIcon={{ type: 'font-awesome', name: 'tag', color: '#6200EE' }}
+            leftIcon={{ type: 'font-awesome', name: 'tag', color: theme.colors.basicColor }}
             inputStyle={styles.inputText}
             containerStyle={styles.inputField}
           />
@@ -171,7 +171,7 @@ const Register = ({ navigation }) => {
             placeholderTextColor="#B0BEC5"
             value={Email}
             onChangeText={(text) => setEmail(text)}
-            leftIcon={{ type: 'font-awesome', name: 'envelope', color: '#6200EE' }}
+            leftIcon={{ type: 'font-awesome', name: 'envelope', color: theme.colors.basicColor }}
             inputStyle={styles.inputText}
             containerStyle={styles.inputField}
           />
@@ -180,7 +180,7 @@ const Register = ({ navigation }) => {
             placeholderTextColor="#B0BEC5"
             value={MobileNumber}
             onChangeText={(text) => setMobileNumber(text)}
-            leftIcon={{ type: 'font-awesome', name: 'phone', color: '#6200EE' }}
+            leftIcon={{ type: 'font-awesome', name: 'phone', color: theme.colors.basicColor }}
             inputStyle={styles.inputText}
             containerStyle={styles.inputField}
           />
@@ -190,7 +190,7 @@ const Register = ({ navigation }) => {
             value={Password}
             onChangeText={(text) => setPassword(text)}
             secureTextEntry
-            leftIcon={{ type: 'font-awesome', name: 'lock', color: '#6200EE' }}
+            leftIcon={{ type: 'font-awesome', name: 'lock', color: theme.colors.basicColor }}
             inputStyle={styles.inputText}
             containerStyle={styles.inputField}
           />
@@ -199,7 +199,7 @@ const Register = ({ navigation }) => {
             placeholderTextColor="#B0BEC5"
             value={OrganizationCode}
             onChangeText={(text) => setOrganizationCode(text)}
-            leftIcon={{ type: 'font-awesome', name: 'building', color: '#6200EE' }}
+            leftIcon={{ type: 'font-awesome', name: 'building', color: theme.colors.basicColor }}
             inputStyle={styles.inputText}
             containerStyle={styles.inputField}
             maxLength={6}
@@ -247,7 +247,7 @@ const styles = StyleSheet.create({
   logoText: {
     fontSize: 28,
     fontWeight: 'bold',
-    color: '#6200EE',
+    color: theme.colors.basicColor,
     marginTop: 10,
   },
   inputContainer: {
@@ -263,7 +263,7 @@ const styles = StyleSheet.create({
     padding: 10,
   },
   registerButton: {
-    backgroundColor: '#6200EE',
+    backgroundColor: theme.colors.basicColor,
     borderRadius: 25,
     paddingVertical: 15,
     marginBottom: 20,
@@ -276,7 +276,7 @@ const styles = StyleSheet.create({
   },
   loginText: {
     textAlign: 'center',
-    color: '#6200EE',
+    color: theme.colors.basicColor,
     fontSize: 16,
   },
   error: {
@@ -285,7 +285,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   imagePicker: {
-    backgroundColor: '#6200EE',
+    backgroundColor: theme.colors.basicColor,
     borderRadius: 25,
     paddingVertical: 10,
     paddingHorizontal: 15,

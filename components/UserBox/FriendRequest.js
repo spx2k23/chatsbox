@@ -3,6 +3,7 @@ import { View, Text, StyleSheet, Image } from 'react-native';
 import { Button } from 'react-native-elements';
 import { gql, useMutation } from "@apollo/client";
 import { useSQLiteContext } from 'expo-sqlite';
+import theme from '../../config/theme';
 
 const ACCEPT_FRIEND_REQUEST = gql`
   mutation AcceptFriendRequest($friendRequestAccepterId: ID!, $friendRequestReceiverId: ID!) {
@@ -147,7 +148,7 @@ const styles = StyleSheet.create({
     marginTop: 10,
   },
   acceptButton: {
-    backgroundColor: '#6200EE',
+    backgroundColor: theme.colors.basicColor,
     marginRight: 10,
     width: 100
   },

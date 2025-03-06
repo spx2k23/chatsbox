@@ -2,6 +2,7 @@ import React from 'react';
 import { View, Text, StyleSheet, Image } from 'react-native';
 import { Button } from 'react-native-elements';
 import { useMutation, gql } from '@apollo/client';
+import theme from '../../config/theme';
 
 const APPROVE_USER = gql`
   mutation ApproveUser($userId: ID!) {
@@ -97,7 +98,7 @@ const styles = StyleSheet.create({
     marginTop: 10,
   },
   approveButton: {
-    backgroundColor: '#6200EE',
+    backgroundColor: theme.colors.basicColor,
     marginRight: 10,
     width: 100
   },

@@ -10,6 +10,7 @@ import AudioRecorder from './AudioRecorder';
 import VoteInputEditor from './Vote/VoteInputEditor';
 import { gql, useMutation } from '@apollo/client';
 import { useSQLiteContext } from 'expo-sqlite';
+import theme from '../../../config/theme';
 
 const CREATE_ANNOUNCEMENT_MUTATION = gql`
   mutation CreateAnnouncement($createdBy: ID!, $messages: [MessageInput!]!) {
@@ -279,7 +280,7 @@ const AnnouncementInputContainer = ({ setShowContainer, tempData, setTempData, s
 
         {/* Send Button */}
         <TouchableOpacity onPress={handleSend}>
-          <IconButton icon="send" size={24} style={styles.send} iconColor="#6200EE" />
+          <IconButton icon="send" size={24} style={styles.send} iconColor={theme.colors.basicColor} />
         </TouchableOpacity>
       </View>
     </KeyboardAvoidingView>

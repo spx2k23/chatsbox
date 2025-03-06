@@ -9,6 +9,7 @@ import * as DocumentPicker from 'expo-document-picker';
 import * as ImagePicker from 'expo-image-picker';
 import { Alert } from 'react-native';
 import { Audio, InterruptionModeIOS, InterruptionModeAndroid } from 'expo-av';
+import theme from "../config/theme";
 
 const isIosPlatform = Platform.OS === 'ios';
 
@@ -359,7 +360,7 @@ const Chat = ({ route }) => {
               )}
               {textMessage.length > 0 && (
                 <TouchableOpacity onPress={handleTextSend}>
-                  <MaterialCommunityIcons name="send-outline" size={24} color="#6200EE" />
+                  <MaterialCommunityIcons name="send-outline" size={24} color={theme.colors.basicColor} />
                 </TouchableOpacity>
               )}
             </View>
@@ -389,7 +390,7 @@ const styles = StyleSheet.create({
   nameText: {
     fontSize: 20,
     fontWeight: 'bold',
-    color: '#6200EE',
+    color: theme.colors.basicColor,
     marginLeft: 10,
   },
   profileImg: {

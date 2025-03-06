@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { StyleSheet, View, Image, Text, TouchableOpacity, Modal } from "react-native";
 import ProfileModal from "./ProfileModal";
+import theme from "../../config/theme";
 
 const UserBox = ({ image, firstName, lastName, email, role, bio, isFriend, isRequestSent, isRequestReceived, userId, receiverId, updateUserStatus }) => {
   const [modalVisible, setModalVisible] = useState(false);
@@ -104,11 +105,11 @@ const styles = StyleSheet.create({
   modalText: {
     marginBottom: 10,
     fontSize: 18,
-    color: '#6200EE',
+    color: theme.colors.basicColor,
     textAlign: 'center',
   },
   button: {
-    backgroundColor: '#6200EE',
+    backgroundColor: theme.colors.basicColor,
     padding: 10,
     borderRadius: 5,
     marginVertical: 10,

@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { StyleSheet, View, Image, Text, TouchableOpacity, Modal, Platform, TouchableWithoutFeedback } from "react-native";
 import { gql, useMutation } from "@apollo/client";
+import theme from "../../config/theme";
 
 const SEND_FRIEND_REQUEST = gql`
   mutation SendFriendRequest($friendRequestSenderId: ID!, $friendRequestReceiverId: ID!) {
@@ -121,7 +122,7 @@ const styles = StyleSheet.create({
     marginTop: 15,
     marginBottom: 10, 
     fontSize: 18,
-    color: '#6200EE',  
+    color: theme.colors.basicColor,  
     textAlign: 'center',
   },
   buttonContainer: {
@@ -130,7 +131,7 @@ const styles = StyleSheet.create({
     width: '100%', 
   },
   button: {
-    backgroundColor: '#6200EE', 
+    backgroundColor:theme.colors.basicColor, 
     padding: Platform.OS === 'android' ? 10 : 9,
     borderRadius: 5,
     width: '45%', 

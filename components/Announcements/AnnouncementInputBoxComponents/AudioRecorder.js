@@ -3,6 +3,7 @@ import { View, StyleSheet, Text, TouchableOpacity } from 'react-native';
 import { Audio, InterruptionModeIOS, InterruptionModeAndroid } from 'expo-av';
 import AudioPlayer from './AudioPlayer';
 import { MaterialIcons } from '@expo/vector-icons';
+import theme from '../../../config/theme';
 
 export default function AudioRecorder({ audioUri, setTempData, tempData, index }) {
   const [recording, setRecording] = useState(null);
@@ -129,7 +130,7 @@ const styles = StyleSheet.create({
     gap: 5,
   },
   startButton: {
-    backgroundColor: '#6200EE',
+    backgroundColor: theme.colors.basicColor,
   },
   stopButton: {
     backgroundColor: '#D32F2F',

@@ -2,6 +2,7 @@ import { StyleSheet, View,Dimensions,TouchableOpacity,Text,Image,Platform } from
 import { MaterialIcons } from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
 import { useState,useEffect } from "react";
+import theme from "../../config/theme";
 
 
 const { width } = Dimensions.get('window');
@@ -52,7 +53,7 @@ const ProfilePic=({profilePic,isEditing ,email,companyName,setProfilePic})=>{
                     {profilePic ? (
                         <Image source={{ uri: `data:image/jpeg;base64,${profilePic}`}} style={styles.profileImg} />
                     ) : (
-                        <MaterialIcons name="account-circle" size={150} color="#6200EE" style={styles.profileImg} />
+                        <MaterialIcons name="account-circle" size={150} color={theme.colors.basicColor} style={styles.profileImg} />
                     )}
                 </TouchableOpacity>
                 <Text style={styles.email}>{email}</Text>
@@ -67,7 +68,7 @@ export default ProfilePic;
 
 const styles=StyleSheet.create({
     backdrop: {
-        backgroundColor: '#6200EE',
+        backgroundColor: theme.colors.basicColor,
         position: 'absolute',
         top: 0,
         zIndex: 1,
@@ -110,7 +111,7 @@ const styles=StyleSheet.create({
     },
     company: {
         fontWeight: 'bold',
-        color: '#6200EE',
+        color: theme.colors.basicColor,
         fontSize: scaleFont(15),
         margin: Platform.OS === 'ios' ? scaleSize(8) : scaleSize(5),
     },

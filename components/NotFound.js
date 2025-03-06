@@ -1,12 +1,13 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';  // Import MaterialIcons for icons
+import theme from '../config/theme';
 
 const CustomDataNotFound = ({ title ,style}) => {
     return (
         <View style={[styles.container,style]}>
             {/* Data Not Found Icon */}
-            <MaterialIcons name="search-off" size={48} color="#6200EE" style={styles.icon} />
+            <MaterialIcons name="search-off" size={48} color={theme.colors.basicColor} style={styles.icon} />
 
             {/* Data Not Found Message */}
             <Text style={styles.dataNotFoundText}>{title}</Text>
@@ -32,7 +33,7 @@ const styles = StyleSheet.create({
         marginBottom: 10,
     },
     dataNotFoundText: {
-        color: '#6200EE',  // Theme color
+        color: theme.colors.basicColor,  // Theme color
         fontSize: 18,
         fontWeight: 'bold',
         textAlign: 'center',
