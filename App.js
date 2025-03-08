@@ -20,6 +20,7 @@ import TabNav from './components/NavBar/TabNav';
 import SettingsOrgCode from './screens/SettingsOrgCode';
 import { View } from 'react-native';
 import theme from './config/theme';
+import ManageUsers from './components/Settings/ManageUsers';
 
 const Stack = createStackNavigator();
 
@@ -122,6 +123,22 @@ const App = () => {
                     <MaterialIcons name="arrow-back" size={24} />
                   </TouchableOpacity>
                   <Text style={styles.title}> Organization Code</Text>
+                  </View>
+                ),
+                headerShown: true,
+                headerTitle:'',
+              })}
+            />
+             <Stack.Screen
+              name="ManageUsers"
+              component={ManageUsers}
+              options={({ navigation }) => ({
+                headerLeft: () => (
+                  <View style={styles.titleContainer}>
+                  <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backIconContainer}>
+                    <MaterialIcons name="arrow-back" size={24} />
+                  </TouchableOpacity>
+                  <Text style={styles.title}>Manage Users</Text>
                   </View>
                 ),
                 headerShown: true,

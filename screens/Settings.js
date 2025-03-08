@@ -38,6 +38,7 @@ const Settings=()=>{
             {switchOrgModel&&<SwitchOrganizationModel setSwitchOrgModel={setSwitchOrgModel} switchOrgModel={switchOrgModel} addmodal={addmodal} setaddmodal={setaddmodal}/>}
             {addmodal&&<AddOrgModal addmodal={addmodal} setaddmodal={setaddmodal}/>}
             <SettingsButton title={'Organization Code'} discription={'Change Organizations Code'} iconName={'office-building-cog-outline'} onPress={()=>navigation.navigate('OrganizationCode')}/>
+            <SettingsButton title={'Manage Users'} discription={'Promote,Depromote or Remove users'} iconName={'account-cog-outline'} onPress={()=>navigation.navigate('ManageUsers')}/>    
             <SettingsButton title={'Approve Requests'} discription={'Approve Members'} iconName={'send-check-outline'} onPress={()=>console.log('pressed !')}/>
             <SettingsButton title={'Help'} discription={'Report Problem, Help Desk'} iconName={'help-circle-outline'} onPress={()=>console.log('pressed !')}/> 
             <SettingsButton title={'Logout'} discription={'Logout Now'} iconName={'logout'} onPress={()=>setlogoutModalVisible(true)}/>           

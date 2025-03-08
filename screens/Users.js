@@ -156,19 +156,28 @@ const Users = ({ navigation }) => {
 
   // Filtered users based on search and tab choice
   const filteredUsers = users.filter(user => {
-    const searchTextLower = searchText.toLowerCase();
-    const matchesSearch =
-      (user.FirstName?.toLowerCase().includes(searchTextLower)) ||
-      (user.SecondName?.toLowerCase().includes(searchTextLower)) ||
-      (user.Email?.toLowerCase().includes(searchTextLower));
-
+    // Split search text into tokens (ignoring empty strings)
+    const searchTokens = searchText
+      .toLowerCase()
+      .split(' ')
+      .filter(token => token.trim() !== '');
+  
+    // Check if all tokens match at least one field
+    const matchesSearch = searchTokens.every(token => 
+      user.FirstName?.toLowerCase().includes(token) ||
+      user.SecondName?.toLowerCase().includes(token) ||
+      user.Email?.toLowerCase().includes(token)||
+      user.Role?.toLowerCase().includes(token)
+    );
+  
+    // Existing tab filtering logic
     const isInCurrentTab =
       currentTabChoice === 'friends'
         ? user.isFriend
         : currentTabChoice === 'requests'
-        ? user.isRequestSent || user.isRequestReceived
-        : !user.isFriend && !user.isRequestSent && !user.isRequestReceived;
-
+          ? user.isRequestSent || user.isRequestReceived
+          : !user.isFriend && !user.isRequestSent && !user.isRequestReceived;
+  
     return matchesSearch && isInCurrentTab;
   });
 
