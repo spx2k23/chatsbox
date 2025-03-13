@@ -43,6 +43,9 @@ const Settings=()=>{
             <SettingsButton title={'Help'} discription={'Report Problem, Help Desk'} iconName={'help-circle-outline'} onPress={()=>console.log('pressed !')}/> 
             <SettingsButton title={'Logout'} discription={'Logout Now'} iconName={'logout'} onPress={()=>setlogoutModalVisible(true)}/>           
             <LogoutModal isVisible={logoutmodalVisible} onClose={() => setlogoutModalVisible(false)} navigation={navigation}/>
+                <TouchableOpacity onPress={()=>navigation.navigate('GroupChat')}>
+                    <Text>Check Group UI</Text>
+                </TouchableOpacity>
         </View>
     );
 }

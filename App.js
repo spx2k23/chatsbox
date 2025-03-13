@@ -21,6 +21,7 @@ import SettingsOrgCode from './screens/SettingsOrgCode';
 import { View } from 'react-native';
 import theme from './config/theme';
 import ManageUsers from './components/Settings/ManageUsers';
+import GroupChat from './screens/GroupChat';
 
 const Stack = createStackNavigator();
 
@@ -142,6 +143,14 @@ const App = () => {
                   </View>
                 ),
                 headerShown: true,
+                headerTitle:'',
+              })}
+            />
+              <Stack.Screen
+              name="GroupChat"
+              component={GroupChat}
+              options={({ navigation }) => ({
+                headerShown:false,
                 headerTitle:'',
               })}
             />
