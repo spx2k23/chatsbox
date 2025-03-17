@@ -10,18 +10,9 @@ const UserBox = ({ image, firstName, lastName, email, role, bio, isFriend, isReq
   let buttonLabel;
   let buttonDisabled = false;
 
-  if (isFriend) {
-    buttonLabel = 'Friends';
+  if (isFriend||isRequestReceived||isRequestSent) {
     buttonDisabled = true;
-  } else if (isRequestReceived) {
-    buttonLabel = 'Friend Request Pending';
-    buttonDisabled = true;
-  } else if (isRequestSent) {
-    buttonLabel = 'Request Send Pending';
-    buttonDisabled = true;
-  } else {
-    buttonLabel = 'Send Friend Request';
-  }
+  } 
 
   return (
     <View>
@@ -35,8 +26,8 @@ const UserBox = ({ image, firstName, lastName, email, role, bio, isFriend, isReq
           <View style={styles.infoContainer}>
             <Text style={styles.name}>{firstName} {lastName}</Text>
             <Text style={styles.email}>{email}</Text>
-            <Text style={styles.UserLabel}>{buttonLabel}</Text>
           </View>
+          <Text style={styles.role}>{role}</Text>
         </View>
       </TouchableOpacity>
       <ProfileModal firstName={firstName} lastName={lastName} image={image} email={email} role={role} 
@@ -54,11 +45,12 @@ const styles = StyleSheet.create({
     marginVertical: 8,
     backgroundColor: '#fff',
     borderRadius: 5,
-    elevation: 0,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.15,
-    shadowRadius: 1.84,
+    // elevation: 5,
+    // shadowColor: '#000',
+    // shadowOffset: { width: 0, height: 2 },
+    // shadowOpacity: 0.15,
+    // shadowRadius: 1.84,
+    alignItems:'center'
   },
   pressed: {
     shadowOffset: { width: 0, height: -2 },
@@ -72,7 +64,7 @@ const styles = StyleSheet.create({
     marginRight: 10,
   },
   infoContainer: {
-    flex: 1,
+    flex: 5,
     justifyContent: 'center',
   },
   name: {
@@ -126,6 +118,13 @@ const styles = StyleSheet.create({
   },
   UserLabel: {
     fontSize: 14,
+  },
+  role:{
+    color:'grey',
+    fontSize:14,
+    marginRight:10,
+    flex:3,
+    fontWeight:'600'
   }
 });
 

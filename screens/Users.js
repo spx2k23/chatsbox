@@ -285,6 +285,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 10,
+    backgroundColor:'#fff',
   },
   searchBar: {
     borderWidth: 1,
@@ -295,11 +296,13 @@ const styles = StyleSheet.create({
     marginTop: 6,
     width: '90%',
     alignSelf: 'center',
+    backgroundColor:'#fff',
   },
   tabContainer: {
     flexDirection: 'row',
     justifyContent: 'space-around',
     marginBottom: 2,
+    backgroundColor:'#fff',
   },
   tabButton: {
     flexDirection: 'row',
@@ -331,7 +334,9 @@ const styles = StyleSheet.create({
     marginLeft: 8,
   },
   flatListContainer: {
-    paddingLeft: Platform.OS === 'ios' ? 15 : 0, // Add left padding for iOS
+    paddingLeft: Platform.OS === 'ios' ? 15 : 0, // Add left padding for iOS,
+    backgroundColor:'#fff',
+    flex:1
   },
   nomatch: {
     textAlign: 'center',
