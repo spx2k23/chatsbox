@@ -150,20 +150,20 @@ const AnnouncementInputContainer = ({ setShowContainer, tempData, setTempData, s
           let blob;
 
         // Check if the URI is a local file path
-        if (item.uri.startsWith('file://')) {
-          // Use expo-file-system to read the file as Base64
-          const filePath = item.uri.replace('file://', '');
-          const base64 = await FileSystem.readAsStringAsync(filePath, {
-            encoding: FileSystem.EncodingType.Base64,
-          });
-          blob = new Blob([Buffer.from(base64, 'base64')], {
-            type: item.type === 'image' ? 'image/jpeg' : item.type === 'video' ? 'video/mp4' : 'application/octet-stream',
-          });
-        } else {
-          // Fetch the file from the URI (for HTTP(S) URLs)
-          const response = await fetch(item.uri);
-          blob = await response.blob();
-        }
+          if (item.uri.startsWith('file://')) {
+            // Use expo-file-system to read the file as Base64
+            const filePath = item.uri.replace('file://', '');
+            const base64 = await FileSystem.readAsStringAsync(filePath, {
+              encoding: FileSystem.EncodingType.Base64,
+            });
+            blob = new Blob([Buffer.from(base64, 'base64')], {
+              type: item.type === 'image' ? 'image/jpeg' : item.type === 'video' ? 'video/mp4' : 'application/octet-stream',
+            });
+          } else {
+            // Fetch the file from the URI (for HTTP(S) URLs)
+            const response = await fetch(item.uri);
+            blob = await response.blob();
+          }
           const file = new File([blob], item.name || `file-${index}`, {
             type: item.type === 'image' ? 'image/jpeg' : item.type === 'video' ? 'video/mp4' : 'application/octet-stream',
           });
