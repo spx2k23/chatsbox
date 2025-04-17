@@ -11,6 +11,7 @@ import VoteInputEditor from './Vote/VoteInputEditor';
 import { gql, useMutation } from '@apollo/client';
 import { useSQLiteContext } from 'expo-sqlite';
 import theme from '../../../config/theme';
+import * as FileSystem from 'expo-file-system';
 
 const CREATE_ANNOUNCEMENT_MUTATION = gql`
   mutation CreateAnnouncement($createdBy: ID!, $messages: [MessageInput!]!) {
@@ -140,18 +141,35 @@ const AnnouncementInputContainer = ({ setShowContainer, tempData, setTempData, s
         alert('No data to send!');
         return;
       }
+      console.log("enter");
+      
   
       // Prepare messages for the mutation
-      const messages = filteredData.map((item, index) => {
+      const messages = await Promise.all( filteredData.map(async (item, index) => {
         if (item.uri && ['image', 'video', 'document', 'audio'].includes(item.type)) {
-          // Pass the file object directly
+          let blob;
+
+        // Check if the URI is a local file path
+        if (item.uri.startsWith('file://')) {
+          // Use expo-file-system to read the file as Base64
+          const filePath = item.uri.replace('file://', '');
+          const base64 = await FileSystem.readAsStringAsync(filePath, {
+            encoding: FileSystem.EncodingType.Base64,
+          });
+          blob = new Blob([Buffer.from(base64, 'base64')], {
+            type: item.type === 'image' ? 'image/jpeg' : item.type === 'video' ? 'video/mp4' : 'application/octet-stream',
+          });
+        } else {
+          // Fetch the file from the URI (for HTTP(S) URLs)
+          const response = await fetch(item.uri);
+          blob = await response.blob();
+        }
+          const file = new File([blob], item.name || `file-${index}`, {
+            type: item.type === 'image' ? 'image/jpeg' : item.type === 'video' ? 'video/mp4' : 'application/octet-stream',
+          });
           return {
             type: item.type,
-            file: {
-              uri: item.uri, // Local file path
-              name: item.name || `file-${index}`, // File name
-              type: item.type === 'image' ? 'image/jpeg' : item.type === 'video' ? 'video/mp4' : 'application/octet-stream', // MIME type
-            },
+            file,
             order: index + 1,
           };
         }
@@ -161,7 +179,7 @@ const AnnouncementInputContainer = ({ setShowContainer, tempData, setTempData, s
           content: item.content || '',
           order: index + 1,
         };
-      });
+      }));
   
       console.log('Prepared messages:', messages);
   
