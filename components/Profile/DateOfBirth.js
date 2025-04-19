@@ -1,29 +1,22 @@
 import { MaterialIcons } from '@expo/vector-icons';
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Platform, TouchableOpacity, StyleSheet, Text, View } from 'react-native';
-import DateTimePickerModal from 'react-native-modal-datetime-picker';
+import DateTimePicker from '@react-native-community/datetimepicker';
 import theme from '../../config/theme';
 
 const DateOfBirth = ({ isEditing, selectedDate, setSelectedDate }) => {
   const [isVisible, setIsVisible] = useState(false);
   
-  // Ensure selectedDate is a valid date object or default to current date if invalid
   const dob = selectedDate && !isNaN(Number(selectedDate)) ? new Date(Number(selectedDate)) : new Date();
-  const showDatePicker = () => {
-    setIsVisible(true);
-  };
 
-  const hideDatePicker = () => {
+  const handleChange = (event, date) => {
     setIsVisible(false);
+    if (date) {
+      setSelectedDate(date);
+    }
   };
 
-  const handleConfirm = (date) => {
-    setSelectedDate(date); // Send the selected date back to the parent component
-    hideDatePicker();
-  };
-
-  // Format the date for display (you can change this to any other format)
-  const formattedDate = dob.toLocaleDateString('en-GB'); // Change locale or format as needed
+  const formattedDate = dob.toLocaleDateString('en-GB');
 
   return (
     <View style={[styles.container, isEditing && styles.date]}>
@@ -31,17 +24,19 @@ const DateOfBirth = ({ isEditing, selectedDate, setSelectedDate }) => {
         {formattedDate}
       </Text>
       {isEditing && (
-        <TouchableOpacity onPress={showDatePicker} style={styles.calendar}>
+        <TouchableOpacity onPress={() => setIsVisible(true)} style={styles.calendar}>
           <MaterialIcons name="calendar-month" size={24} color={theme.colors.basicColor} />
         </TouchableOpacity>
       )}
-      <DateTimePickerModal
-        isVisible={isVisible}
-        mode="date"
-        onConfirm={handleConfirm}
-        onCancel={hideDatePicker}
-        date={dob} // Pass the date object directly to DateTimePickerModal
-      />
+      {isVisible && (
+        <DateTimePicker
+          value={dob}
+          mode="date"
+          display="default"
+          onChange={handleChange}
+          maximumDate={new Date()} // optional: prevent selecting future dates
+        />
+      )}
     </View>
   );
 };
@@ -65,7 +60,7 @@ const styles = StyleSheet.create({
     marginTop: 10,
     paddingBottom: 2,
     letterSpacing: Platform.OS === 'android' ? 2 : 4,
-    color:theme.colors.basicColor,
+    color: theme.colors.basicColor,
   },
   isEditTextField: {
     textAlign: 'left',

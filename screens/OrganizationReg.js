@@ -6,7 +6,7 @@ import * as ImagePicker from 'expo-image-picker';
 import * as FileSystem from 'expo-file-system';
 import Loading from '../components/Loading/Loading';
 import { MaterialIcons } from '@expo/vector-icons';
-import DateTimePickerModal from 'react-native-modal-datetime-picker';
+import DateTimePicker from '@react-native-community/datetimepicker';
 import theme from '../config/theme';
 
 const REGISTER_ORGANIZATION = gql`
@@ -197,13 +197,20 @@ const OrganizationReg = ({ navigation }) => {
                             <Text style={[styles.dobtext, { color: DateOfBirth ? '#000' : "#B0BEC5" }]} >{formattedDate}</Text>
                             <MaterialIcons name='arrow-drop-down' size={24} color={theme.colors.basicColor} />
                         </TouchableOpacity>
-                        <DateTimePickerModal
-                            mode="date"
-                            isVisible={isVisible}
-                            onConfirm={handleConfirm}
-                            onCancel={() => setIsVisible(false)}
-                            date={DateOfBirth ? DateOfBirth : new Date()}
-                        />
+                        {isVisible && (
+  <DateTimePicker
+    value={DateOfBirth || new Date()}
+    mode="date"
+    display="default"
+    onChange={(event, selectedDate) => {
+      setIsVisible(false);
+      if (selectedDate) {
+        setDOB(selectedDate);
+      }
+    }}
+  />
+)}
+
                     </View>
                     <Input
                         placeholder="Role"
