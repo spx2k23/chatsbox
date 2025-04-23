@@ -13,6 +13,7 @@ import { useSQLiteContext } from 'expo-sqlite';
 import theme from '../../../config/theme';
 import * as FileSystem from 'expo-file-system';
 
+
 const CREATE_ANNOUNCEMENT_MUTATION = gql`
   mutation CreateAnnouncement($createdBy: ID!, $messages: [MessageInput!]!) {
     createAnnouncement(createdBy: $createdBy, messages: $messages) {
@@ -145,42 +146,42 @@ const AnnouncementInputContainer = ({ setShowContainer, tempData, setTempData, s
       
   
       // Prepare messages for the mutation
-      const messages = await Promise.all( filteredData.map(async (item, index) => {
-        if (item.uri && ['image', 'video', 'document', 'audio'].includes(item.type)) {
-          let blob;
-
-        // Check if the URI is a local file path
-          if (item.uri.startsWith('file://')) {
-            // Use expo-file-system to read the file as Base64
-            const filePath = item.uri.replace('file://', '');
-            const base64 = await FileSystem.readAsStringAsync(filePath, {
-              encoding: FileSystem.EncodingType.Base64,
-            });
-            blob = new Blob([Buffer.from(base64, 'base64')], {
-              type: item.type === 'image' ? 'image/jpeg' : item.type === 'video' ? 'video/mp4' : 'application/octet-stream',
-            });
-          } else {
-            // Fetch the file from the URI (for HTTP(S) URLs)
-            const response = await fetch(item.uri);
-            blob = await response.blob();
-          }
-          const file = new File([blob], item.name || `file-${index}`, {
-            type: item.type === 'image' ? 'image/jpeg' : item.type === 'video' ? 'video/mp4' : 'application/octet-stream',
-          });
-          return {
-            type: item.type,
-            file,
-            order: index + 1,
-          };
-        }
-  
-        return {
-          type: item.type,
-          content: item.content || '',
-          order: index + 1,
-        };
-      }));
-  
+      const messages = (
+        await Promise.all(
+          filteredData.map(async (item, index) => {
+            let content;
+      
+            if (item.uri && ['image', 'video', 'document', 'audio'].includes(item.type)) {
+              // Check if the URI is a local file path
+              if (item.uri.startsWith('file://')) {
+                try {
+                  // Read the file as Base64
+                  const base64 = await FileSystem.readAsStringAsync(item.uri, {
+                    encoding: FileSystem.EncodingType.Base64,
+                  });
+                  console.log('Base64 content fetched successfully');
+                  content = `data:${item.type === 'image' ? 'image/jpeg' : item.type === 'video' ? 'video/mp4' : 'application/octet-stream'};base64,${base64}`;
+                } catch (error) {
+                  console.error('Error reading local file:', error);
+                  return null;
+                }
+              } else {
+                // For HTTP(S) URLs, use the URI directly as the content
+                content = item.uri;
+              }
+            } else {
+              // For text messages, use the content directly
+              content = item.content || '';
+            }
+      
+            return {
+              type: item.type || 'text',
+              content: content, // Ensure the content field is always populated
+              order: index + 1,
+            };
+          })
+        )
+      ).filter(Boolean); // Remove any null values caused by errors
       console.log('Prepared messages:', messages);
   
       // Create the announcement
