@@ -46,6 +46,9 @@ const Settings=()=>{
                 <TouchableOpacity onPress={()=>navigation.navigate('GroupChat')}>
                     <Text>Check Group UI</Text>
                 </TouchableOpacity>
+                <TouchableOpacity onPress={()=>navigation.navigate('CreateGroup')}>
+                    <Text>Check CreateGroup</Text>
+                </TouchableOpacity>
         </View>
     );
 }
