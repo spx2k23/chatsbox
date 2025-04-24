@@ -28,7 +28,6 @@ const CreateGroupMemberBox = ({
 
   return (
     <TouchableOpacity style={styles.card} onPress={() => handleSelect(id)}>
-  
         <View>
         <Image
           source={{ uri: `data:image/jpeg;base64,${image}` }}
@@ -52,6 +51,7 @@ const CreateGroupMemberBox = ({
           name={ "plus"}
           size={24}
           color={theme.colors.basicColor}
+          style={styles.icon}
         />}
    
     </TouchableOpacity>
@@ -81,8 +81,8 @@ const styles = StyleSheet.create({
     right: 0,
     backgroundColor: '#fff',
     borderRadius: 10,
-    // borderWidth: 2,
-    // borderColor: '#fff',
+    borderWidth: 2,
+    borderColor: '#fff',
   },
   infoContainer: {
     flex: 1,
@@ -96,4 +96,7 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: '#555',
   },
+  icon:{
+    marginRight:40
+  }
 });
