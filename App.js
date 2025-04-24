@@ -23,6 +23,7 @@ import theme from './config/theme';
 import ManageUsers from './components/Settings/ManageUsers';
 import GroupChat from './screens/GroupChat';
 import CreateGroup from './components/GroupChat/CreateGroup';
+import { jwtDecode } from 'jwt-decode';
 
 const Stack = createStackNavigator();
 
@@ -34,7 +35,14 @@ const App = () => {
       try {
         const token = await AsyncStorage.getItem('token');
         if (token) {
-          setIsAuthenticated(true);
+          const decodedToken = jwtDecode(token);
+          const currentTime = Date.now() / 1000;
+          if (decodedToken.exp && decodedToken.exp < currentTime) {
+            await AsyncStorage.removeItem("token");
+            setIsAuthenticated(false);
+          } else {
+            setIsAuthenticated(true);
+          }
         } else {
           setIsAuthenticated(false);
         }

@@ -47,29 +47,29 @@ const Login = ({ navigation }) => {
   const [password, setPassword] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
 
-  useEffect(() => {
-    const checkLoginStatus = async () => {
-      try {
-        const token = await AsyncStorage.getItem("token");
-        if (token) {
-          const decodedToken = jwtDecode(token);
-          const currentTime = Date.now() / 1000;
-          if (decodedToken.exp && decodedToken.exp < currentTime) {
-            await AsyncStorage.removeItem("token");
-            navigation.navigate("Login");
-          } else {
-            navigation.replace("Chats");
-          }
-        } else {
-          console.log("No token found");
-        }
-      } catch (error) {
-        console.log("Error retrieving token:", error);
-      }
-    };
+  // useEffect(() => {
+  //   const checkLoginStatus = async () => {
+  //     try {
+  //       const token = await AsyncStorage.getItem("token");
+  //       if (token) {
+  //         const decodedToken = jwtDecode(token);
+  //         const currentTime = Date.now() / 1000;
+  //         if (decodedToken.exp && decodedToken.exp < currentTime) {
+  //           await AsyncStorage.removeItem("token");
+  //           navigation.navigate("Login");
+  //         } else {
+  //           navigation.replace("Chats");
+  //         }
+  //       } else {
+  //         console.log("No token found");
+  //       }
+  //     } catch (error) {
+  //       console.log("Error retrieving token:", error);
+  //     }
+  //   };
 
-    checkLoginStatus();
-  }, []);
+  //   checkLoginStatus();
+  // }, []);
 
   const [login, { loading }] = useLazyQuery(LOGIN_QUERY, {
     onCompleted: async (data) => {
