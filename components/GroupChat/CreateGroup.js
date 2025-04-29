@@ -124,6 +124,9 @@ const CreateGroup=()=>{
          
         }}
       />
+     {selectedMembers.length>0&&<TouchableOpacity style={styles.floatButton}>
+        <Text style={{  color:'#fff', textAlign:'center',fontSize:14}}>Add</Text>
+      </TouchableOpacity>}
         </View>
     )
 }
@@ -133,8 +136,11 @@ export default CreateGroup;
 const styles = StyleSheet.create({
     container: {
       flex: 1,
-      backgroundColor: '#fff',
+      backgroundColor:'#FFFAFA',
       paddingBottom:70
+    },
+    flatListContainer:{
+      backgroundColor:'#FFFAFA',
     },
     header: {
       flexDirection: 'row',
@@ -144,7 +150,7 @@ const styles = StyleSheet.create({
       paddingBottom: 10,
       width: '100%',
       paddingHorizontal: 10,
-      backgroundColor: '#fff',
+      backgroundColor:'#FFFAFA',
     },
     subheader:{
         marginLeft:15,
@@ -177,5 +183,18 @@ const styles = StyleSheet.create({
   },
       searchBarInput:{
        marginLeft:isIosPlatform?5:0
+      },
+      floatButton:{
+        position:'absolute',
+        zIndex:5,
+        right:50,
+        bottom:100,
+        alignItems:'center',
+        justifyContent:'center',
+        backgroundColor:theme.colors.basicColor,
+        width:64,
+        borderRadius:8,
+        paddingHorizontal:13,
+        paddingVertical:3
       }
 });

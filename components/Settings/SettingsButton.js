@@ -1,12 +1,12 @@
 import { MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";
 import { StyleSheet, TouchableOpacity, View,Text } from "react-native";
-import { Button } from "react-native-paper";
-import { Icon } from "react-native-paper";
+import AntDesign from '@expo/vector-icons/AntDesign';
 
-const SettingsButton=({iconName,onPress,title,discription})=>{
+const SettingsButton=({iconName,onPress,title,discription,isMaterialCommunity})=>{
     return(
         <TouchableOpacity onPress={onPress} style={styles.container}>
-            <MaterialCommunityIcons name={iconName} size={24} color={'grey'}/>
+           {isMaterialCommunity&& <MaterialCommunityIcons name={iconName} size={24} color={'grey'}/>}
+           {!isMaterialCommunity&&<AntDesign name={iconName} size={24} color="grey" />}
             <View style={styles.textbox}>
                 <Text style={styles.title}>{title}</Text>
                 <Text style={styles.discription}>{discription}</Text>

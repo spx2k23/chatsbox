@@ -93,7 +93,7 @@ const ChatContentBox = ({ messages, currentUserID }) => {
                     item.type!=='text'&&{padding:2,width:'60%'}
                 ]}
             >
-                {item.type === 'text' && <Text style={{color:'#fff',maxWidth:'70%'}}>{item.text}</Text>}
+                {item.type === 'text' && <Text style={{color:isCurrentUser?'#fff':'#000',maxWidth:'70%'}}>{item.text}</Text>}
                 {item.type === 'image'&& <TouchableOpacity onPress={()=>openImageModal(item.uri)}><Image source={{ uri:item.uri}} style={styles.image} contentFit="cover" onError={() => console.log('Failed to load image')}/></TouchableOpacity>}
                 {item.type === 'audio' && <AudioPlayer uri={item.uri}/>}
                 {item.type==='document' && <DocViewer uri={item.documentData.uri} name={item.documentData.name}  isSent={isCurrentUser}/>}
@@ -302,7 +302,7 @@ const styles = StyleSheet.create({
     },
     leftAligned: {
         alignSelf: 'flex-start',
-        backgroundColor: 'grey',
+        backgroundColor: '#E6E6F9',
     },
     rightAligned: {
         alignSelf: 'flex-end',
