@@ -12,7 +12,7 @@ import { gql, useMutation } from '@apollo/client';
 import { useSQLiteContext } from 'expo-sqlite';
 import theme from '../../../config/theme';
 import * as FileSystem from 'expo-file-system';
-
+import { ReactNativeFile } from 'apollo-upload-client';
 
 const CREATE_ANNOUNCEMENT_MUTATION = gql`
   mutation CreateAnnouncement($createdBy: ID!, $messages: [MessageInput!]!) {
@@ -130,82 +130,159 @@ const AnnouncementInputContainer = ({ setShowContainer, tempData, setTempData, s
   //   setShowContainer(false); // Optionally close the container after sending
   // };
 
+  // const handleSend = async () => {
+  //   try {
+  //     // Filter out empty text items
+  //     const filteredData = tempData.filter(item => { 
+  //       if (item.type === 'text') return item.content.trim() !== '';
+  //       return true;
+  //     });
+
+  //     if (filteredData.length === 0) {
+  //       alert('No data to send!');
+  //       return;
+  //     }
+  //     console.log("enter");
+
+
+  //     // Prepare messages for the mutation
+  //     const messages = (
+  //       await Promise.all(
+  //         filteredData.map(async (item, index) => {
+  //           let content;
+
+  //           if (item.uri && ['image', 'video', 'document', 'audio'].includes(item.type)) {
+  //             // Check if the URI is a local file path
+  //             if (item.uri.startsWith('file://')) {
+  //               try {
+  //                 // Read the file as Base64
+  //                 const base64 = await FileSystem.readAsStringAsync(item.uri, {
+  //                   encoding: FileSystem.EncodingType.Base64,
+  //                 });
+  //                 console.log('Base64 content fetched successfully');
+  //                 content = `data:${item.type === 'image' ? 'image/jpeg' : item.type === 'video' ? 'video/mp4' : 'application/octet-stream'};base64,${base64}`;
+  //               } catch (error) {
+  //                 console.error('Error reading local file:', error);
+  //                 return null;
+  //               }
+  //             } else {
+  //               // For HTTP(S) URLs, use the URI directly as the content
+  //               content = item.uri;
+  //             }
+  //           } else {
+  //             // For text messages, use the content directly
+  //             content = item.content || '';
+  //           }
+
+  //           return {
+  //             type: item.type || 'text',
+  //             content: content, // Ensure the content field is always populated
+  //             order: index + 1,
+  //           };
+  //         })
+  //       )
+  //     ).filter(Boolean); // Remove any null values caused by errors
+  //     console.log('Prepared messages:', messages);
+
+  //     // Create the announcement
+  //     const { data } = await createAnnouncement({ 
+  //       variables: {
+  //         createdBy: userId, // Replace with actual user ID
+  //         messages,
+  //       },
+  //     });
+
+  //     console.log('Announcement created:', data.createAnnouncement);
+
+  //     if (data.createAnnouncement.success) {
+  //       alert(data.createAnnouncement.message); // Success message
+  //     } else {
+  //       alert(`Error: ${data.createAnnouncement.message}`); // Error message
+  //     }
+
+  //     // Clear state and close the container
+  //     setTempData([]);
+  //     setShowContainer(false);
+  //   } catch (error) {
+  //     console.error('Error sending announcement:', error);
+  //     alert('Failed to send announcement. Please try again.');
+  //   }
+  // };
+
   const handleSend = async () => {
     try {
-      // Filter out empty text items
-      const filteredData = tempData.filter(item => { 
-        if (item.type === 'text') return item.content.trim() !== '';
-        return true;
-      });
-  
+      const filteredData = tempData.filter(item =>
+        item.type === 'text' ? item.content.trim() !== '' : true
+      );
+
       if (filteredData.length === 0) {
         alert('No data to send!');
         return;
       }
-      console.log("enter");
-      
-  
-      // Prepare messages for the mutation
-      const messages = (
-        await Promise.all(
-          filteredData.map(async (item, index) => {
-            let content;
-      
-            if (item.uri && ['image', 'video', 'document', 'audio'].includes(item.type)) {
-              // Check if the URI is a local file path
-              if (item.uri.startsWith('file://')) {
-                try {
-                  // Read the file as Base64
-                  const base64 = await FileSystem.readAsStringAsync(item.uri, {
-                    encoding: FileSystem.EncodingType.Base64,
-                  });
-                  console.log('Base64 content fetched successfully');
-                  content = `data:${item.type === 'image' ? 'image/jpeg' : item.type === 'video' ? 'video/mp4' : 'application/octet-stream'};base64,${base64}`;
-                } catch (error) {
-                  console.error('Error reading local file:', error);
-                  return null;
-                }
-              } else {
-                // For HTTP(S) URLs, use the URI directly as the content
-                content = item.uri;
-              }
-            } else {
-              // For text messages, use the content directly
-              content = item.content || '';
-            }
-      
-            return {
-              type: item.type || 'text',
-              content: content, // Ensure the content field is always populated
-              order: index + 1,
-            };
-          })
-        )
-      ).filter(Boolean); // Remove any null values caused by errors
+
+      const messages = filteredData.map((item, index) => {
+        if (['image', 'video', 'document', 'audio'].includes(item.type)) {
+          const file = new ReactNativeFile({
+            uri: item.uri,
+            name: item.name || `file-${index}.jpeg`,
+            type: item.mimeType || 'image/jpeg',
+          });
+
+          return {
+            type: item.type,
+            file,
+            order: index + 1,
+          };
+        } else {
+          return {
+            type: item.type || 'text',
+            content: item.content,
+            order: index + 1,
+          };
+        }
+      });
+
       console.log('Prepared messages:', messages);
-  
-      // Create the announcement
-      const { data } = await createAnnouncement({ 
+
+      const { data } = await createAnnouncement({
         variables: {
-          createdBy: userId, // Replace with actual user ID
+          createdBy: userId,
           messages,
         },
       });
-  
+
       console.log('Announcement created:', data.createAnnouncement);
-  
+
       if (data.createAnnouncement.success) {
-        alert(data.createAnnouncement.message); // Success message
+        alert(data.createAnnouncement.message);
       } else {
-        alert(`Error: ${data.createAnnouncement.message}`); // Error message
+        alert(`Error: ${data.createAnnouncement.message}`);
       }
-  
-      // Clear state and close the container
+
       setTempData([]);
       setShowContainer(false);
     } catch (error) {
       console.error('Error sending announcement:', error);
       alert('Failed to send announcement. Please try again.');
+    }
+  };
+
+  const getMimeType = (uri) => {
+    const extension = uri.split('.').pop().toLowerCase();
+    switch (extension) {
+      case 'jpg':
+      case 'jpeg':
+        return 'image/jpeg';
+      case 'png':
+        return 'image/png';
+      case 'mp4':
+        return 'video/mp4';
+      case 'pdf':
+        return 'application/pdf';
+      case 'mp3':
+        return 'audio/mpeg';
+      default:
+        return 'application/octet-stream';
     }
   };
 
@@ -307,10 +384,10 @@ const AnnouncementInputContainer = ({ setShowContainer, tempData, setTempData, s
 };
 
 const styles = StyleSheet.create({
-  keyboardAvoidingViewStyle:{
+  keyboardAvoidingViewStyle: {
     position: 'absolute',
-    zIndex:1,
-    bottom:10
+    zIndex: 1,
+    bottom: 10
   },
   container: {
     backgroundColor: '#fff',
@@ -320,7 +397,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: '#000',
     borderRadius: 10,
-   
+
   },
   close: {
     alignSelf: 'flex-end',

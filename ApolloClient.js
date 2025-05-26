@@ -4,11 +4,11 @@ import { getMainDefinition } from '@apollo/client/utilities';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { GraphQLWsLink } from '@apollo/client/link/subscriptions';
 import { createClient } from 'graphql-ws';
-import createUploadLink from 'apollo-upload-client/createUploadLink.mjs';
+import { createUploadLink } from 'apollo-upload-client';
 
 const httpLink = createUploadLink({
-  // uri: 'http://192.168.134.253:4000/graphql',
-  uri: 'http://192.168.5.97:4000/graphql',
+  uri: 'http://192.168.38.253:4000/graphql',
+  // uri: 'http://192.168.5.97:4000/graphql',
 });
 
 const authLink = setContext(async (_, { headers }) => {
@@ -25,8 +25,8 @@ const link = authLink.concat(httpLink);
 
 const wsLink = new GraphQLWsLink(
   createClient({
-    // url: 'ws://192.168.134.253:4000/graphql',
-    url: 'ws://192.168.5.97:4000/graphql',
+    url: 'ws://192.168.38.253:4000/graphql',
+    // url: 'ws://192.168.5.97:4000/graphql',
     connectionParams: async () => {
       const token = await AsyncStorage.getItem('token');
       return {
