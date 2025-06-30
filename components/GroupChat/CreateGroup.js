@@ -4,10 +4,10 @@ import theme from "../../config/theme";
 import { useNavigation } from "@react-navigation/native";
 import React, { useEffect, useState} from 'react';
 import { useQuery, gql } from '@apollo/client';
-import { useSQLiteContext } from 'expo-sqlite';
 import CreateGroupMemberBox from "./CreateGroupMemberBox";
-const isIosPlatform = Platform.OS === 'ios';
+import realm from "../../db_configs/realm";
 
+const isIosPlatform = Platform.OS === 'ios';
 
 const GET_USERS_IN_ORG = gql`
   query GetUsersInOrganization($organizationId: ID!) {
@@ -21,6 +21,7 @@ const GET_USERS_IN_ORG = gql`
     }
   }
 `;
+
 const CreateGroup=()=>{
     const navigation = useNavigation();
     const [users, setUsers] = useState([]);
@@ -28,11 +29,11 @@ const CreateGroup=()=>{
     const [userId, setUserId] = useState(null);
     const [searchText, setSearchText] = useState('');
     const [selectedMembers,setSelectedMembers]=useState([]);
-    const db = useSQLiteContext();
+
     useEffect(() => {
         const fetchOrgAndUser  = async () => {
           try {
-            const firstRow = await db.getFirstAsync(`SELECT * FROM user`);
+            const firstRow = realm.objects('User')[0];
             // if(isIosPlatform)  console.log('Database First Row:', firstRow);
             setOrganizationId(firstRow.currentOrg);
             setUserId(firstRow.userId);

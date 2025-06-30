@@ -1,13 +1,13 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { FlatList, View, Text, StyleSheet, TextInput, Pressable, Platform } from 'react-native';
 import { useQuery, gql, useApolloClient } from '@apollo/client';
-import { useSQLiteContext } from 'expo-sqlite';
 import { useFocusEffect } from '@react-navigation/native';
 import Loading from '../components/Loading/Loading';
 import UserBox from '../components/UserBox/UserBox';
 import FriendRequest from '../components/UserBox/FriendRequest';
 import CustomNotFound from '../components/NotFound';
 import theme from '../config/theme';
+import realm from '../db_configs/realm';
 
 const GET_USERS_IN_ORG = gql`
   query GetUsersInOrganization($organizationId: ID!) {
@@ -55,14 +55,12 @@ const Users = ({ navigation }) => {
   const [users, setUsers] = useState([]);
   const [requestCount, setRequestCount] = useState(0);
 
-  const db = useSQLiteContext();
-
   useEffect(() => {
     const fetchOrgAndUser  = async () => {
       try {
-        const firstRow = await db.getFirstAsync(`SELECT * FROM user`);
-        setOrganizationId(firstRow.currentOrg);
-        setUserId(firstRow.userId);
+        const user = realm.objects('User')[0];
+        setOrganizationId(user.currentOrg);
+        setUserId(user.userId);
       } catch (error) {
         console.error('Error fetching organization or user:', error);
       }
@@ -97,21 +95,19 @@ const Users = ({ navigation }) => {
                 const { Friend } = data.friendsUpdate;
                 console.log("accept");
                 updateUserStatus(FriendsUpdateReceiverId, { isRequestSent: false, isFriend: true });
-                db.runAsync(
-                  `INSERT INTO friends (userId, firstName, lastName, role, dateOfBirth, profilePicture, bio, email, phoneNumber) 
-                  VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?) ON CONFLICT(userId) DO NOTHING;`,
-                  [
-                    Friend.id,
-                    Friend.FirstName,
-                    Friend.LastName,
-                    Friend.Role,
-                    Friend.DateOfBirth,
-                    Friend.ProfilePicture,
-                    Friend.Bio,
-                    Friend.Email,
-                    Friend.MobileNumber
-                  ]
-                );
+                realm.write(() => {
+                  realm.create('Friend', {
+                    userId: Friend.id,
+                    firstName: Friend.FirstName,
+                    lastName: Friend.LastName,
+                    role: Friend.Role,
+                    dateOfBirth: Friend.DateOfBirth,
+                    profilePicture: Friend.ProfilePicture,
+                    bio: Friend.Bio,
+                    email: Friend.Email,
+                    phoneNumber: Friend.MobileNumber,
+                  }, Realm.UpdateMode.Never);
+                });
               } else {
                 console.log("reject");
                 updateUserStatus(FriendsUpdateReceiverId, { isRequestSent: false });

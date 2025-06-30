@@ -4,10 +4,9 @@ import { Input, Button } from 'react-native-elements';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { useLazyQuery, gql } from '@apollo/client';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { jwtDecode } from 'jwt-decode';
 import Loading from '../components/Loading/Loading';
-import { useSQLiteContext } from 'expo-sqlite';
 import theme from '../config/theme';
+import realm from '../db_configs/realm';
 
 const LOGIN_QUERY = gql`
   query Login($Email: String!, $Password: String!) {
@@ -41,84 +40,43 @@ const LOGIN_QUERY = gql`
 
 const Login = ({ navigation }) => {
 
-  const db = useSQLiteContext();
-
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
-
-  // useEffect(() => {
-  //   const checkLoginStatus = async () => {
-  //     try {
-  //       const token = await AsyncStorage.getItem("token");
-  //       if (token) {
-  //         const decodedToken = jwtDecode(token);
-  //         const currentTime = Date.now() / 1000;
-  //         if (decodedToken.exp && decodedToken.exp < currentTime) {
-  //           await AsyncStorage.removeItem("token");
-  //           navigation.navigate("Login");
-  //         } else {
-  //           navigation.replace("Chats");
-  //         }
-  //       } else {
-  //         console.log("No token found");
-  //       }
-  //     } catch (error) {
-  //       console.log("Error retrieving token:", error);
-  //     }
-  //   };
-
-  //   checkLoginStatus();
-  // }, []);
 
   const [login, { loading }] = useLazyQuery(LOGIN_QUERY, {
     onCompleted: async (data) => {
       if (data.login.success) {
         await AsyncStorage.setItem('token', data.login.token);
         const user = data.login.user;
-        const firstRow = await db.getFirstAsync('SELECT * FROM user');
-        // console.log(firstRow.lastName);
+        realm.write(() => {
+          realm.delete(realm.objects('User'));
+          realm.delete(realm.objects('Organization'));
 
-        if (firstRow === null) {
-          await db.runAsync(
-            `INSERT INTO user (userId, firstName, lastName, role, dateOfBirth, profilePicture, bio, email, phoneNumber, currentOrg) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-              ON CONFLICT(userId) DO NOTHING;`,
-            [user.id, user.FirstName, user.LastName, user.Role, user.DateOfBirth, user.ProfilePicture, user.Bio, user.Email, user.MobileNumber, user.Organization[0].OrganizationId.id]
-          )
-          const organizations = user.Organization;
-          for (const org of organizations) {
-            const { OrganizationId, SuperAdmin, adminRights } = org;
-            await db.runAsync(
-              `INSERT INTO organizations (organizationId, organizationName, OrganizationLogo, superAdmin, adminRights) VALUES (?, ?, ?, ?, ?)
-                ON CONFLICT(organizationId) DO NOTHING;`,
-              [OrganizationId.id, OrganizationId.OrganizationName, OrganizationId.OrganizationLogo, SuperAdmin, adminRights]
-            )
-          }
-          console.log("if");
-          navigation.replace('Chats');
-        } else if (firstRow.userId === user.id) {
-          console.log("else if");
-          navigation.replace('Chats');
-        } else {
-          await db.runAsync(`DELETE FROM user WHERE userId = $userId`, { $userId: firstRow.userId })
-          await db.runAsync('DELETE FROM organizations')
-          await db.runAsync(
-            `INSERT INTO user (userId, firstName, lastName, role, dateOfBirth, profilePicture, bio, email, phoneNumber, currentOrg) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-              ON CONFLICT(userId) DO NOTHING;`,
-            [user.id, user.FirstName, user.LastName, user.Role, user.DateOfBirth, user.ProfilePicture, user.Bio, user.Email, user.MobileNumber, user.Organization[0].OrganizationId.id]
-          )
-          const organizations = user.Organization;
-          for (const org of organizations) {
-            const { OrganizationId, SuperAdmin, adminRights } = org;
-            await db.runAsync(
-              `INSERT INTO organizations (organizationId, organizationName, OrganizationLogo, superAdmin, adminRights) VALUES (?, ?, ?, ?, ?)
-                ON CONFLICT(organizationId) DO NOTHING;`,
-              [OrganizationId.id, OrganizationId.OrganizationName, OrganizationId.OrganizationLogo, SuperAdmin, adminRights]
-            )
-          }
-          console.log("else");
-          navigation.replace('Chats');
-        }
+          realm.create('User', {
+            userId: user.id,
+            firstName: user.FirstName,
+            lastName: user.LastName,
+            role: user.Role,
+            dateOfBirth: user.DateOfBirth,
+            profilePicture: user.ProfilePicture,
+            bio: user.Bio,
+            email: user.Email,
+            phoneNumber: user.MobileNumber,
+            currentOrg: user.Organization[0].OrganizationId.id
+          });
+
+          user.Organization.forEach(org => {
+            const orgId = org.OrganizationId;
+            realm.create('Organization', {
+              organizationId: orgId.id,
+              organizationName: orgId.OrganizationName,
+              OrganizationLogo: orgId.OrganizationLogo,
+              superAdmin: org.SuperAdmin,
+              adminRights: org.adminRights
+            });
+          });
+        });
 
       } else {
         setErrorMessage(data.login.message);

@@ -9,10 +9,10 @@ import DocViewer from './DocViewer';
 import AudioRecorder from './AudioRecorder';
 import VoteInputEditor from './Vote/VoteInputEditor';
 import { gql, useMutation } from '@apollo/client';
-import { useSQLiteContext } from 'expo-sqlite';
 import theme from '../../../config/theme';
 import * as FileSystem from 'expo-file-system';
 import { ReactNativeFile } from 'apollo-upload-client';
+import realm from '../../../db_configs/realm';
 
 const CREATE_ANNOUNCEMENT_MUTATION = gql`
   mutation CreateAnnouncement($createdBy: ID!, $messages: [MessageInput!]!) {
@@ -33,13 +33,11 @@ const AnnouncementInputContainer = ({ setShowContainer, tempData, setTempData, s
   const [recording, setRecording] = useState();
   const [userId, setUserId] = useState(null);
 
-  const db = useSQLiteContext();
-
   useEffect(() => {
     const fetchOrgAndUser = async () => {
       try {
-        const firstRow = await db.getFirstAsync(`SELECT * FROM user`);
-        setUserId(firstRow.userId);
+        const user = realm.objects('User')[0];
+        setUserId(user.userId);
       } catch (error) {
         console.error('Error fetching organization or user:', error);
       }
@@ -127,16 +125,12 @@ const AnnouncementInputContainer = ({ setShowContainer, tempData, setTempData, s
         }
       });
 
-      console.log('Prepared messages:', messages);
-
       const { data } = await createAnnouncement({
         variables: {
           createdBy: userId,
           messages,
         },
       });
-
-      console.log('Announcement created:', data.createAnnouncement);
 
       if (data.createAnnouncement.success) {
         alert(data.createAnnouncement.message);

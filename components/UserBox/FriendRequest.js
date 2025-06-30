@@ -2,8 +2,8 @@ import React from 'react';
 import { View, Text, StyleSheet, Image } from 'react-native';
 import { Button } from 'react-native-elements';
 import { gql, useMutation } from "@apollo/client";
-import { useSQLiteContext } from 'expo-sqlite';
 import theme from '../../config/theme';
+import realm from '../../db_configs/realm';
 
 const ACCEPT_FRIEND_REQUEST = gql`
   mutation AcceptFriendRequest($friendRequestAccepterId: ID!, $friendRequestReceiverId: ID!) {
@@ -36,14 +36,12 @@ const REJECT_FRIEND_REQUEST = gql`
 
 const FriendRequest = ({ firstName, lastName, email, image, userId, receiverId, isRequestSent, isRequestReceived, updateUserStatus }) => {
 
-  const db = useSQLiteContext();
-
   const [acceptFriendRequest] = useMutation(ACCEPT_FRIEND_REQUEST);
   const [rejectFriendRequest] = useMutation(REJECT_FRIEND_REQUEST);
 
   const handleAccept = async (userId) => {
     console.log('Hi');
-    
+
     const { data } = await acceptFriendRequest({
       variables: {
         friendRequestAccepterId: userId,
@@ -52,16 +50,25 @@ const FriendRequest = ({ firstName, lastName, email, image, userId, receiverId, 
     });
     console.log(data.acceptFriendRequest.success);
     if (data.acceptFriendRequest.success) {
-      
-      
-      const {user}= data.acceptFriendRequest;
+
+      const { user } = data.acceptFriendRequest;
       updateUserStatus(receiverId, { isRequestReceived: false, isFriend: true });
-      
-       await db.runAsync(
-        `INSERT INTO friends (userId, firstName, lastName, role, dateOfBirth, profilePicture, bio, email, phoneNumber) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
-          ON CONFLICT(userId) DO NOTHING;`,
-        [user.id, user.FirstName, user.LastName, user.Role, user.DateOfBirth, user.ProfilePicture, user.Bio, user.Email, user.MobileNumber]
-      )
+
+      realm.write(() => {
+        if (!realm.objectForPrimaryKey('Friend', friend.id)) {
+          realm.create('Friend', {
+            userId: user.id,
+            firstName: user.FirstName,
+            lastName: user.LastName,
+            role: user.Role,
+            dateOfBirth: user.DateOfBirth,
+            profilePicture: user.ProfilePicture,
+            bio: user.Bio,
+            email: user.Email,
+            phoneNumber: user.MobileNumber,
+          });
+        }
+      });
     }
   };
 

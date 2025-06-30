@@ -6,9 +6,21 @@ import AnnouncementInputContainer from '../components/Announcements/Announcement
 import { MaterialIcons } from '@expo/vector-icons';
 import { Easing } from 'react-native';
 import theme from '../config/theme';
+import { gql } from '@apollo/client';
 
 const windowWidth = Dimensions.get('window').width;
 const windowHeight=Dimensions.get('window').height;
+
+const GET_ANNOUNCEMENT = gql`
+  query Announcement($organizationId: ID!) {
+    announcement(organizationId: $organizationId) {
+      id
+      createdBy
+      messages
+      createdAt
+    }
+  }
+`
 
 const Announcements = () => {
   const [announcements, setAnnouncements] = useState([]); // Original list of announcements
@@ -24,6 +36,7 @@ const Announcements = () => {
   const flatListRef = useRef(null); // FlatList ref to scroll to a specific 
   const timeoutRef = useRef(null);
 
+  
   // Viewable items change handler
   const handleViewableItemsChanged = ({ viewableItems, changed }) => {
     if (viewableItems.length > 0) {

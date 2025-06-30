@@ -2,10 +2,10 @@ import React, { useEffect, useState } from "react";
 import { FlatList, StyleSheet, View, Text } from "react-native";
 import ChatBox from "../components/ChatList/ChatBox";
 import Loading from "../components/Loading/Loading";
-import { useSQLiteContext } from "expo-sqlite";
 import CustomDataNotFound from "../components/NotFound";
 import { useFocusEffect } from "@react-navigation/native";
 import { gql, useLazyQuery } from '@apollo/client';
+import realm from "../db_configs/realm";
 
 const GET_FRIENDS = gql`
   query GetFriends {
@@ -25,8 +25,6 @@ const GET_FRIENDS = gql`
 
 const ChatList = () => {
 
-  const db = useSQLiteContext();
-
   const [friends, setFriends] = useState([]);
   const [loading, setLoading] = useState(true);
   const [message, setMessages] = useState('');
@@ -38,26 +36,25 @@ const ChatList = () => {
       if (!friendsFromCloud || friendsFromCloud.length === 0) {
         setMessages('Please add friends to chat');
       } else {
-        for (const newUser of friendsFromCloud) {
-          await db.runAsync(
-            `INSERT INTO friends (userId, firstName, lastName, role, dateOfBirth, profilePicture, bio, email, phoneNumber) 
-           VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?) ON CONFLICT(userId) DO NOTHING;`,
-            [
-              newUser.id,
-              newUser.FirstName,
-              newUser.LastName,
-              newUser.Role,
-              newUser.DateOfBirth,
-              newUser.ProfilePicture,
-              newUser.Bio,
-              newUser.Email,
-              newUser.MobileNumber
-            ]
-          );
-        }
-
-        const updatedFriends = await db.getAllAsync('SELECT * FROM friends');
-        setFriends(updatedFriends);
+        realm.write(() => {
+          for (const friend of friendsFromCloud) {
+            if (!realm.objectForPrimaryKey('Friend', friend.id)) {
+              realm.create('Friend', {
+                userId: friend.id,
+                firstName: friend.FirstName,
+                lastName: friend.LastName,
+                role: friend.Role,
+                dateOfBirth: friend.DateOfBirth,
+                profilePicture: friend.ProfilePicture,
+                bio: friend.Bio,
+                email: friend.Email,
+                phoneNumber: friend.MobileNumber,
+              });
+            }
+          }
+        });
+        const updatedFriends = realm.objects('Friend');
+        setFriends(updatedFriends.sorted('firstName'));
       }
       setLoading(false);
       console.log("from cloud");
@@ -70,12 +67,12 @@ const ChatList = () => {
   });
 
   const fetchFriendsFromDB = async () => {
-    const fetchAllFriends = await db.getAllAsync('SELECT * FROM friends');
-    if (fetchAllFriends.length === 0) {
+    const savedFriends = realm.objects('Friend');
+    if (savedFriends.length === 0) {
       setMessages('Fetching from cloud!');
       getAllFriends();
     } else {
-      setFriends(fetchAllFriends);
+      setFriends(savedFriends.sorted("firstName"));
       setLoading(false);
       console.log("from local");
     }

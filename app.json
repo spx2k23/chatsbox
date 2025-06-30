@@ -27,7 +27,8 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "package": "com.kavinkumar_s.chatsbox"
     },
     "web": {
       "bundler": "metro",
@@ -35,7 +36,13 @@
       "favicon": "./assets/favicon.png"
     },
     "plugins": [
-      "expo-sqlite"
-    ]
+      "expo-font"
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "fe312675-c5df-442e-abf6-0f509dcabf16"
+      }
+    },
+    "owner": "kavinkumar_s"
   }
 }

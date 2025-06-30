@@ -3,9 +3,9 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { ApolloProvider } from '@apollo/client';
 import { StatusBar, StyleSheet, TouchableOpacity, BackHandler, Text } from 'react-native';
-import { SQLiteProvider } from 'expo-sqlite';
 import { MaterialIcons } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import 'react-native-get-random-values';
 
 import client from './ApolloClient';
 import Login from './screens/Login';
@@ -13,7 +13,6 @@ import Register from './screens/Register';
 import OrganizationReg from './screens/OrganizationReg';
 import Chat from './screens/Chat';
 import Profile from './screens/Profile';
-import { initializeDatabase } from './db_configs/dbSetup';
 import NotificationListener from './components/Notification/NotificationListener';
 import NetworkListener from './components/Notification/NetworkListener';
 import TabNav from './components/NavBar/TabNav';
@@ -28,8 +27,7 @@ import { jwtDecode } from 'jwt-decode';
 const Stack = createStackNavigator();
 
 const App = () => {
-  const [isAuthenticated, setIsAuthenticated] = useState(null); // Track auth status
-  // Check for token validity on app startup
+  const [isAuthenticated, setIsAuthenticated] = useState(null);
   useEffect(() => {
     const checkToken = async () => {
       try {
@@ -61,7 +59,6 @@ const App = () => {
   }
 
   return (
-    <SQLiteProvider databaseName='chat.db' onInit={initializeDatabase}>
       <ApolloProvider client={client}>
         <StatusBar />
         <NavigationContainer>
@@ -180,7 +177,6 @@ const App = () => {
           </>
         )}
       </ApolloProvider>
-    </SQLiteProvider>
   );
 };
 

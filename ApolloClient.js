@@ -7,7 +7,7 @@ import { createClient } from 'graphql-ws';
 import { createUploadLink } from 'apollo-upload-client';
 
 const httpLink = createUploadLink({
-  uri: 'http://192.168.38.253:4000/graphql',
+  uri: 'http://192.168.194.253:4000/graphql',
   // uri: 'http://192.168.5.97:4000/graphql',
 });
 
@@ -25,7 +25,7 @@ const link = authLink.concat(httpLink);
 
 const wsLink = new GraphQLWsLink(
   createClient({
-    url: 'ws://192.168.38.253:4000/graphql',
+    url: 'ws://192.168.194.253:4000/graphql',
     // url: 'ws://192.168.5.97:4000/graphql',
     connectionParams: async () => {
       const token = await AsyncStorage.getItem('token');

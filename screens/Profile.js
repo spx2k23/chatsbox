@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, TextInput, StyleSheet, ScrollView, TouchableOpacity,Platform ,Dimensions} from "react-native";
 import { MaterialIcons } from '@expo/vector-icons';
-import { useSQLiteContext } from 'expo-sqlite';
 import DateOfBirth from '../components/Profile/DateOfBirth';
 import ProfilePic from '../components/Profile/ProfilePic';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import theme from '../config/theme';
+import realm from '../db_configs/realm';
 
 const { width } = Dimensions.get('window');
 const scale = width / 375; // 375 is the baseline width (iPhone 6)
@@ -14,8 +14,6 @@ const scaleFont = (size) => size * scale;
 const scaleSize = (size) => size * scale;
 
 const Profile = () => {
-    
-    const db = useSQLiteContext();
 
     const[isEditing,setIsEditing]=useState(false);
     const [firstname, setFirstName] = useState();
@@ -44,7 +42,7 @@ const Profile = () => {
     }, []);
 
     const fetchUser  = async () => {
-        const user = await db.getFirstAsync('SELECT * FROM user');
+        const user = realm.objects('User')[0];
         setFirstName(user.firstName);
         setLastName(user.lastName);
         setProfilePic(user.profilePicture);
