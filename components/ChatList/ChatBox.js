@@ -1,5 +1,5 @@
-import { useNavigation } from "@react-navigation/native";
 import React from "react";
+import { useNavigation } from "@react-navigation/native";
 import { View, Image, Text, StyleSheet, TouchableOpacity, Platform } from "react-native";
 
 const ChatBox = ({ image, firstName, lastName, id, lastmessage, lastmessage_time ,datas}) => {

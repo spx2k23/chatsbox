@@ -24,6 +24,7 @@ import ManageUsers from './components/Settings/ManageUsers';
 import GroupChat from './screens/GroupChat';
 import CreateGroup from './components/GroupChat/CreateGroup';
 import { jwtDecode } from 'jwt-decode';
+import { SetupFolders } from './components/SetupFolders';
 
 const Stack = createStackNavigator();
 
@@ -59,6 +60,8 @@ const App = () => {
   if (isAuthenticated === null) {
     return null; // Or show a loading spinner
   }
+
+  SetupFolders();
 
   return (
     <SQLiteProvider databaseName='chat.db' onInit={initializeDatabase}>

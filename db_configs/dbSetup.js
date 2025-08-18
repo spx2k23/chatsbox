@@ -38,12 +38,18 @@ export const initializeDatabase = async (db) => {
         phoneNumber TEXT NOT NULL,
         UNIQUE(userId)
       );
-      CREATE TABLE IF NOT EXISTS messages (
+      CREATE TABLE IF NOT EXISTS announcements (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
-        userId TEXT,
-        message TEXT,
-        timestamp DATETIME DEFAULT CURRENT_TIMESTAMP,
-        delivered BOOLEAN
+        announcementId TEXT UNIQUE,
+        createdBy TEXT,
+        date TEXT
+      );
+      CREATE TABLE IF NOT EXISTS announcementMessages (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        announcementId TEXT,
+        type TEXT,
+        content TEXT,
+        orderNum INTEGER
       );
     `);
     console.log('Database initialized successfully');
