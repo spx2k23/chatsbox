@@ -8,6 +8,7 @@ import { jwtDecode } from 'jwt-decode';
 import Loading from '../components/Loading/Loading';
 import { useSQLiteContext } from 'expo-sqlite';
 import theme from '../config/theme';
+import {s} from 'react-native-size-matters';
 
 const LOGIN_QUERY = gql`
   query Login($Email: String!, $Password: String!) {
@@ -149,7 +150,7 @@ const Login = ({ navigation }) => {
         <Loading />
       }
       <View style={styles.logoContainer}>
-        <Icon name="chat" size={80} color={theme.colors.basicColor} />
+        <Icon name="chat" size={s(80)} color={theme.colors.basicColor} />
         <Text style={styles.logoText}>Bush</Text>
       </View>
       <View style={styles.inputContainer}>
@@ -192,51 +193,51 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: 'center',
-    padding: 20,
+    padding: s(20),
     backgroundColor: '#F5F5F5',
   },
   logoContainer: {
     alignItems: 'center',
-    marginBottom: 40,
+    marginBottom: s(40),
   },
   logoText: {
-    fontSize: 28,
+    fontSize: s(28),
     fontWeight: 'bold',
     color: theme.colors.basicColor,
-    marginTop: 10,
+    marginTop: s(10),
   },
   inputContainer: {
-    marginBottom: 20,
+    marginBottom: s(20),
     width: '90%',
     alignSelf: 'center'
   },
   inputField: {
-    marginBottom: 15,
+    marginBottom: s(15),
   },
   inputText: {
     color: '#37474F',
-    padding: 10
+    padding: s(10)
   },
   loginButton: {
     backgroundColor: theme.colors.basicColor,
-    borderRadius: 25,
-    paddingVertical: 15,
-    marginBottom: 20,
+    borderRadius: s(25),
+    paddingVertical: s(15),
+    marginBottom: s(20),
     width: '60%',
     alignSelf: 'center'
   },
   loginButtonText: {
-    fontSize: 18,
+    fontSize: s(18),
     fontWeight: 'bold',
   },
   registerText: {
     textAlign: 'center',
     color: theme.colors.basicColor,
-    fontSize: 16,
+    fontSize: s(16),
   },
   error: {
     color: 'red',
-    marginBottom: 15,
+    marginBottom: s(15),
     textAlign: 'center',
   },
 });

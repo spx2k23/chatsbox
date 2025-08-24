@@ -6,6 +6,7 @@ import { useSQLiteContext } from "expo-sqlite";
 import CustomDataNotFound from "../components/NotFound";
 import { useFocusEffect } from "@react-navigation/native";
 import { gql, useLazyQuery } from '@apollo/client';
+import {s} from 'react-native-size-matters';
 
 const GET_FRIENDS = gql`
   query GetFriends {
@@ -129,7 +130,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#f5f5f5',
-    marginTop: 10
+    marginTop: s(10)
   },
 });
 

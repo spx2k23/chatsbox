@@ -10,6 +10,7 @@ import * as ImagePicker from 'expo-image-picker';
 import { Alert } from 'react-native';
 import { Audio, InterruptionModeIOS, InterruptionModeAndroid } from 'expo-av';
 import theme from "../config/theme";
+import {s,vs,} from 'react-native-size-matters';
 
 const isIosPlatform = Platform.OS === 'ios';
 
@@ -18,8 +19,8 @@ const Chat = ({ route }) => {
   const data = route.params;
   const currentUserID = data.datas.userId;
   const [profilemodel, setprofilemodel] = useState(false);
-  const [inputHeight, setInputHeight] = useState(40); // Initial height for TextInput
-  const maxInputHeight = 120; // Maximum height for TextInput
+  const [inputHeight, setInputHeight] = useState(s(40)); // Initial height for TextInput
+  const maxInputHeight = s(120); // Maximum height for TextInput
   const [textMessage, setTextMessage] = useState('');
   const [imagePickerPermission, setImagePickerPermission] = useState(false);
   const [recording, setRecording] = useState(null);
@@ -278,7 +279,7 @@ const Chat = ({ route }) => {
     };
     setMessages((prevMessages) => [temp, ...prevMessages]);
     setTextMessage('');
-    setInputHeight(40); // Reset height to initial value
+    setInputHeight(s(40)); // Reset height to initial value
     Keyboard.dismiss();
 
   };
@@ -286,7 +287,7 @@ const Chat = ({ route }) => {
   return (
     <KeyboardAvoidingView
       behavior={ isIosPlatform?"padding" :null}
-      keyboardVerticalOffset={isIosPlatform ? 0 : 40}
+      keyboardVerticalOffset={vs(isIosPlatform ? 0 : 38)}
       style={{ flex: 1 ,backgroundColor:'#fff',}}
       
     >
@@ -294,7 +295,7 @@ const Chat = ({ route }) => {
         {/* Header */}
         <View style={styles.header}>
           <TouchableOpacity onPress={() => navigation.goBack()}>
-            <MaterialIcons name="arrow-back" size={24} />
+            <MaterialIcons name="arrow-back" size={s(22)} />
           </TouchableOpacity>
           <TouchableOpacity onPress={() => setprofilemodel(true)}>
             <Image
@@ -346,21 +347,21 @@ const Chat = ({ route }) => {
                   <TouchableOpacity onPress={handleDocSelect}>
                     <MaterialCommunityIcons
                       name="file-upload-outline"
-                      size={24}
+                      size={s(20)}
                       color="grey"
                     />
                   </TouchableOpacity>
                   <TouchableOpacity onPress={handleMediaSelect}>
-                    <Ionicons name="image-outline" size={24} color="grey" />
+                    <Ionicons name="image-outline" size={s(20)} color="grey" />
                   </TouchableOpacity>
                   <TouchableOpacity onPress={()=>{}}onPressIn={handleMicPressIn} onPressOut={handleMicPressOut}>
-                    <Ionicons name="mic-outline" size={recording?40:24} color="grey" />
+                    <Ionicons name="mic-outline" size={s(recording?26:20)} color="grey" />
                   </TouchableOpacity>
                 </>
               )}
               {textMessage.length > 0 && (
                 <TouchableOpacity onPress={handleTextSend}>
-                  <MaterialCommunityIcons name="send-outline" size={24} color={theme.colors.basicColor} />
+                  <MaterialCommunityIcons name="send-outline" size={s(20)} color={theme.colors.basicColor} />
                 </TouchableOpacity>
               )}
             </View>
@@ -375,57 +376,59 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#fff',
-    paddingBottom:70
+    paddingBottom:s(60)
   },
   header: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 20,
-    paddingTop: isIosPlatform ? 60 : 30,
-    paddingBottom: 10,
+    marginBottom: s(12),
+    paddingTop: s(isIosPlatform ? 55 : 25),
+    paddingBottom: s(10),
     width: '100%',
-    paddingHorizontal: 10,
+    paddingHorizontal: s(10),
     backgroundColor: '#fff',
   },
   nameText: {
-    fontSize: 20,
+    fontSize: s(18),
     fontWeight: 'bold',
     color: theme.colors.basicColor,
-    marginLeft: 10,
+    marginLeft: s(10),
   },
   profileImg: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    marginHorizontal: 10,
+    width: s(35),
+    height: s(35),
+    borderRadius: s(20),
+    marginHorizontal: s(10),
   },
   inputContainer: {
-    flex: isIosPlatform ? 0.5 : 0, // Adjust flex for input container
+    flex:s( isIosPlatform ? 0.5 : 0), // Adjust flex for input container
     width: '100%',
-    paddingHorizontal: 5,
+    paddingHorizontal: s(4),
     backgroundColor: 'transparent',
     minHeight:'2%',
-    marginBottom:isIosPlatform?0:20,
+    marginBottom:s(isIosPlatform?0:16),
     position:'absolute',
-    bottom:isIosPlatform?40:0,
-    zIndex:10
+    bottom:s(isIosPlatform?32:0),
+    zIndex:10,
+   
   
   },
   inputBox: {
-    borderWidth: 1,
+    borderWidth: s(1),
     borderColor: '#ccc',
-    borderRadius: 20,
+    borderRadius: s(20),
     flexDirection: 'row',
     alignItems: 'center',
-    paddingHorizontal: 10,
-    paddingVertical: 2,
+    paddingHorizontal: s(8),
+    paddingVertical: vs(2),
     backgroundColor: '#fff',
+    
   },
   textInput: {
     flex: 1,
-    paddingHorizontal: 10,
-    paddingVertical: 8,
-    fontSize: 16,
+    paddingHorizontal: s(10),
+    paddingVertical: vs(8),
+    fontSize: s(14),
     textAlignVertical: 'top',
   },
   iconBox: {

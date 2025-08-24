@@ -1,5 +1,5 @@
 import React, { useRef, useState, useEffect} from 'react';
-
+import {s} from 'react-native-size-matters';
 
 import {
     Platform,
@@ -217,7 +217,7 @@ const ChatContentBox = ({ messages, currentUserID }) => {
         <>
          {(showSearchBox || searchQuery !== '') && (
                 <View style={styles.searchBoxContainer}>
-                     <MaterialIcons name="search" size={24} color="grey" />
+                     <MaterialIcons name="search" size={s(22)} color="grey" />
                     <TextInput
                         style={styles.searchBox}
                         placeholder="Search..."
@@ -227,10 +227,10 @@ const ChatContentBox = ({ messages, currentUserID }) => {
                     {highlightedIndices.length > 0 && (
                         <View style={styles.navigationButtons}>
                             <TouchableOpacity onPress={navigateNext}>
-                                <MaterialIcons name="keyboard-arrow-up" size={24} color={theme.colors.basicColor} />
+                                <MaterialIcons name="keyboard-arrow-up" size={s(22)} color={theme.colors.basicColor} />
                             </TouchableOpacity>
                             <TouchableOpacity onPress={navigatePrevious}>
-                                <MaterialIcons name="keyboard-arrow-down" size={24} color={theme.colors.basicColor} />
+                                <MaterialIcons name="keyboard-arrow-down" size={s(22)} color={theme.colors.basicColor} />
                             </TouchableOpacity>
                         </View>
                     )}
@@ -284,21 +284,21 @@ const styles = StyleSheet.create({
         flex: 1,
     },
     contentContainer: {
-        paddingBottom: 20,
-        paddingTop: 10,
+        paddingBottom: s(20),
+        paddingTop: s(10),
         backgroundColor: '#fff',
-        marginBottom:100,
+        marginBottom:s(100),
     },
     flatList: {
         width: windowWidth,
-        paddinsg:20,
+        padding:s(8),
         paddingBottom:'20%'
     },
     groupContainer: {
-        padding: 10,
-        borderRadius: 8,
+        padding: s(10),
+        borderRadius: s(8),
         alignSelf: 'flex-start',
-        margin: 10,
+        margin: s(8),
     },
     leftAligned: {
         alignSelf: 'flex-start',
@@ -309,33 +309,34 @@ const styles = StyleSheet.create({
         backgroundColor: theme.colors.basicColor,
     },
     highlightedContainer: {
-        backgroundColor: 'red',
+        backgroundColor: '#6020b9eb',
     },
     searchBoxContainer: {
         flexDirection: 'row',
         alignItems: 'center',
         backgroundColor: '#dad9d9',
        
-        borderRadius: 8,
+        borderRadius: s(8),
         // zIndex: 1,
         minHeight:'5%',
-        paddingHorizontal:5,
-        marginHorizontal:5,
+        paddingHorizontal:s(5),
+        marginHorizontal:s(5),
     },
     searchBox: {
         flex: 1,
-        marginLeft: 10,
-        fontSize: PixelRatio.getFontScale() * 16,
+        marginLeft: s(8),
+        // fontSize: PixelRatio.getFontScale() * 16,
+        fontSize:s(14)
        
     },
     noResultsText: {
         color: 'red',
-        marginLeft: 10,
+        marginLeft: s(10),
     },
     navigationButtons: {
         flexDirection: 'row',
         alignItems: 'center',
-        marginLeft: 10,
+        marginLeft: s(10),
     },
     overlay: {
         position: 'absolute',

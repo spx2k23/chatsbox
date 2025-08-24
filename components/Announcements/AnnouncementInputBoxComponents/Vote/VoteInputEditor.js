@@ -4,6 +4,7 @@ import VoteOptionEditor from './VoteOptionEditor';
 import { IconButton } from 'react-native-paper';
 import { StyleSheet } from 'react-native';
 import theme from '../../../../config/theme';
+import {s} from 'react-native-size-matters';
 
 const VoteInputEditor = ({ tempData, setTempData, index }) => {
     const [topic, setTopic] = useState(tempData[index].topic || '');

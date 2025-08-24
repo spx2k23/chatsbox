@@ -1,6 +1,7 @@
 import React from "react";
 import { useNavigation } from "@react-navigation/native";
 import { View, Image, Text, StyleSheet, TouchableOpacity, Platform } from "react-native";
+import {s} from 'react-native-size-matters';
 
 const ChatBox = ({ image, firstName, lastName, id, lastmessage, lastmessage_time ,datas}) => {
     const navigation = useNavigation(); // Moved inside the component
@@ -33,22 +34,22 @@ const ChatBox = ({ image, firstName, lastName, id, lastmessage, lastmessage_time
 
 const styles = StyleSheet.create({
     container: {
-        margin:2,
+        margin:s(2),
         flexDirection: "row", 
-        padding: 10,
+        padding: s(10),
         alignItems: "center", 
-        borderBottomWidth: 1,
+        borderBottomWidth: s(1),
         borderBottomColor: "#e0e0e0", 
         backgroundColor: "#fff", 
-        width:Platform.OS==='ios'?410:390,
+        width:s(340),
         alignSelf:'center',
-        borderRadius:10
+        borderRadius:s(10)
     },
     avatar: {
-        width: 50,
-        height: 50,
-        borderRadius: 25, 
-        marginRight: 10,
+        width: s(50),
+        height: s(50),
+        borderRadius: s(25), 
+        marginRight: s(10),
     },
     messageContainer: {
         flex: 1, 
@@ -58,18 +59,18 @@ const styles = StyleSheet.create({
         flexDirection: "row",
         justifyContent: "space-between",
         alignItems: "center",
-        marginBottom: 5, 
+        marginBottom: s(5), 
     },
     name: {
-        fontSize: 16,
+        fontSize: s(14),
         fontWeight: "bold",
     },
     time: {
-        fontSize: 12,
+        fontSize: s(10),
         color: "#757575", 
     },
     lastMessage: {
-        fontSize: 14,
+        fontSize: s(12),
         color: "#616161", 
     },
 });
