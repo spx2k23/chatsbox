@@ -8,7 +8,7 @@ import { jwtDecode } from 'jwt-decode';
 import Loading from '../components/Loading/Loading';
 import { useSQLiteContext } from 'expo-sqlite';
 import theme from '../config/theme';
-import {s} from 'react-native-size-matters';
+import {s,ms,vs} from 'react-native-size-matters';
 
 const LOGIN_QUERY = gql`
   query Login($Email: String!, $Password: String!) {
@@ -150,7 +150,7 @@ const Login = ({ navigation }) => {
         <Loading />
       }
       <View style={styles.logoContainer}>
-        <Icon name="chat" size={s(80)} color={theme.colors.basicColor} />
+        <Icon name="chat" size={ms(80)} color={theme.colors.basicColor} />
         <Text style={styles.logoText}>Bush</Text>
       </View>
       <View style={styles.inputContainer}>
@@ -160,7 +160,7 @@ const Login = ({ navigation }) => {
           keyboardType='email-address'
           value={email}
           onChangeText={(text) => setEmail(text.toLowerCase())}
-          leftIcon={{ type: 'font-awesome', name: 'envelope', color: theme.colors.basicColor }}
+          leftIcon={{ type: 'font-awesome', name: 'envelope', color: theme.colors.basicColor,size:s(16),marginRight:vs(5) }}
           inputStyle={styles.inputText}
           containerStyle={styles.inputField}
         />
@@ -170,7 +170,7 @@ const Login = ({ navigation }) => {
           value={password}
           onChangeText={(text) => setPassword(text)}
           secureTextEntry
-          leftIcon={{ type: 'font-awesome', name: 'lock', color: theme.colors.basicColor}}
+          leftIcon={{ type: 'font-awesome', name: 'lock', color: theme.colors.basicColor,size:s(16),marginRight:vs(5)}}
           inputStyle={styles.inputText}
           containerStyle={styles.inputField}
         />
@@ -193,51 +193,53 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: 'center',
-    padding: s(20),
+    padding:ms(20),
     backgroundColor: '#F5F5F5',
   },
   logoContainer: {
     alignItems: 'center',
-    marginBottom: s(40),
+    marginBottom: vs(40),
   },
   logoText: {
-    fontSize: s(28),
+    fontSize: ms(28),
     fontWeight: 'bold',
     color: theme.colors.basicColor,
-    marginTop: s(10),
+    marginTop: vs(10),
   },
   inputContainer: {
-    marginBottom: s(20),
-    width: '90%',
+    marginBottom: vs(20),
+    width: s(300),
     alignSelf: 'center'
   },
   inputField: {
-    marginBottom: s(15),
+    marginBottom: vs(15),
   },
   inputText: {
     color: '#37474F',
-    padding: s(10)
+    padding: ms(10),
+    fontSize:ms(14),
+    
   },
   loginButton: {
     backgroundColor: theme.colors.basicColor,
     borderRadius: s(25),
-    paddingVertical: s(15),
+    paddingVertical: vs(15),
     marginBottom: s(20),
-    width: '60%',
+    width: s(180),
     alignSelf: 'center'
   },
   loginButtonText: {
-    fontSize: s(18),
+    fontSize: ms(18),
     fontWeight: 'bold',
   },
   registerText: {
     textAlign: 'center',
     color: theme.colors.basicColor,
-    fontSize: s(16),
+    fontSize: ms(16),
   },
   error: {
     color: 'red',
-    marginBottom: s(15),
+    marginBottom: vs(15),
     textAlign: 'center',
   },
 });

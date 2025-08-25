@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { StyleSheet, View, Image, Text, TouchableOpacity, Modal, Platform, TouchableWithoutFeedback } from "react-native";
 import { gql, useMutation } from "@apollo/client";
 import theme from "../../config/theme";
-import {s} from 'react-native-size-matters';
+import {s,ms,vs} from 'react-native-size-matters';
 
 const SEND_FRIEND_REQUEST = gql`
   mutation SendFriendRequest($friendRequestSenderId: ID!, $friendRequestReceiverId: ID!) {
@@ -83,46 +83,46 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(0, 0, 0, 0.6)', 
   },
   modalContent: {
-    width: s(300),  
-    padding: s(20),
+    width: ms(300),  
+    padding: ms(10),
     backgroundColor: 'white',
-    borderRadius: s(10),
+    borderRadius: ms(10),
     alignItems: 'center',
   },
   modalImage: {
-    width: s(80),
-    height: s(80),
-    borderRadius: s(40),
-    marginBottom: s(20),
+    width: ms(80),
+    height: ms(80),
+    borderRadius: ms(40),
+    marginBottom: ms(20),
   },
   nameText: {
     fontSize: s(20), 
     fontWeight: 'bold',
     color: '#1E1E1E',  
-    marginBottom: s(5),
+    marginBottom: vs(5),
   },
   emailText: {
-    fontSize: s(14),
+    fontSize: ms(14),
     color: '#6B6B6B',  
-    marginBottom: s(10),  
+    marginBottom: vs(10),  
   },
   bioText: {
-    fontSize: s(11),
+    fontSize: ms(11),
     color: '#8C8C8C',  
     fontStyle: 'italic',
-    marginBottom: s(10),
+    marginBottom: vs(10),
     textAlign: 'center',
   },
   roleText: {
-    fontSize: s(14),
+    fontSize: ms(14),
     color: '#3F51B5', 
-    marginBottom: s(13),
+    marginBottom: vs(13),
     fontWeight: '600',
   },
   modalText: {
-    marginTop: s(13),
-    marginBottom: s(8), 
-    fontSize: s(14),
+    marginTop: vs(13),
+    marginBottom: vs(8), 
+    fontSize: ms(14),
     color: theme.colors.basicColor,  
     textAlign: 'center',
   },
@@ -134,7 +134,7 @@ const styles = StyleSheet.create({
   button: {
     backgroundColor:theme.colors.basicColor, 
     padding: s(9),
-    borderRadius: s(4),
+    borderRadius: ms(4),
     width: '45%', 
     alignItems: 'center',
     justifyContent: 'center',
@@ -144,7 +144,7 @@ const styles = StyleSheet.create({
   },
   buttonText: {
     color: 'white',
-    fontSize: s(12),
+    fontSize: ms(12),
     fontWeight: 'bold',
   },
 });

@@ -10,7 +10,7 @@ import * as ImagePicker from 'expo-image-picker';
 import { Alert } from 'react-native';
 import { Audio, InterruptionModeIOS, InterruptionModeAndroid } from 'expo-av';
 import theme from "../config/theme";
-import {s,vs,} from 'react-native-size-matters';
+import {s,vs,ms} from 'react-native-size-matters';
 
 const isIosPlatform = Platform.OS === 'ios';
 
@@ -279,7 +279,7 @@ const Chat = ({ route }) => {
     };
     setMessages((prevMessages) => [temp, ...prevMessages]);
     setTextMessage('');
-    setInputHeight(s(40)); // Reset height to initial value
+    setInputHeight(vs(40)); // Reset height to initial value
     Keyboard.dismiss();
 
   };
@@ -295,7 +295,7 @@ const Chat = ({ route }) => {
         {/* Header */}
         <View style={styles.header}>
           <TouchableOpacity onPress={() => navigation.goBack()}>
-            <MaterialIcons name="arrow-back" size={s(22)} />
+            <MaterialIcons name="arrow-back" size={ms(22)} />
           </TouchableOpacity>
           <TouchableOpacity onPress={() => setprofilemodel(true)}>
             <Image
@@ -347,21 +347,21 @@ const Chat = ({ route }) => {
                   <TouchableOpacity onPress={handleDocSelect}>
                     <MaterialCommunityIcons
                       name="file-upload-outline"
-                      size={s(20)}
+                      size={ms(20)}
                       color="grey"
                     />
                   </TouchableOpacity>
                   <TouchableOpacity onPress={handleMediaSelect}>
-                    <Ionicons name="image-outline" size={s(20)} color="grey" />
+                    <Ionicons name="image-outline" size={ms(20)} color="grey" />
                   </TouchableOpacity>
                   <TouchableOpacity onPress={()=>{}}onPressIn={handleMicPressIn} onPressOut={handleMicPressOut}>
-                    <Ionicons name="mic-outline" size={s(recording?26:20)} color="grey" />
+                    <Ionicons name="mic-outline" size={ms(recording?26:20)} color="grey" />
                   </TouchableOpacity>
                 </>
               )}
               {textMessage.length > 0 && (
                 <TouchableOpacity onPress={handleTextSend}>
-                  <MaterialCommunityIcons name="send-outline" size={s(20)} color={theme.colors.basicColor} />
+                  <MaterialCommunityIcons name="send-outline" size={ms(20)} color={theme.colors.basicColor} />
                 </TouchableOpacity>
               )}
             </View>
@@ -376,47 +376,47 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#fff',
-    paddingBottom:s(60)
+    paddingBottom:vs(70)
   },
   header: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: s(12),
-    paddingTop: s(isIosPlatform ? 55 : 25),
-    paddingBottom: s(10),
+    marginBottom: vs(12),
+    paddingTop: vs(isIosPlatform ? 45 : 25),
+    paddingBottom: vs(10),
     width: '100%',
     paddingHorizontal: s(10),
     backgroundColor: '#fff',
   },
   nameText: {
-    fontSize: s(18),
+    fontSize: ms(18),
     fontWeight: 'bold',
     color: theme.colors.basicColor,
-    marginLeft: s(10),
+    marginLeft: vs(10),
   },
   profileImg: {
-    width: s(35),
-    height: s(35),
-    borderRadius: s(20),
+    width: ms(40),
+    height: ms(40),
+    borderRadius: ms(20),
     marginHorizontal: s(10),
   },
   inputContainer: {
-    flex:s( isIosPlatform ? 0.5 : 0), // Adjust flex for input container
-    width: '100%',
+    flex: isIosPlatform ? 0.5 : 0, // Adjust flex for input container
+    width: '98%',
     paddingHorizontal: s(4),
     backgroundColor: 'transparent',
     minHeight:'2%',
-    marginBottom:s(isIosPlatform?0:16),
+    marginBottom:vs(isIosPlatform?0:16),
     position:'absolute',
-    bottom:s(isIosPlatform?32:0),
+    bottom:vs(isIosPlatform?22:0),
     zIndex:10,
-   
+   alignSelf:'center'
   
   },
   inputBox: {
-    borderWidth: s(1),
+    borderWidth: 1,
     borderColor: '#ccc',
-    borderRadius: s(20),
+    borderRadius: ms(20),
     flexDirection: 'row',
     alignItems: 'center',
     paddingHorizontal: s(8),
@@ -428,7 +428,7 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingHorizontal: s(10),
     paddingVertical: vs(8),
-    fontSize: s(14),
+    fontSize: ms(14),
     textAlignVertical: 'top',
   },
   iconBox: {

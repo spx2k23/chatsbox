@@ -14,6 +14,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useSQLiteContext } from 'expo-sqlite';
 import { useNavigation } from '@react-navigation/native';
 import theme from '../../config/theme';
+import {s,ms,vs} from 'react-native-size-matters';
 
 
 
@@ -61,22 +62,22 @@ const TabNav=()=>{
                 iconName = 'campaign';
               }
             else iconName='settings'
-            return <MaterialIcons  name={iconName} size={size} color={color} />;
+            return <MaterialIcons  name={iconName} size={ms(16)} color={color} />;
           },
           tabBarActiveTintColor: theme.colors.basicColor,
           tabBarInactiveTintColor: 'gray',
           headerTitle:'',
           tabBarLabelStyle: {
-            fontSize: 12,
+            fontSize: ms(12),
                      },
           tabBarStyle: {
-            paddingBottom: 8,  // Add padding to the bottom of the tab bar
-            height:Platform.OS==='android'?60:70,  // Optional: Adjust the height of the tab bar
+            paddingBottom: vs(8),  // Add padding to the bottom of the tab bar
+            height:vs(50),  // Optional: Adjust the height of the tab bar
                     },
           headerRight:()=><NavProfileIcon currentUser={currentUser} navigation={navigation}/> , 
           
           headerStyle:{
-            height:Platform.OS==='android'? 60:105,
+            height:vs(Platform.OS==='ios'?80:50),
           }
 
         })}
@@ -127,13 +128,13 @@ export default TabNav;
 const styles=StyleSheet.create({
   headertitlecontainer:{
     alignItems:'center',
-    marginLeft:20
+    marginLeft:s(20),
   },
   appName:{
-      marginLeft:10,
+      marginLeft:s(10),
       letterSpacing:5,
       fontWeight:600,
-      fontSize:24,
+      fontSize:ms(24),
        color:theme.colors.basicColor,
        width:'100%'
   },
@@ -141,7 +142,7 @@ const styles=StyleSheet.create({
     marginLeft:10,
       letterSpacing:2,
       fontWeight:500,
-      fontSize:22,
+      fontSize:ms(22),
        color:theme.colors.basicColor,
        width:'100%'
   }

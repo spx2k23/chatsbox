@@ -25,6 +25,7 @@ import GroupChat from './screens/GroupChat';
 import CreateGroup from './components/GroupChat/CreateGroup';
 import { jwtDecode } from 'jwt-decode';
 import { SetupFolders } from './components/SetupFolders';
+import {vs,s,ms} from 'react-native-size-matters';
 
 const Stack = createStackNavigator();
 
@@ -119,7 +120,7 @@ const App = () => {
               options={({ navigation }) => ({
                 headerLeft: () => (
                   <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backIconContainer}>
-                    <MaterialIcons name="arrow-back" size={24} color={theme.colors.basicColor} />
+                    <MaterialIcons name="arrow-back" size={ms(24)} color={theme.colors.basicColor} />
                   </TouchableOpacity>
                 ),
                 headerTitle: '',  // Hide the title
@@ -195,10 +196,10 @@ const styles = StyleSheet.create({
     flexDirection:'row',
   },
   title:{
-    fontSize:24,
+    fontSize:ms(24),
     fontWeight:500,
     width:'100%',
-    marginLeft:10
+    marginLeft:s(10)
   }
 });
 

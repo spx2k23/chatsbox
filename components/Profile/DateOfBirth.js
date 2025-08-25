@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { Platform, TouchableOpacity, StyleSheet, Text, View } from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import theme from '../../config/theme';
-
+import {vs,s,ms} from 'react-native-size-matters';
 const DateOfBirth = ({ isEditing, selectedDate, setSelectedDate }) => {
   const [isVisible, setIsVisible] = useState(false);
   
@@ -47,8 +47,8 @@ const styles = StyleSheet.create({
     width: '70%',
     justifyContent: 'center',
     alignItems: 'center',
-    marginLeft: 50,
-    marginBottom: 20,
+    marginLeft: s(50),
+    marginBottom: vs(20),
   },
   date: {
     borderBottomWidth: 2,
@@ -57,10 +57,11 @@ const styles = StyleSheet.create({
   textField: {
     textAlign: 'center',
     flex: 1,
-    marginTop: 10,
+    marginTop: vs(10),
     paddingBottom: 2,
     letterSpacing: Platform.OS === 'android' ? 2 : 4,
     color: theme.colors.basicColor,
+    fontSize:ms(12)
   },
   isEditTextField: {
     textAlign: 'left',
@@ -69,9 +70,10 @@ const styles = StyleSheet.create({
     paddingBottom: 2,
     letterSpacing: Platform.OS === 'android' ? 2 : 4,
     color: theme.colors.basicColor,
+    fontSize:ms(12)
   },
   calendar: {
-    marginLeft: 20,
+    marginLeft: s(20),
     marginBottom: 8,
   },
 });

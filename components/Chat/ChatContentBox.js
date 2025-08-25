@@ -1,5 +1,5 @@
 import React, { useRef, useState, useEffect} from 'react';
-import {s} from 'react-native-size-matters';
+import {s,vs,ms} from 'react-native-size-matters';
 
 import {
     Platform,
@@ -93,7 +93,7 @@ const ChatContentBox = ({ messages, currentUserID }) => {
                     item.type!=='text'&&{padding:2,width:'60%'}
                 ]}
             >
-                {item.type === 'text' && <Text style={{color:isCurrentUser?'#fff':'#000',maxWidth:'70%'}}>{item.text}</Text>}
+                {item.type === 'text' && <Text style={{color:isCurrentUser?'#fff':'#000',maxWidth:'70%',fontSize:ms(12)}}>{item.text}</Text>}
                 {item.type === 'image'&& <TouchableOpacity onPress={()=>openImageModal(item.uri)}><Image source={{ uri:item.uri}} style={styles.image} contentFit="cover" onError={() => console.log('Failed to load image')}/></TouchableOpacity>}
                 {item.type === 'audio' && <AudioPlayer uri={item.uri}/>}
                 {item.type==='document' && <DocViewer uri={item.documentData.uri} name={item.documentData.name}  isSent={isCurrentUser}/>}
@@ -217,7 +217,7 @@ const ChatContentBox = ({ messages, currentUserID }) => {
         <>
          {(showSearchBox || searchQuery !== '') && (
                 <View style={styles.searchBoxContainer}>
-                     <MaterialIcons name="search" size={s(22)} color="grey" />
+                     <MaterialIcons name="search" size={ms(22)} color="grey" />
                     <TextInput
                         style={styles.searchBox}
                         placeholder="Search..."
@@ -227,10 +227,10 @@ const ChatContentBox = ({ messages, currentUserID }) => {
                     {highlightedIndices.length > 0 && (
                         <View style={styles.navigationButtons}>
                             <TouchableOpacity onPress={navigateNext}>
-                                <MaterialIcons name="keyboard-arrow-up" size={s(22)} color={theme.colors.basicColor} />
+                                <MaterialIcons name="keyboard-arrow-up" size={ms(22)} color={theme.colors.basicColor} />
                             </TouchableOpacity>
                             <TouchableOpacity onPress={navigatePrevious}>
-                                <MaterialIcons name="keyboard-arrow-down" size={s(22)} color={theme.colors.basicColor} />
+                                <MaterialIcons name="keyboard-arrow-down" size={ms(22)} color={theme.colors.basicColor} />
                             </TouchableOpacity>
                         </View>
                     )}
@@ -284,21 +284,21 @@ const styles = StyleSheet.create({
         flex: 1,
     },
     contentContainer: {
-        paddingBottom: s(20),
-        paddingTop: s(10),
+        paddingBottom: vs(20),
+        paddingTop: vs(10),
         backgroundColor: '#fff',
-        marginBottom:s(100),
+        marginBottom:vs(100),
     },
     flatList: {
         width: windowWidth,
-        padding:s(8),
+        padding:8,
         paddingBottom:'20%'
     },
     groupContainer: {
-        padding: s(10),
-        borderRadius: s(8),
+        padding: 10,
+        borderRadius: 8,
         alignSelf: 'flex-start',
-        margin: s(8),
+        margin: 8,
     },
     leftAligned: {
         alignSelf: 'flex-start',
@@ -316,7 +316,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         backgroundColor: '#dad9d9',
        
-        borderRadius: s(8),
+        borderRadius: 8,
         // zIndex: 1,
         minHeight:'5%',
         paddingHorizontal:s(5),
@@ -324,23 +324,23 @@ const styles = StyleSheet.create({
     },
     searchBox: {
         flex: 1,
-        marginLeft: s(8),
+        marginLeft: vs(8),
         // fontSize: PixelRatio.getFontScale() * 16,
-        fontSize:s(14)
+        fontSize:ms(14)
        
     },
     noResultsText: {
         color: 'red',
-        marginLeft: s(10),
+        marginLeft: vs(10),
     },
     navigationButtons: {
         flexDirection: 'row',
         alignItems: 'center',
-        marginLeft: s(10),
+        marginLeft: vs(10),
     },
     overlay: {
         position: 'absolute',
-        bottom:isIosPlatform?20:5,
+        bottom:0,
         left: '35%',
         right: 0,
         width: '30%',
@@ -353,12 +353,12 @@ const styles = StyleSheet.create({
         borderColor: 'grey',
     },
     overlayText: {
-        fontSize: 14,
+        fontSize: ms(14),
         color: theme.colors.basicColor,
     },
     image: {
-        minWidth:200,
-        minHeight:200,
+        minWidth:s(200),
+        minHeight:vs(150),
         borderRadius:10
       },
     
