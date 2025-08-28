@@ -1,6 +1,6 @@
 import { Modal, StyleSheet, TouchableWithoutFeedback, View,Text,Platform, TouchableOpacity } from "react-native";
 import theme from "../../config/theme";
-
+import {ms,vs} from 'react-native-size-matters';
 const ManageUsersModal=({userModal,setUserModal,userId,name,userRights})=>{
     return(
         <Modal
@@ -41,7 +41,7 @@ const styles=StyleSheet.create({
     modalcontainer:{
         backgroundColor:'white',
         width:'76%',
-        padding:20,
+        padding:ms(20),
         borderRadius:10,
         elevation: 1,
         shadowColor: '#000',
@@ -55,16 +55,18 @@ const styles=StyleSheet.create({
     },
     name:{
         fontWeight:'700',
-        fontSize:17
+        fontSize:ms(17)
     },
     userRights:{
         color:theme.colors.basicColor,
         position:'absolute',
         right:0,
-        fontWeight:'500'
+        fontWeight:'500',
+        fontSize:ms(12)
     },
     btn:{
         fontWeight:'500',
-        marginVertical:5
+        marginVertical:vs(5),
+        fontSize:ms(12)
     }
 })

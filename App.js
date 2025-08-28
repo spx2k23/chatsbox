@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { ApolloProvider } from '@apollo/client';
-import { StatusBar, StyleSheet, TouchableOpacity, BackHandler, Text } from 'react-native';
+import { StatusBar, StyleSheet, TouchableOpacity, BackHandler, Text, Platform } from 'react-native';
 import { SQLiteProvider } from 'expo-sqlite';
 import { MaterialIcons } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -125,6 +125,7 @@ const App = () => {
                 ),
                 headerTitle: '',  // Hide the title
                 headerShown: true,
+              
               })}
             />
             <Stack.Screen
@@ -134,13 +135,17 @@ const App = () => {
                 headerLeft: () => (
                   <View style={styles.titleContainer}>
                   <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backIconContainer}>
-                    <MaterialIcons name="arrow-back" size={24} />
+                    <MaterialIcons name="arrow-back" size={ms(24)} />
                   </TouchableOpacity>
                   <Text style={styles.title}> Organization Code</Text>
                   </View>
                 ),
                 headerShown: true,
                 headerTitle:'',
+                headerStyle:{
+                  height:Platform.OS==='android'?vs(50):vs(75),
+                 
+                },
               })}
             />
              <Stack.Screen
@@ -150,13 +155,17 @@ const App = () => {
                 headerLeft: () => (
                   <View style={styles.titleContainer}>
                   <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backIconContainer}>
-                    <MaterialIcons name="arrow-back" size={24} />
+                    <MaterialIcons name="arrow-back" size={ms(24)} color={theme.colors.basicColor}/>
                   </TouchableOpacity>
                   <Text style={styles.title}>Manage Users</Text>
                   </View>
                 ),
                 headerShown: true,
                 headerTitle:'',
+                headerStyle:{
+                  height:Platform.OS==='android'?vs(50):vs(75),
+                 
+                },
               })}
             />
               <Stack.Screen
@@ -165,6 +174,7 @@ const App = () => {
               options={({ navigation }) => ({
                 headerShown:false,
                 headerTitle:'',
+                
               })}
             />
               <Stack.Screen
@@ -190,7 +200,8 @@ const App = () => {
 
 const styles = StyleSheet.create({
   backIconContainer: {
-    paddingLeft: 10,
+   paddingLeft: 10,
+
   },
   titleContainer:{
     flexDirection:'row',

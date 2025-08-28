@@ -21,7 +21,7 @@ import ImagePreviewerModal from '../Chat/ImagePreviewerModal';
 import AudioPlayer from '../Announcements/AnnouncementInputBoxComponents/AudioPlayer';
 import VideoPlayer from '../Announcements/AnnouncementInputBoxComponents/VideoPlayer';
 import theme from '../../config/theme';
-
+import {ms,s,vs} from 'react-native-size-matters';
 
 const isIosPlatform = Platform.OS === 'ios';
 const windowWidth = Dimensions.get('window').width;
@@ -95,7 +95,7 @@ const GroupChatContentBox = ({ messages, currentUserID }) => {
                 ]}
             >
               
-                {item.type === 'text' && <Text style={{color:isCurrentUser?'#fff':'#000',maxWidth:'70%'}}>{item.text}</Text>}
+                {item.type === 'text' && <Text style={{color:isCurrentUser?'#fff':'#000',maxWidth:'70%',fontSize:ms(14,.4)}}>{item.text}</Text>}
                 {item.type === 'image'&& <TouchableOpacity onPress={()=>openImageModal(item.uri)}><Image source={{ uri:item.uri}} style={styles.image} contentFit="cover" onError={() => console.log('Failed to load image')}/></TouchableOpacity>}
                 {item.type === 'audio' && <AudioPlayer uri={item.uri}/>}
                 {item.type==='document' && <DocViewer uri={item.documentData.uri} name={item.documentData.name}  isSent={isCurrentUser}/>}
@@ -226,7 +226,7 @@ const GroupChatContentBox = ({ messages, currentUserID }) => {
         <>
          {(showSearchBox || searchQuery !== '') && (
                 <View style={styles.searchBoxContainer}>
-                     <MaterialIcons name="search" size={24} color="grey" />
+                     <MaterialIcons name="search" size={ms(22)} color="grey" />
                     <TextInput
                         style={styles.searchBox}
                         placeholder="Search..."
@@ -236,10 +236,10 @@ const GroupChatContentBox = ({ messages, currentUserID }) => {
                     {highlightedIndices.length > 0 && (
                         <View style={styles.navigationButtons}>
                             <TouchableOpacity onPress={navigateNext}>
-                                <MaterialIcons name="keyboard-arrow-up" size={24} color={theme.colors.basicColor} />
+                                <MaterialIcons name="keyboard-arrow-up" size={ms(20)} color={theme.colors.basicColor} />
                             </TouchableOpacity>
                             <TouchableOpacity onPress={navigatePrevious}>
-                                <MaterialIcons name="keyboard-arrow-down" size={24} color={theme.colors.basicColor} />
+                                <MaterialIcons name="keyboard-arrow-down" size={ms(20)} color={theme.colors.basicColor} />
                             </TouchableOpacity>
                         </View>
                     )}
@@ -334,7 +334,7 @@ const styles = StyleSheet.create({
     searchBox: {
         flex: 1,
         marginLeft: 10,
-        fontSize: PixelRatio.getFontScale() * 16,
+        fontSize: ms(12),
        
     },
     noResultsText: {
@@ -348,7 +348,7 @@ const styles = StyleSheet.create({
     },
     overlay: {
         position: 'absolute',
-        bottom:isIosPlatform?20:5,
+        bottom:isIosPlatform?ms(20):ms(3),
         left: '35%',
         right: 0,
         width: '30%',
@@ -361,7 +361,7 @@ const styles = StyleSheet.create({
         borderColor: 'grey',
     },
     overlayText: {
-        fontSize: 14,
+        fontSize: ms(10),
         color: theme.colors.basicColor,
     },
     image: {
@@ -374,13 +374,14 @@ const styles = StyleSheet.create({
         flexDirection:'row'
       },
       profileImg:{
-        width:20,
-        height:20,
-        borderRadius:10,
-        marginRight:5
+        width:ms(20),
+        height:ms(20),
+        borderRadius:ms(10),
+        marginRight:s(5)
       },
       senderName:{
-        color:theme.colors.basicColor
+        color:theme.colors.basicColor,
+        fontSize:ms(10)
       }
     
 });

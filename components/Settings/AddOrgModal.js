@@ -1,7 +1,7 @@
 import { Modal, StyleSheet, Text, TouchableWithoutFeedback, View,Platform ,TextInput,TouchableOpacity} from "react-native";
 import { useState ,useRef} from "react";
 import theme from "../../config/theme";
-
+import {s,ms,vs} from 'react-native-size-matters';
 
 const AddOrgModal=({addmodal,setaddmodal})=>{
 
@@ -64,27 +64,29 @@ const styles =StyleSheet.create({
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
-        backgroundColor: 'rgba(80, 80, 80, 0.6)', 
+        backgroundColor: 'rgba(80, 80, 80, 0.6)',
+        
     },
     modalContent:{
         backgroundColor:'white',
         width:'60%',
         padding:20,
-        borderRadius:5,
+        borderRadius:ms(5),
         alignItems:'center'
     },
     inputs:{
         flexDirection: 'row',
         gap:10,
-        alignItems:'center'
+        alignItems:'center',
+        marginBottom:ms(5)
    },
    input: {
-    width:18,
-    height:22,
+    width:s(18,.4),
+    height:s(22,.4),
     borderWidth: 1,
     borderColor: 'grey',
     padding:0,
-    fontSize: 16,
+    fontSize: ms(16,.4),
     borderRadius: 5,
    textAlign:'center',
    fontWeight:Platform.OS==='android'?'800':'600'
@@ -93,15 +95,19 @@ const styles =StyleSheet.create({
     marginRight: 10, // Add space after the 3rd input
   },
   title:{
-    fontSize:21,
+    fontSize:ms(21,.4),
     fontWeight:'600',
-    marginBottom:20
+    marginBottom:20,
+    marginTop:ms(20)
   },
   btn:{
     backgroundColor:theme.colors.basicColor,
     color:'#fff',
-    paddingHorizontal:25,
+    paddingHorizontal:s(20),
     borderRadius:8,
-    marginTop:20
+    marginTop:20,
+    fontSize:ms(14),
+    marginBottom:ms(20),
+    paddingVertical:ms(2)
   }
 });

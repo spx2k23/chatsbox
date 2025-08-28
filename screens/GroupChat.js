@@ -9,7 +9,7 @@ import { Alert } from 'react-native';
 import { Audio, InterruptionModeIOS, InterruptionModeAndroid } from 'expo-av';
 import theme from "../config/theme";
 import GroupChatContentBox from "../components/GroupChat/GroupChatContentBox";
-
+import {ms,s,vs} from 'react-native-size-matters';
 const isIosPlatform = Platform.OS === 'ios';
 
 const GroupChat=()=>{
@@ -365,9 +365,9 @@ const GroupChat=()=>{
             </TouchableOpacity>
             <Text style={styles.nameText} numberOfLines={1}>{data.name}</Text>
             <View style={styles.headerIcons}>
-                <MaterialCommunityIcons  name="phone-outline" size={24} color={'grey'}/>
-                <MaterialCommunityIcons  name="video-plus-outline" size={24} color={'grey'}/>
-                <MaterialCommunityIcons  name="dots-vertical" size={24} color={'grey'}/>
+                <MaterialCommunityIcons  name="phone-outline" size={ms(22)} color={'grey'}/>
+                <MaterialCommunityIcons  name="video-plus-outline" size={ms(22)} color={'grey'}/>
+                <MaterialCommunityIcons  name="dots-vertical" size={ms(22)} color={'grey'}/>
             </View>
           </View>
   
@@ -399,15 +399,15 @@ const GroupChat=()=>{
                     <TouchableOpacity onPress={handleDocSelect}>
                       <MaterialCommunityIcons
                         name="file-upload-outline"
-                        size={24}
+                        size={ms(22)}
                         color="grey"
                       />
                     </TouchableOpacity>
                     <TouchableOpacity onPress={handleMediaSelect}>
-                      <Ionicons name="image-outline" size={24} color="grey" />
+                      <Ionicons name="image-outline" size={ms(22)} color="grey" />
                     </TouchableOpacity>
                     <TouchableOpacity onPress={()=>{}}onPressIn={handleMicPressIn} onPressOut={handleMicPressOut}>
-                      <Ionicons name="mic-outline" size={recording?40:24} color="grey" />
+                      <Ionicons name="mic-outline" size={recording?ms(30):ms(22)} color="grey" />
                     </TouchableOpacity>
                   </>
                 )}
@@ -443,7 +443,7 @@ const styles = StyleSheet.create({
     },
     headerIcons:{
         flexDirection:'row',
-         gap:30,
+         gap:s(25),
          zIndex:1,
         position:'absolute',
         right:10,
@@ -452,22 +452,22 @@ const styles = StyleSheet.create({
        
     },
     nameText: {
-      fontSize: 20,
+      fontSize: ms(18),
       fontWeight: 'bold',
       color: theme.colors.basicColor,
       marginLeft: 10,
       width:'40%',
     },
     profileImg: {
-      width: 40,
-      height: 40,
-      borderRadius: 20,
+      width: ms(30),
+      height: ms(30),
+      borderRadius: ms(15),
       marginHorizontal: 10,
     },
     inputContainer: {
       flex: isIosPlatform ? 0.5 : 0, // Adjust flex for input container
       width: '100%',
-      paddingHorizontal: 5,
+      paddingHorizontal:s(5),
       backgroundColor: 'transparent',
       minHeight:'2%',
       marginBottom:isIosPlatform?0:20,
@@ -482,7 +482,7 @@ const styles = StyleSheet.create({
       borderRadius: 20,
       flexDirection: 'row',
       alignItems: 'center',
-      paddingHorizontal: 10,
+      paddingHorizontal: s(10),
       paddingVertical: 2,
       backgroundColor: '#fff',
     },
@@ -490,11 +490,12 @@ const styles = StyleSheet.create({
       flex: 1,
       paddingHorizontal: 10,
       paddingVertical: 8,
-      fontSize: 16,
+      fontSize: ms(14),
       textAlignVertical: 'top',
     },
     iconBox: {
       flexDirection: 'row',
       alignItems: 'center',
+      gap:5
     },
   });

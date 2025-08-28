@@ -35,7 +35,7 @@ const Profile = () => {
             borderRadius:ms(25),
             borderColor: theme.colors.basicColor,
             padding:10,
-            height:Platform.OS==='ios'?'51%':'56%',
+            height:Platform.OS==='ios'?'55.5%':'57%',
             paddingTop:vs(30)
         }
     });
@@ -69,7 +69,7 @@ const Profile = () => {
     };
 
     return (
-        <KeyboardAwareScrollView>
+        <KeyboardAwareScrollView >
         <View style={styles.container}>
             <ProfilePic profilePic={profilePic} isEditing={isEditing} email={email} companyName={companyName} setProfilePic={setProfilePic}/>
         <View style={isEditing?staticstyles.isEditingForm:styles.form}>
@@ -147,13 +147,14 @@ export default Profile;
 
 const styles = StyleSheet.create({
     container: {
-        flex: 1,
         alignItems: 'center',
         justifyContent: 'flex-start',
-        padding: ms(20), // Scaled padding for consistency
-        backgroundColor: '#f4f7fa',
+        padding: (10), // Scaled padding for consistency
+    
+     
     },
     inputContainer: {
+        flex:1,
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'space-between',
@@ -164,7 +165,7 @@ const styles = StyleSheet.create({
     inputField: {
         width:s(200),
         fontSize: ms(18), // Scaled font size
-        borderBottomWidth: s(2),
+        borderBottomWidth: 2,
         borderBottomColor: theme.colors.basicColor,
         flex: 1,
         paddingHorizontal: vs(5),
@@ -173,6 +174,7 @@ const styles = StyleSheet.create({
         color:theme.colors.basicColor,
     },
     textbox:{
+          flex:1,
         flexDirection:'row',
         width:'100%',
     },
@@ -233,14 +235,15 @@ const styles = StyleSheet.create({
     },
     footerContainer: {
         position: 'absolute',
-        bottom:-220,
+      
+        bottom:ms(-140),
         alignItems: 'center',
         justifyContent: 'center',
         width: '100%',
         paddingVertical:vs(10),
     },
     line: {
-        borderBottomWidth: (1),
+        bordersBottomWidth: (1),
         borderBottomColor: theme.colors.basicColor,
         width: '80%',
         marginBottom: vs(10),
@@ -300,11 +303,13 @@ const styles = StyleSheet.create({
         marginRight:s(-20)
     },
     form:{
+          flex:1,
         borderWidth:2,
         width:'90%',
         borderRadius:ms(25),
         borderColor:theme.colors.basicColor,
-        padding:ms(10)
+        padding:ms(10),
+        
     },
     bio:{
         marginLeft:s(-40),

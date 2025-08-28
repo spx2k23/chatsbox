@@ -1,10 +1,10 @@
 import React from 'react';
-import { View, Text, StyleSheet, Image } from 'react-native';
+import { View, Text, StyleSheet, Image ,TouchableOpacity} from 'react-native';
 import { Button } from 'react-native-elements';
 import { gql, useMutation } from "@apollo/client";
 import { useSQLiteContext } from 'expo-sqlite';
 import theme from '../../config/theme';
-
+import {s,ms,vs} from 'react-native-size-matters';
 const ACCEPT_FRIEND_REQUEST = gql`
   mutation AcceptFriendRequest($friendRequestAccepterId: ID!, $friendRequestReceiverId: ID!) {
     acceptFriendRequest(friendRequestAccepterId: $friendRequestAccepterId, friendRequestReceiverId: $friendRequestReceiverId) {
@@ -87,7 +87,7 @@ const FriendRequest = ({ firstName, lastName, email, image, userId, receiverId, 
           {
             isRequestReceived && (
               <View style={styles.buttonContainer}>
-                <Button
+                {/* <Button
                   title="Accept"
                   buttonStyle={styles.acceptButton}
                   onPress={() => handleAccept(userId)}
@@ -96,7 +96,22 @@ const FriendRequest = ({ firstName, lastName, email, image, userId, receiverId, 
                   title="Reject"
                   buttonStyle={styles.rejectButton}
                   onPress={() => handleReject(userId)}
-                />
+                /> */}
+                <TouchableOpacity
+    style={styles.acceptButton}
+    onPress={() => handleAccept(userId)}
+    activeOpacity={0.7}
+  >
+    <Text style={styles.buttonText}>Accept</Text>
+  </TouchableOpacity>
+
+  <TouchableOpacity
+    style={styles.rejectButton}
+    onPress={() => handleReject(userId)}
+    activeOpacity={0.7}
+  >
+    <Text style={styles.buttonText}>Reject</Text>
+  </TouchableOpacity>
               </View>
 
             )
@@ -126,9 +141,9 @@ const styles = StyleSheet.create({
     elevation: 2,
   },
   image: {
-    width: 50,
-    height: 50,
-    borderRadius: 25,
+    width: ms(40),
+    height: ms(40),
+    borderRadius: ms(20),
     marginRight: 10,
   },
   infoContainer: {
@@ -136,11 +151,11 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   name: {
-    fontSize: 16,
+    fontSize: ms(16,.4),
     fontWeight: 'bold',
   },
   email: {
-    fontSize: 14,
+    fontSize: ms(14,.4),
     color: '#555',
   },
   buttonContainer: {
@@ -150,10 +165,21 @@ const styles = StyleSheet.create({
   acceptButton: {
     backgroundColor: theme.colors.basicColor,
     marginRight: 10,
-    width: 100
+    width: s(80),
+    paddingVertical: vs(5), // for height
+    borderRadius: 8,
+    alignItems: "center",
   },
   rejectButton: {
-    backgroundColor: '#B0BEC5',
-    width: 100
+    backgroundColor: "#B0BEC5",
+    width: s(80),
+    paddingVertical: vs(5),
+    borderRadius: 8,
+    alignItems: "center",
+  },
+  buttonText: {
+    fontSize: ms(13),
+    color: "#fff",
+    fontWeight: "600",
   },
 });

@@ -89,6 +89,7 @@ const styles=StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'center',
         zIndex: 1,
+        top:20
     },
     profileImg: {
         width: ms(100),

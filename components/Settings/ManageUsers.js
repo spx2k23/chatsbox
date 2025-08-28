@@ -7,7 +7,7 @@ import { useSQLiteContext } from 'expo-sqlite';
 import { useFocusEffect } from '@react-navigation/native';
 import {MaterialIcons } from "@expo/vector-icons";
 import ManageUserBox from './ManageUserBox';
-
+import {s,ms,vs} from 'react-native-size-matters';
 
 const GET_USERS_IN_ORG = gql`
   query GetUsersInOrganization($organizationId: ID!) {
@@ -95,11 +95,12 @@ const ManageUsers=()=>{
         <View style={styles.container}>
            
             <View style={styles.searchContainer}>
-                    <MaterialIcons name="search" size={24} color="grey" />
+                    <MaterialIcons name="search" size={ms(24)} color="grey" />
                     <TextInput
                         placeholder="Search..."
                         value={searchText}
                         onChangeText={setSearchText}
+                        style={styles.searchText}
                     />
             </View>
             <FlatList
@@ -142,12 +143,15 @@ const styles=StyleSheet.create({
         borderColor: '#ccc',
         borderRadius: 10,
         marginBottom: 10,
-        marginTop: 6,
+        marginTop: ms(6),
         width: '98%',  
         alignSelf: 'center',
         letterSpacing:10,
         paddingLeft:10,
-        minHeight:40
+        minHeight:ms(40,.4),
+      
     },
-  
+  searchText:{
+      fontSize:ms(14)
+  }
 })

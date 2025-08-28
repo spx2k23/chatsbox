@@ -2,7 +2,7 @@ import { MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";
 import { useRef, useState } from "react";
 import { Text, View,StyleSheet,TextInput, TouchableOpacity, Platform } from "react-native";
 import theme from "../config/theme";
-
+import {ms,s,vs} from 'react-native-size-matters';
 const SettingsOrgCode =()=>{
     const inputs = useRef([]);
     const [newCode,setNewCode]=useState('');
@@ -28,7 +28,7 @@ const SettingsOrgCode =()=>{
       };
     return(
         <View style={styles.container}> 
-            <MaterialCommunityIcons name="swap-horizontal" size={24} color={'grey'}/>
+            <MaterialCommunityIcons name="swap-horizontal" size={ms(24)} color={'grey'}/>
             <View style={styles.orgCodeBox}>
                 <Text style={styles.title1}>Change Organization Code</Text>
                 <Text style={styles.discription}>
@@ -41,6 +41,7 @@ const SettingsOrgCode =()=>{
                     <Text key={index} style={[styles.currText, index === 2 ? styles.inputWithMargin : null]} >{currentCode.charAt(index)}</Text>
                 ))}
                 </View>
+       
                 <Text style={styles.title}>New Code</Text>
                 <View style={styles.inputs}>
                 {Array.from({ length: 6 }).map((_, index) => (
@@ -60,8 +61,9 @@ const SettingsOrgCode =()=>{
                 </View>
                 {changeFlag&&<View style={styles.aproval}>
                         <Text style={styles.aprovalText}>{codeChangeSucess?'Approved':'Already Exists'}</Text>
-                        <MaterialIcons name={codeChangeSucess?'check-circle-outline':'warning-amber'} color={codeChangeSucess?'green':'red'} size={20}/>
+                        <MaterialIcons name={codeChangeSucess?'check-circle-outline':'warning-amber'} color={codeChangeSucess?'green':'red'} size={ms(16)}/>
                     </View>}
+                   
             </View>
         </View>
     );
@@ -72,23 +74,25 @@ const styles=StyleSheet.create({
     container:{
         flex:1,
         flexDirection:'row',
-        paddingTop:30,
-        paddingLeft:20,
+        paddingTop:vs(25),
+        paddingLeft:s(20),
         backgroundColor:'#fff'
     },
     orgCodeBox:{
         marginLeft:15
     },
     title1:{
-        fontSize:18,
+        fontSize:ms(17),
         fontWeight:'500',
-        marginBottom:5,
+        marginBottom:vs(5),
     },
     discription:{
-        color:'grey'
+        color:'grey',
+         fontSize:ms(12)
     },
     note:{
         color:theme.colors.basicColor,
+        fontSize:ms(14)
     },
     inputs:{
          flexDirection: 'row',
@@ -96,49 +100,51 @@ const styles=StyleSheet.create({
          alignItems:'center'
     },
     input: {
-        width:18,
-        height:22,
+        width:vs(18),
+        height:vs(22),
         borderWidth: 1,
         borderColor: 'grey',
         padding:0,
-        fontSize: 16,
+        fontSize: ms(14),
         borderRadius: 5,
        textAlign:'center',
        fontWeight:Platform.OS==='android'?'800':'600'
       },
       inputWithMargin: {
-        marginRight: 10, // Add space after the 3rd input
+        marginRight: s(10), // Add space after the 3rd input
       },
       change:{
         color:theme.colors.basicColor,
         fontWeight:'500',
-        marginLeft:20
+        marginLeft:20,
+        fontSize:ms(12)
       },
       currCodeBox:{
         flexDirection:'row',
-        gap:10,
+        gap:s(6),
       },
       currText:{
         width:18,
-        height:22,
-        fontSize:18,
+        height:vs(22),
+        fontSize:ms(15),
         fontWeight:600
       },
       title:{
-        fontSize:18,
+        fontSize:ms(16),
         fontWeight:'600',
-        marginBottom:10,
-        marginTop:20
+        marginBottom:vs(5),
+        marginTop:vs(8)
     },
     aproval:{
         flexDirection:'row',
         alignItems:'center',
-        height:20,
+        height:vs(20),
         marginTop:5 
     },
     aprovalText:{
-        fontSize:14,
+        fontSize:ms(12),
         marginRight:5,
         color:'grey'
-    }
+    },
+   
 });

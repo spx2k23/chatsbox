@@ -5,7 +5,7 @@ import { FontAwesome6} from "@expo/vector-icons";
 import { useState } from "react";
 import AddOrgModal from "./AddOrgModal";
 import theme from "../../config/theme";
-
+import {ms,s,vs} from 'react-native-size-matters';
 const SwitchOrganizationModel=({switchOrgModel,setSwitchOrgModel,addmodal,setaddmodal})=>{
         const enrolledOrgs=[
             {
@@ -45,14 +45,14 @@ const SwitchOrganizationModel=({switchOrgModel,setSwitchOrgModel,addmodal,setadd
                            <View style={styles.addOrgbox}>
                             <Text style={styles.addOrgboxText}>Organizations</Text>
                             <TouchableOpacity style={styles.addBtn} onPress={()=>{setaddmodal(true);setSwitchOrgModel(false)}}>
-                                 <MaterialCommunityIcons name="plus" size={24}/>
+                                 <MaterialCommunityIcons name="plus" size={ms(22)}/>
                             </TouchableOpacity>
                            </View>
                            <ScrollView>
                             {
                                 enrolledOrgs.map((org,index)=>{
                                     return <TouchableOpacity key={index} style={styles.orgBox}>
-                                                {org.imageUrl?<Image source={{uri:org.imageUrl}} style={styles.orgImage}/>:<FontAwesome6 name={'globe'} size={40} color={'grey'}/>}
+                                                {org.imageUrl?<Image source={{uri:org.imageUrl}} style={styles.orgImage}/>:<FontAwesome6 name={'globe'} size={ms(30)} color={'grey'} style={styles.orgImage}/>}
                                               <Text style={styles.orgText}>{org.name}</Text>
                                           </TouchableOpacity>
                                 })
@@ -80,7 +80,9 @@ const styles=StyleSheet.create({
         backgroundColor:'white',
         width:'60%',
         height:'35%',
-        padding:20,
+        paddingLeft:s(15),
+        paddingRight:ms(6),
+        paddingVertical:vs(8),
         borderRadius:5
     },
     addOrgbox:{
@@ -89,7 +91,7 @@ const styles=StyleSheet.create({
         marginBottom:10
     },
 addOrgboxText:{
-    fontSize:24,
+    fontSize:ms(20),
     fontWeight:'500',
     color:theme.colors.basicColor
 },
@@ -98,9 +100,9 @@ addBtn:{
     // marginLeft:'20%'
 },
 orgImage:{
-    width:40,
-    height:40,
-    borderRadius:20,
+    width:ms(30),
+    height:ms(30),
+    borderRadius:ms(15),
     resizeMode: 'contain', 
    
 },
@@ -111,6 +113,7 @@ orgBox:{
 },
 orgText:{
     marginLeft:20,
-    fontWeight:'500'
+    fontWeight:'500',
+    fontSize:ms(14)
 }
 })

@@ -8,6 +8,7 @@ import UserBox from '../components/UserBox/UserBox';
 import FriendRequest from '../components/UserBox/FriendRequest';
 import CustomNotFound from '../components/NotFound';
 import theme from '../config/theme';
+import {s,ms,vs} from 'react-native-size-matters';
 
 const GET_USERS_IN_ORG = gql`
   query GetUsersInOrganization($organizationId: ID!) {
@@ -209,7 +210,7 @@ const Users = ({ navigation }) => {
           onPress={() => setCurrentTabChoice('friends')}
           style={[styles.tabButton, currentTabChoice === 'friends' && styles.activeTab]}
         >
-          <Text style={currentTabChoice === 'friends' ? styles.activeText : null}>
+          <Text style={currentTabChoice === 'friends' ? styles.activeText : styles.inactiveText}>
             Friends
           </Text>
         </Pressable>
@@ -217,7 +218,7 @@ const Users = ({ navigation }) => {
           onPress={() => setCurrentTabChoice('others')}
           style={[styles.tabButton, currentTabChoice === 'others' && styles.activeTab]}
         >
-          <Text style={currentTabChoice === 'others' ? styles.activeText : null}>
+          <Text style={currentTabChoice === 'others' ? styles.activeText : styles.inactiveText}>
             Others
           </Text>
         </Pressable>
@@ -225,7 +226,7 @@ const Users = ({ navigation }) => {
           onPress={() => setCurrentTabChoice('requests')}
           style={[styles.tabButton, currentTabChoice === 'requests' && styles.activeTab]}
         >
-          <Text style={currentTabChoice === 'requests' ? styles.activeText : null}>
+          <Text style={currentTabChoice === 'requests' ? styles.activeText : styles.inactiveText}>
             Requests
           </Text>
           {requestCount > 0 && <Text style={styles.requestNumber}>{requestCount}</Text>}
@@ -288,12 +289,13 @@ const styles = StyleSheet.create({
     backgroundColor:'#fff',
   },
   searchBar: {
+    fontSize:ms(13),
     borderWidth: 1,
     borderColor: '#ccc',
     borderRadius: 10,
     padding: 10,
-    marginBottom: 10,
-    marginTop: 6,
+    marginBottom: vs(10),
+    marginTop: vs(6),
     width: '90%',
     alignSelf: 'center',
     backgroundColor:'#fff',
@@ -305,42 +307,47 @@ const styles = StyleSheet.create({
     backgroundColor:'#fff',
   },
   tabButton: {
+    fontSize:ms(14),
     flexDirection: 'row',
     alignItems: 'center',
-    paddingVertical: 10,
-    paddingHorizontal: 20,
+    paddingVertical: vs(10),
+    paddingHorizontal: s(20),
     borderRadius: 5,
     paddingBottom: Platform.OS === 'ios' ? 8 : 10, // Adjust padding for iOS
   },
   activeText: {
     color: theme.colors.basicColor,
-    fontSize: 16,
+    fontSize: ms(14),
     fontWeight: 'bold',
     borderBottomWidth: 2,
     borderBottomColor:theme.colors.basicColor,
     paddingBottom: Platform.OS === 'ios' ? 4 : 2, // Adjust padding for iOS
   },
+  inactiveText:{
+     fontSize: ms(12),
+  },
   requestNumber: {
     color: '#fff',
     backgroundColor: theme.colors.basicColor,
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    borderRadius: 50,
-    fontSize: 12,
+    paddingHorizontal: ms(8),
+    paddingVertical: ms(4),
+    borderRadius: ms(11),
+    fontSize: ms(12),
     fontWeight: 'bold',
     textAlign: 'center',
-    height: 24,
-    width: 24,
+    height: ms(22),
+    width: ms(22),
     marginLeft: 8,
   },
   flatListContainer: {
-    paddingLeft: Platform.OS === 'ios' ? 15 : 0, // Add left padding for iOS,
+    paddingLeft:s(10), // Add left padding for iOS,
     backgroundColor:'#fff',
     flex:1
   },
   nomatch: {
     textAlign: 'center',
-    marginTop: 100,
+    marginTop: vs(100),
+    fontSize:ms(10)
   },
 });
 

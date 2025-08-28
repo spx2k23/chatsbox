@@ -6,6 +6,7 @@ import React, { useEffect, useState} from 'react';
 import { useQuery, gql } from '@apollo/client';
 import { useSQLiteContext } from 'expo-sqlite';
 import CreateGroupMemberBox from "./CreateGroupMemberBox";
+import {ms,s,vs} from 'react-native-size-matters';
 const isIosPlatform = Platform.OS === 'ios';
 
 
@@ -89,7 +90,7 @@ const CreateGroup=()=>{
             </View>
           </View>
           <View  style={styles.searchBar}>
-          <MaterialIcons name="search" size={24} color="black" />
+          <MaterialIcons name="search" size={ms(22)} color="black" />
             <TextInput
                 style={styles.searchBarInput}
                 placeholder="Search..."
@@ -125,7 +126,7 @@ const CreateGroup=()=>{
         }}
       />
      {selectedMembers.length>0&&<TouchableOpacity style={styles.floatButton}>
-        <Text style={{  color:'#fff', textAlign:'center',fontSize:14}}>Add</Text>
+        <Text style={{  color:'#fff', textAlign:'center',fontSize:ms(12),}}>Add</Text>
       </TouchableOpacity>}
         </View>
     )
@@ -156,12 +157,12 @@ const styles = StyleSheet.create({
         marginLeft:15,
     },
     title:{
-        fontSize:22,
+        fontSize:ms(20),
         fontWeight:500,
         marginBottom:5
     },
     subtitle:{
-        fontSize:14,
+        fontSize:ms(12),
         color:theme.colors.basicColor
     },
      searchBar: {
@@ -172,7 +173,7 @@ const styles = StyleSheet.create({
     paddingVertical: Platform.OS === 'ios' ? 10 : 0, // Vertical padding (force 0 for Android)
     margin: 0, // Remove any default margins
     lineHeight: Platform.OS === 'android' ? 20 : undefined, // Adjust line height for Android
-    fontSize: 16,
+    fontSize: ms(14),
     backgroundColor: '#fff',
     textAlignVertical: 'center', // Align text vertically (Android-specific)
     includeFontPadding: false, // Disable extra font padding (Android-specific)
@@ -182,7 +183,8 @@ const styles = StyleSheet.create({
     alignItems:'center'
   },
       searchBarInput:{
-       marginLeft:isIosPlatform?5:0
+       marginLeft:isIosPlatform?5:0,
+       fontSize:ms(12)
       },
       floatButton:{
         position:'absolute',
@@ -192,9 +194,9 @@ const styles = StyleSheet.create({
         alignItems:'center',
         justifyContent:'center',
         backgroundColor:theme.colors.basicColor,
-        width:64,
+      width:s(60),
         borderRadius:8,
-        paddingHorizontal:13,
-        paddingVertical:3
+        paddingHorizontal:s(13),
+        paddingVertical:vs(3)
       }
 });

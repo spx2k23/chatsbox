@@ -25,7 +25,7 @@ const DateOfBirth = ({ isEditing, selectedDate, setSelectedDate }) => {
       </Text>
       {isEditing && (
         <TouchableOpacity onPress={() => setIsVisible(true)} style={styles.calendar}>
-          <MaterialIcons name="calendar-month" size={24} color={theme.colors.basicColor} />
+          <MaterialIcons name="calendar-month" size={ms(20)} color={theme.colors.basicColor} />
         </TouchableOpacity>
       )}
       {isVisible && (

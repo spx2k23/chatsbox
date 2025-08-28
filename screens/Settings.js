@@ -8,11 +8,9 @@ import SettingsButton from "../components/Settings/SettingsButton";
 import { FontAwesome6} from "@expo/vector-icons";
 import SwitchOrganizationModel from "../components/Settings/SwitchOrganizationModel";
 import AddOrgModal from "../components/Settings/AddOrgModal";
+import {ms,s,vs} from 'react-native-size-matters';
 
 
-const { width } = Dimensions.get('window');
-const scale = width / 375;
-const scaleSize = (size) => size * scale;
 
 const Settings=()=>{
     const navigation=useNavigation();
@@ -28,7 +26,7 @@ const Settings=()=>{
         <View style={styles.container}>
             <TouchableOpacity style={styles.orgswitchContainer} onPress={() => setSwitchOrgModel(true)}>
                {organization.imgUrl?<Image source={{ uri: `data:image/jpeg;base64,${organization.imgUrl}`}} style={styles.orgImg} />:
-               <FontAwesome6 name={'globe'} size={24} color={'grey'}/>}
+               <FontAwesome6 name={'globe'} size={ms(24)} color={'grey'}/>}
                 <View style={styles.textbox}>
                 <Text style={styles.title}>{organization.name}</Text>
                 <Text style={styles.discription}>Switch Organization</Text>
@@ -60,22 +58,24 @@ const styles=StyleSheet.create({
        backgroundColor:'#fff'
     },
     orgImg:{
-        width: 50,
-        height: 50,
-        borderRadius: 30,
+        width: ms(50),
+        height: ms(50),
+        borderRadius: ms(25),
     },
     orgswitchContainer:{
         flexDirection:'row',
         alignItems:'center'
     },
     title:{
-        fontSize:20,
+        fontSize:ms(20,.4),
         fontWeight:500
     },
     discription:{
-        color:'grey'
+        color:'grey',
+        fontSize:ms(13,.4),
     },
     textbox:{
-        marginHorizontal:22
+        marginHorizontal:s(22),
+        marginTop:vs(10)
     },
 });

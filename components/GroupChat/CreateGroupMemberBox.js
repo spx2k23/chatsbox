@@ -1,7 +1,7 @@
 import { Text, View, StyleSheet, Image, TouchableOpacity } from "react-native";
 import theme from '../../config/theme';
 import Octicons from '@expo/vector-icons/Octicons';
-
+import {ms,s,vs} from 'react-native-size-matters';
 const CreateGroupMemberBox = ({
   firstName,
   lastName,
@@ -36,7 +36,7 @@ const CreateGroupMemberBox = ({
         {isSelected && (
           <Octicons
             name="check-circle-fill"
-            size={20}
+            size={ms(18)}
             color={theme.colors.basicColor}
             style={styles.checkIcon}
           />
@@ -49,7 +49,7 @@ const CreateGroupMemberBox = ({
       </View>
        { !isSelected&&<Octicons
           name={ "plus"}
-          size={24}
+          size={ms(20)}
           color={theme.colors.basicColor}
           style={styles.icon}
         />}
@@ -63,7 +63,7 @@ export default CreateGroupMemberBox;
 const styles = StyleSheet.create({
   card: {
     flexDirection: 'row',
-    padding: 10,
+    padding: ms(10),
     marginVertical: 8,
     marginHorizontal:5,
     backgroundColor: '#fff',
@@ -71,9 +71,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   image: {
-    width: 50,
-    height: 50,
-    borderRadius: 25,
+    width: ms(40),
+    height: ms(40),
+    borderRadius: ms(20),
     marginRight: 10,
   },
   checkIcon: {
@@ -90,11 +90,11 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   name: {
-    fontSize: 16,
+    fontSize: ms(14),
     fontWeight: 'bold',
   },
   role: {
-    fontSize: 14,
+    fontSize: ms(12),
     color: '#555',
   },
   icon:{
