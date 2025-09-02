@@ -309,7 +309,7 @@ const styles = StyleSheet.create({
         backgroundColor: theme.colors.basicColor,
     },
     highlightedContainer: {
-        backgroundColor: '#6020b9eb',
+        backgroundColor: '#f8e15e',
     },
     searchBoxContainer: {
         flexDirection: 'row',

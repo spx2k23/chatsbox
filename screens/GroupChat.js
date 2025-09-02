@@ -16,7 +16,11 @@ const GroupChat=()=>{
 
     const data={
         image:'https://img.freepik.com/free-vector/happy-green-cartoon-dragon-smiling_1308-138462.jpg?semt=ais_hybrid',
-        name:'Sprexcel'
+        name:'Sprexcel',
+        members:[{userId:'id1',name:"John Doe",profileImg:'https://img.freepik.com/free-vector/cute-pink-dragon-cartoon-character-standing-isolated_1308-140080.jpg?semt=ais_hybrid',role:'Member'},
+          {userId:'id2',name:'Sprexcel',profileImg:'https://img.freepik.com/free-vector/happy-green-cartoon-dragon-smiling_1308-138462.jpg?semt=ais_hybrid',role:'Admin'},
+           {userId:'id3',name:'Kavin',profileImg:'https://img.freepik.com/free-vector/happy-blue-cartoon-dragon-smiling_1308-146653.jpg',role:'Member'},
+        ]
     }
     const currentUserID = 'dbdkjdlk';
     const navigation = useNavigation();
@@ -354,16 +358,17 @@ const GroupChat=()=>{
           {/* Header */}
           <View style={styles.header}>
             <TouchableOpacity onPress={() => navigation.goBack()}>
-              <MaterialIcons name="arrow-back" size={24} />
+              <MaterialIcons name="arrow-back" size={ms(20)} />
             </TouchableOpacity>
-            <TouchableOpacity >
+            <TouchableOpacity  onPress={()=>navigation.navigate('GroupInfo',{data:data})} style={{flexDirection:'row',alignContent:'center'}}>
               <Image
                 // source={{ uri: `data:image/jpeg;base64,${data.image}` }}
                 source={{uri:data.image}}
                 style={styles.profileImg}
               />
-            </TouchableOpacity>
+            
             <Text style={styles.nameText} numberOfLines={1}>{data.name}</Text>
+            </TouchableOpacity>
             <View style={styles.headerIcons}>
                 <MaterialCommunityIcons  name="phone-outline" size={ms(22)} color={'grey'}/>
                 <MaterialCommunityIcons  name="video-plus-outline" size={ms(22)} color={'grey'}/>
@@ -413,7 +418,7 @@ const GroupChat=()=>{
                 )}
                 {textMessage.length > 0 && (
                   <TouchableOpacity onPress={handleTextSend}>
-                    <MaterialCommunityIcons name="send-outline" size={24} color={theme.colors.basicColor} />
+                    <MaterialCommunityIcons name="send-outline" size={ms(22)} color={theme.colors.basicColor} />
                   </TouchableOpacity>
                 )}
               </View>
@@ -429,7 +434,7 @@ const styles = StyleSheet.create({
     container: {
       flex: 1,
       backgroundColor: '#fff',
-      paddingBottom:70
+      paddingBottom:vs(49)
     },
     header: {
       flexDirection: 'row',
