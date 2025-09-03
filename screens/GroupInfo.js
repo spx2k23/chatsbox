@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState , useEffect,} from "react";
 import {
   View,
   Text,
@@ -9,30 +9,124 @@ import {
   Modal,
   Pressable,
   TextInput,
+  Platform,
 } from "react-native";
 import { useRoute, useNavigation } from "@react-navigation/native";
 import { Ionicons, MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";
 import { s, vs, ms } from "react-native-size-matters";
+import { useQuery, gql, useApolloClient } from '@apollo/client';
+import { useSQLiteContext } from 'expo-sqlite';
+import theme from "../config/theme";
+const GET_USERS_IN_ORG = gql`
+  query GetUsersInOrganization($organizationId: ID!) {
+    getUsersInOrganization(organizationId: $organizationId) {
+      id
+      FirstName
+      LastName
+      Email
+      Role
+      Bio
+      ProfilePicture
+      isFriend
+      isRequestSent
+      isRequestReceived
+    }
+  }
+`;
+    
+const FRIENDS_UPDATE = gql`
+  subscription FriendsUpdate($userId: ID!) {
+    friendsUpdate(userId: $userId) {
+      Type
+      FriendsUpdateReceiverId
+      Friend {
+        id
+        FirstName
+        LastName
+        Bio
+        Role
+        DateOfBirth
+        ProfilePicture
+        Email
+        MobileNumber
+      }
+    }
+  }
+`;
 
 const GroupInfo = () => {
+    const client = useApolloClient();
+    const [organizationId, setOrganizationId] = useState(null);
+    const [userId, setUserId] = useState(null);
+      const [users, setUsers] = useState([]);
+        const db = useSQLiteContext();
+      
+        useEffect(() => {
+          const fetchOrgAndUser  = async () => {
+            try {
+              const firstRow = await db.getFirstAsync(`SELECT * FROM user`);
+              setOrganizationId(firstRow.currentOrg);
+              setUserId(firstRow.userId);
+            } catch (error) {
+              console.error('Error fetching organization or user:', error);
+            }
+          };
+          fetchOrgAndUser ();
+        }, []);
+      
+        const { loading, error, data, refetch } = useQuery(GET_USERS_IN_ORG, {
+          variables: { organizationId },
+          skip: !organizationId,
+          onCompleted: (data) => {
+            setUsers(data.getUsersInOrganization);
+          },
+        });
+      
   const route = useRoute();
-  const { data } = route.params;
+  const { groupMembers} = route.params;
   const navigation = useNavigation();
 
   const [selectedMember, setSelectedMember] = useState(null);
   const [modalVisible, setModalVisible] = useState(false);
-
+  const [addMemberModalVisible, setAddMemberModalVisible] = useState(false);
   const [editModalVisible, setEditModalVisible] = useState(false);
-  const [groupName, setGroupName] = useState(data.name);
-  const [groupImage, setGroupImage] = useState(data.image);
+  const [leaveModalVisible, setLeaveModalVisible] = useState(false);
 
+
+  const [selectedUsers, setSelectedUsers] = useState([]);
+  const [groupName, setGroupName] = useState(groupMembers.name);
+  const [groupImage, setGroupImage] = useState(groupMembers.image);
+
+  const availableUsers = users.filter(
+    (u) => !groupMembers.members.some((m) => m.userId === u.id)
+  );
+
+const handleLeaveGroup = () => {
+  console.log("User confirmed to leave the group");
+  setLeaveModalVisible(false);
+
+};
   const handleMemberAction = (action) => {
-    console.log(`${action} ->`, selectedMember?.name);
+    // console.log(`${action} ->`, selectedMember?.name);
     setModalVisible(false);
   };
+const toggleSelectUser = (user) => {
+  if (selectedUsers.some((u) => u.id === user.id)) {
+    setSelectedUsers(selectedUsers.filter((u) => u.id !== user.id));
+  } else {
+    setSelectedUsers([...selectedUsers, user]);
+  }
+};
+
+const handleAddSelectedMembers = () => {
+  // console.log("Selected Members to Add:", selectedUsers);
+
+  setSelectedUsers([]);
+  setAddMemberModalVisible(false);
+};
 
   const handleSaveGroup = () => {
-    console.log("Updated Group:", { groupName, groupImage });
+    // console.log("Updated Group:", { groupName, groupImage });
     setEditModalVisible(false);
   };
 
@@ -81,7 +175,7 @@ const GroupInfo = () => {
       {/* Members section */}
       <Text style={styles.sectionTitle}>Members</Text>
       <FlatList
-        data={data.members}
+        data={groupMembers.members}
         keyExtractor={(item, index) => item.userId + index}
         renderItem={renderMember}
         contentContainerStyle={{ paddingHorizontal: s(16) }}
@@ -89,12 +183,12 @@ const GroupInfo = () => {
 
       {/* Bottom actions */}
       <View style={styles.footer}>
-        <TouchableOpacity style={styles.footerBtn}>
+        <TouchableOpacity style={styles.footerBtn} onPress={() => setAddMemberModalVisible(true)}>
           <Ionicons name="person-add" size={ms(18)} color="#fff" />
           <Text style={styles.footerBtnText}>Add Member</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity style={[styles.footerBtn, { backgroundColor: "#E53935" }]}>
+        <TouchableOpacity style={[styles.footerBtn, { backgroundColor: "#E53935" }]} onPress={() => setLeaveModalVisible(true)}>
           <MaterialIcons name="exit-to-app" size={ms(18)} color="#fff" />
           <Text style={styles.footerBtnText}>Leave Group</Text>
         </TouchableOpacity>
@@ -199,6 +293,118 @@ const GroupInfo = () => {
           </View>
         </Pressable>
       </Modal>
+            {/* Add Member Modal */}
+      {/* Add Member Modal */}
+<Modal
+  visible={addMemberModalVisible}
+  transparent
+  animationType="slide"
+  onRequestClose={() => setAddMemberModalVisible(false)}
+>
+  <Pressable style={styles.modalOverlay} onPress={() => setAddMemberModalVisible(false)}>
+    <View style={styles.modalContent}>
+      <Text style={styles.modalTitle}>Add Members</Text>
+
+      {availableUsers.length === 0 ? (
+        <Text style={{ textAlign: "center", color: "#777", marginVertical: vs(10) }}>
+          All contacts are already in this group.
+        </Text>
+      ) : (
+        <FlatList
+          data={availableUsers}
+          keyExtractor={(item) => item.id}
+          renderItem={({ item }) => {
+            const isSelected = selectedUsers.some((u) => u.id === item.id);
+            return (
+              <TouchableOpacity
+                style={[
+                  styles.memberCard,
+                  { backgroundColor: isSelected ? "#E8EAF6" : "#f9f9f9" },
+                ]}
+                onPress={() => toggleSelectUser(item)}
+              >
+                <Image
+                  source={{ uri: `data:image/jpeg;base64,${item.ProfilePicture}` }}
+                  style={styles.memberImg}
+                />
+                <View style={{ flex: 1 }}>
+                  <Text style={styles.memberName}>
+                    {item.FirstName} {item.LastName}
+                  </Text>
+                  <Text style={styles.memberRole}>{item.Role}</Text>
+                </View>
+                {isSelected ? (
+                  <Ionicons name="checkmark-circle" size={ms(20)} color="#6200EE" />
+                ) : (
+                  <Ionicons name="ellipse-outline" size={ms(20)} color="#aaa" />
+                )}
+              </TouchableOpacity>
+            );
+          }}
+        />
+      )}
+
+      {selectedUsers.length > 0 && (
+        <TouchableOpacity style={styles.saveBtn} onPress={handleAddSelectedMembers}>
+          <Text style={styles.saveBtnText}>
+            Add {selectedUsers.length} Member{selectedUsers.length > 1 ? "s" : ""}
+          </Text>
+        </TouchableOpacity>
+      )}
+
+      <TouchableOpacity
+        style={[styles.modalBtn, { justifyContent: "center", marginTop: vs(8) }]}
+        onPress={() => {
+          setSelectedUsers([]);
+          setAddMemberModalVisible(false);
+        }}
+      >
+        <Text style={{ color: "#444", fontSize: ms(13), fontWeight: "500" }}>
+          Cancel
+        </Text>
+      </TouchableOpacity>
+    </View>
+  </Pressable>
+</Modal>
+{/* Leave Group Confirmation Modal */}
+<Modal
+  visible={leaveModalVisible}
+  transparent
+  animationType="fade"
+  onRequestClose={() => setLeaveModalVisible(false)}
+>
+  <Pressable style={styles.modalOverlay} onPress={() => setLeaveModalVisible(false)}>
+    <View style={[styles.modalContent, {  alignItems: "center",paddingBottom:Platform.OS==='ios'?ms(25):ms(20) }]}>
+      <Text style={[styles.modalTitle, { fontSize: ms(15), textAlign: "center",marginBottom:0 }]}>
+        Are you sure you want to leave this group?
+      </Text>
+
+      <View style={{ flexDirection: "row", marginTop: vs(16) }}>
+        <TouchableOpacity
+          style={[
+            styles.footerBtn,
+            {  backgroundColor: "#E53935" ,textAlign:'center',paddingHorizontal:s(20)},
+          ]}
+          onPress={handleLeaveGroup}
+        >
+          <Text style={styles.footerBtnText}>Leave</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          style={[
+            styles.footerBtn,
+            { marginLeft: s(10), backgroundColor: theme.colors.basicColor,textAlign:'center',paddingHorizontal:s(20) },
+          ]}
+          onPress={() => setLeaveModalVisible(false)}
+        >
+          <Text style={styles.footerBtnText}>Cancel</Text>
+        </TouchableOpacity>
+      </View>
+    </View>
+  </Pressable>
+</Modal>
+
+
     </View>
   );
 };

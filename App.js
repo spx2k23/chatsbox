@@ -27,6 +27,7 @@ import { jwtDecode } from 'jwt-decode';
 import { SetupFolders } from './components/SetupFolders';
 import {vs,s,ms} from 'react-native-size-matters';
 import GroupInfo from './screens/GroupInfo';
+import ApproveRequest from './screens/ApproveRequest';
 
 const Stack = createStackNavigator();
 
@@ -127,6 +128,26 @@ const App = () => {
                 headerTitle: '',  // Hide the title
                 headerShown: true,
               
+              })}
+            />
+              <Stack.Screen
+              name="ApproveRequests"
+              component={ApproveRequest}
+              options={({ navigation }) => ({
+                headerLeft: () => (
+                    <View style={styles.titleContainer}>
+                  <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backIconContainer}>
+                    <MaterialIcons name="arrow-back" size={ms(24)} />
+                  </TouchableOpacity>
+                  <Text style={styles.title}>Approve Requests </Text>
+                  </View>
+                ),
+                headerTitle: '',  // Hide the title
+                headerShown: true,
+                 headerStyle:{
+                  height:Platform.OS==='android'?vs(50):vs(75),
+                 
+                },
               })}
             />
             <Stack.Screen

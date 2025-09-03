@@ -360,7 +360,7 @@ const GroupChat=()=>{
             <TouchableOpacity onPress={() => navigation.goBack()}>
               <MaterialIcons name="arrow-back" size={ms(20)} />
             </TouchableOpacity>
-            <TouchableOpacity  onPress={()=>navigation.navigate('GroupInfo',{data:data})} style={{flexDirection:'row',alignContent:'center'}}>
+            <TouchableOpacity  onPress={()=>navigation.navigate('GroupInfo',{groupMembers:data})} style={{flexDirection:'row',alignContent:'center'}}>
               <Image
                 // source={{ uri: `data:image/jpeg;base64,${data.image}` }}
                 source={{uri:data.image}}

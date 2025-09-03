@@ -37,7 +37,7 @@ const Settings=()=>{
             {addmodal&&<AddOrgModal addmodal={addmodal} setaddmodal={setaddmodal}/>}
             <SettingsButton isMaterialCommunity={true} title={'Organization Code'} discription={'Change Organizations Code'} iconName={'office-building-cog-outline'} onPress={()=>navigation.navigate('OrganizationCode')}/>
             <SettingsButton isMaterialCommunity={true} title={'Manage Users'} discription={'Promote,Depromote or Remove users'} iconName={'account-cog-outline'} onPress={()=>navigation.navigate('ManageUsers')}/>    
-            <SettingsButton isMaterialCommunity={true} title={'Approve Requests'} discription={'Approve Members'} iconName={'send-check-outline'} onPress={()=>console.log('pressed !')}/>
+            <SettingsButton isMaterialCommunity={true} title={'Approve Requests'} discription={'Approve Members'} iconName={'send-check-outline'} onPress={()=>navigation.navigate('ApproveRequests')}/>
             <SettingsButton isMaterialCommunity={false} title={'Create Group'} discription={'Create groups with organization members'} iconName={"addusergroup"} onPress={()=>navigation.navigate('CreateGroup')}/>    
             <SettingsButton isMaterialCommunity={true} title={'Help'} discription={'Report Problem, Help Desk'} iconName={'help-circle-outline'} onPress={()=>console.log('pressed !')}/> 
             <SettingsButton isMaterialCommunity={true} title={'Logout'} discription={'Logout Now'} iconName={'logout'} onPress={()=>setlogoutModalVisible(true)}/>           
